@@ -15,14 +15,26 @@ export const connectDB = async () => {
     const conn = await mongoose.connect(MONGO_URI);
 
     // Log connection details
-    logger.info("✅ Connexion à MongoDB réussie");
-    logger.info(`📊 Base de données: ${conn.connection.name}`);
-    logger.info(`🌍 Host: ${conn.connection.host}:${conn.connection.port}`);
+    logger.info(`
+      ----- Connection à MongoDB -----
+
+      ✅ Connexion à MongoDB réussie
+      📊 Base de données: ${conn.connection.name}
+      🌍 Host: ${conn.connection.host}:${conn.connection.port}
+      
+      ------------------------------
+      `);
 
     // Start the server
     const server = app.listen(PORT, () => {
-      logger.info(`🚀 Serveur démarré ici : http://localhost:${PORT}`);
-      logger.info(`🔗 Environment: ${process.env.NODE_ENV || "dev"}`);
+      logger.info(`
+        ----- Démarrage du serveur Express -----
+
+        🚀 Serveur démarré ici : http://localhost:${PORT}
+        🔗 Environment: ${process.env.NODE_ENV || "dev"}
+
+        ------------------------------
+        `);
     });
 
     // Handle server errors

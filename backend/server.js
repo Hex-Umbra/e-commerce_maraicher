@@ -28,11 +28,6 @@ app.use((req, res, next) => {
 // Authentication Routes
 app.use("/api/auth", authRouter);
 
-// Test Route
-app.get("/", (req, res) => {
-  res.send("API Ecommerce Maraîcher est en ligne 🚀");
-});
-
 // Error Handling Middleware
 app.use(globalErrorHandler);
 
