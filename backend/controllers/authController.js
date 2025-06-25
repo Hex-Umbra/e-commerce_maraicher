@@ -153,15 +153,6 @@ export const register = catchAsync(async (req, res, next) => {
 
 // User login
 export const login = catchAsync(async (req, res, next) => {
-  // 
-  // Detailed debugging
-  console.log('=== LOGIN DEBUG ===');
-  console.log('req.body:', req.body);
-  console.log('req.body type:', typeof req.body);
-  console.log('req.body keys:', req.body ? Object.keys(req.body) : 'no keys');
-  console.log('Content-Type:', req.get('Content-Type'));
-  console.log('Request headers:', req.headers);
-  console.log('==================');
 
   // Check if req.body exists
   if (!req.body || Object.keys(req.body).length === 0) {
@@ -171,8 +162,7 @@ export const login = catchAsync(async (req, res, next) => {
     });
   }
 
-  const email = req.body?.email;
-  const password = req.body?.password;
+  const { email, password } = req.body;
 
   if (!email || !password) {
     return next(new AppError("Email et mot de passe sont requis", 400));
