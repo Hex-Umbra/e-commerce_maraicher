@@ -22,7 +22,8 @@ export const handleError = (err, context = "", req = null) => {
 
   //  Log the error details
   const logEntry = `
-   - ❌ [${timestamp}] [${context}]
+    \n--- Error Log ---
+   - ❌ [${context}]
    - Message: ${err.message}
    - Status: ${err.statusCode || "Unknown"}
    - ${req ? `Route: ${req.method} ${req.originalUrl}\n` : ""}
@@ -82,3 +83,5 @@ export const catchAsync = (fn) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
+
+

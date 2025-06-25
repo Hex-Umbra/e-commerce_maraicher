@@ -21,7 +21,7 @@ export const connectDB = async () => {
 
     // Start the server
     const server = app.listen(PORT, () => {
-      logger.info(`🚀 Serveur démarré sur le port ${PORT}`);
+      logger.info(`🚀 Serveur démarré ici : http://localhost:${PORT}`);
       logger.info(`🔗 Environment: ${process.env.NODE_ENV || "dev"}`);
     });
 
@@ -39,4 +39,20 @@ export const connectDB = async () => {
     );
     process.exit(1);
   }
+};
+// -------------------------------------------------------------------------------------------------------
+// Graceful shutdown function
+// This function handles graceful shutdown of the server when it receives termination signals.
+// It closes the MongoDB connection and logs the shutdown process.
+const gracefulShutdown = (signal) => {
+  console.log(`\n📴 Signal ${signal} reçu. Arrêt gracieux du serveur...`);
+
+  mongoose.connection.close(() => {
+    console.log("🔌 Connexion MongoDB fermée");
+    console.log("👋 Serveur arrêté proprement");
+    process.exit(0);
+  });
+
+  process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+  process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 };
