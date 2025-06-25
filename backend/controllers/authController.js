@@ -153,12 +153,12 @@ export const register = catchAsync(async (req, res, next) => {
 
 // User login
 export const login = catchAsync(async (req, res, next) => {
-
   // Check if req.body exists
   if (!req.body || Object.keys(req.body).length === 0) {
     return res.status(400).json({
       success: false,
-      message: 'Request body is missing or empty. Please ensure you are sending JSON data with Content-Type: application/json header.'
+      message:
+        "Request body is missing or empty. Please ensure you are sending JSON data with Content-Type: application/json header.",
     });
   }
 
@@ -188,6 +188,10 @@ export const login = catchAsync(async (req, res, next) => {
       .json({ success: false, message: "Invalid credentials" });
   }
 
+  // Send token and response
+  logger.info(
+    `Utilisateur: \x1b[31m${user.name}\x1b[0m \x1b[32m(${user.email})\x1b[0m s'est connecté`
+  );
   createSendToken(user, 200, res, "Logged in successfully");
 });
 
@@ -195,6 +199,8 @@ export const login = catchAsync(async (req, res, next) => {
 
 // User logout
 export const logout = (req, res) => {
+  logger.info("A user has logged out");
+
   res
     .cookie("jwt", "", {
       httpOnly: true,
