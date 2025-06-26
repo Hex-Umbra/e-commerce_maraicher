@@ -31,3 +31,34 @@ export const createProduct = async (req, res) => {
     });
   }
 };
+
+// -------------------------------------------------------------------------------------- //
+// @desc    Get all products
+// @route   GET /api/products
+// @access  Public
+export const getAllProducts = async (req, res) => {
+  try {
+    const products = await Product.find().populate(
+      "producteurId",
+      "name email"
+    );
+
+    // Log the retrieval of products
+    logger.debug(`Retrieved \x1b[1m${products.length}\x1b[0m products`, {
+      userId: req.user ? req.user._id : "anonymous",
+    });
+    
+
+    res.status(200).json({
+      message: "Products retrieved successfully",
+      products,
+    });
+  } catch (error) {
+    // Log the error for debugging purposes
+    handleError(error, "Get All Products", req);
+    res.status(500).json({
+      message: "Error retrieving products",
+      error: error.message,
+    });
+  }
+};
