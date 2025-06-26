@@ -1,3 +1,5 @@
+// @desc Verify user role middleware
+// @route Middleware to check if the user has one of the specified roles
 export const verifyRole = (...roles) => {
 
     return (req, res, next) => {

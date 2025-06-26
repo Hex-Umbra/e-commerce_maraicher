@@ -20,9 +20,9 @@ export const limiter = rateLimiter({
 // ----------------------------------------------------------------------------------------------------- //
 
 // Function to sign JWT token
-const signToken = (_id, role) => {
+const signToken = (_id, role, name) => {
   return jwt.sign(
-    { _id, role, iat: Math.floor(Date.now() / 1000) },
+    { _id, role, name, iat: Math.floor(Date.now() / 1000) },
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRATION,
@@ -37,7 +37,7 @@ const signToken = (_id, role) => {
 
 // Helper to set secure cookie
 const createSendToken = (user, statusCode, res, message) => {
-  const token = signToken(user._id, user.role);
+  const token = signToken(user._id, user.role, user.name);
 
   const cookieOptions = {
     httpOnly: true,
@@ -192,7 +192,7 @@ export const login = catchAsync(async (req, res, next) => {
 
   // Send token and response
   logger.info(
-    `Utilisateur: \x1b[31m${user.name}\x1b[0m \x1b[32m(${user.email})\x1b[0m s'est connecté`
+    `Le \x1b[1m${user.role}\x1b[0m \x1b[31m${user.name}\x1b[0m \x1b[32m(${user.email})\x1b[0m  s'est \x1b[47m\x1b[1m connecté \x1b[0m`
   );
   createSendToken(user, 200, res, "Logged in successfully");
 });
@@ -201,7 +201,7 @@ export const login = catchAsync(async (req, res, next) => {
 
 // User logout
 export const logout = (req, res) => {
-  logger.info("A user has logged out");
+  logger.info(`Le \x1b[1m${req.user.role}\x1b[0m \x1b[31m${req.user.name}\x1b[0m s'est \x1b[47m\x1b[1m déconnecté \x1b[0m`);
 
   res
     .cookie("jwt", "", {
