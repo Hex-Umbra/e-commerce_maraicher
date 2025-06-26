@@ -143,9 +143,11 @@ export const register = catchAsync(async (req, res, next) => {
 
   // Send token and response
   logger.info(
-    `-----------------------------
+    `
+    -----------------------------
     Nouvel utilisateur créé: \x1b[31m${newUser.name} \x1b[32m(${newUser.email})
-    -----------------------------`
+    -----------------------------
+    `
   );
 
   createSendToken(newUser, 201, res, "Utilisateur créé avec succès");
@@ -201,7 +203,9 @@ export const login = catchAsync(async (req, res, next) => {
 
 // User logout
 export const logout = (req, res) => {
-  logger.info(`Le \x1b[1m${req.user.role}\x1b[0m \x1b[31m${req.user.name}\x1b[0m s'est \x1b[47m\x1b[1m déconnecté \x1b[0m`);
+  logger.info(
+    `Le \x1b[1m${req.user.role}\x1b[0m \x1b[31m${req.user.name}\x1b[0m s'est \x1b[47m\x1b[1m déconnecté \x1b[0m`
+  );
 
   res
     .cookie("jwt", "", {

@@ -10,23 +10,22 @@ export const createProduct = catchAsync(async (req, res) => {
     const newProduct = new Product({ ...req.body, producteurId: req.user._id });
     await newProduct.save();
 
-    // Log the successful creation of the product
-    logger.info(`Product created successfully: ${newProduct._id}`, {
+    // Log de la création réussie du produit
+    logger.info(`Produit créé avec succès : ${newProduct._id}`, {
       userId: req.user._id,
       productId: newProduct._id,
       productName: newProduct.name,
     });
 
-    // Respond with the created product and a 201 status code
     res.status(201).location(`/api/products/${newProduct._id}`).json({
-      message: "Product created successfully",
+      message: "Produit créé avec succès.",
       product: newProduct,
     });
   } catch (error) {
-    // Log the error for debugging purposes
-    handleError(error, "Create Product", req);
+    handleError(error, "Création de produit", req);
+
     res.status(500).json({
-      message: "Error creating product",
+      message: "Erreur lors de la création du produit.",
       error: error.message,
     });
   }
@@ -43,20 +42,20 @@ export const getAllProducts = catchAsync(async (req, res) => {
       "name email"
     );
 
-    // Log the retrieval of products
-    logger.debug(`Retrieved \x1b[1m${products.length}\x1b[0m products`, {
+    // Log de la récupération des produits
+    logger.debug(`\x1b[1m${products.length}\x1b[0m produits récupérés`, {
       userId: req.user ? req.user._id : "anonymous",
     });
 
     res.status(200).json({
-      message: "Products retrieved successfully",
+      message: "Produits récupérés avec succès.",
       products,
     });
   } catch (error) {
-    // Log the error for debugging purposes
-    handleError(error, "Get All Products", req);
+    handleError(error, "Récupération de tous les produits", req);
+
     res.status(500).json({
-      message: "Error retrieving products",
+      message: "Erreur lors de la récupération des produits.",
       error: error.message,
     });
   }
@@ -74,19 +73,79 @@ export const getProductById = catchAsync(async (req, res) => {
     );
 
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ message: "Produit introuvable." });
     }
-    // Log in development the successful retrieval of the product
-    logger.debug(`Product retrieved successfully: ${product._id}`, {
+
+    // Log en développement de la récupération réussie du produit
+    logger.debug(`Produit récupéré avec succès : ${product.name} - ${product._id}`, {
       userId: req.user ? req.user._id : "anonymous",
       productId: product._id,
       productName: product.name,
     });
 
-    // Respond with the retrieved product and a 200 status code
     res.status(200).json({
-      message: "Product retrieved successfully",
+      message: "Produit récupéré avec succès.",
       product,
     });
-  } catch (error) {}
+  } catch (error) {
+    handleError(error, "Récupération d'un produit par ID", req);
+
+    res.status(500).json({
+      message: "Erreur lors de la récupération du produit.",
+    });
+  }
+});
+
+// -------------------------------------------------------------------------------------- //
+// @desc    Update a product by ID
+// @route   PUT /api/products/:id
+// @access  Private (Producteur)
+export const updateProduct = catchAsync(async (req, res) => {
+  try {
+    // Vérifie si le produit existe
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Produit introuvable." });
+    }
+
+    // Vérifie si l'utilisateur est bien le producteur du produit
+    if (product.producteurId.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Vous n'êtes pas autorisé à modifier ce produit." });
+    }
+
+    // Met à jour le produit avec les nouvelles données
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body, producteurId: req.user._id },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProduct) {
+      return res
+        .status(404)
+        .json({ message: "Produit introuvable après mise à jour." });
+    }
+
+    // Log de la mise à jour réussie du produit
+    logger.info(`Produit mis à jour avec succès : ${updatedProduct._id}`, {
+      userId: req.user._id,
+      productId: updatedProduct._id,
+      productName: updatedProduct.name,
+    });
+
+    // Répond avec le produit mis à jour et un code 200
+    res.status(200).json({
+      message: "Produit mis à jour avec succès.",
+      updatedProduct,
+    });
+  } catch (error) {
+    // Log de l'erreur pour le débogage
+    handleError(error, "Mise à jour du produit", req);
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour du produit.",
+      error: error.message,
+    });
+  }
 });
