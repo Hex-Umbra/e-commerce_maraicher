@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Tomates Bio",
+    "description": "Tomates fraîches cultivées sans pesticides.",
+    "price": 3.5,
+    "quantity": 120,
+    "category": "Légumes",
+    "image": "https://example.com/images/tomates.jpg"
+  },
+  {
+    "name": "Pommes Golden",
+    "description": "Pommes juteuses et sucrées récoltées localement.",
+    "price": 2.8,
+    "quantity": 80,
+    "category": "Fruits",
+    "image": "https://example.com/images/pommes.jpg"
+  },
+  {
+    "name": "Miel de Printemps",
+    "description": "Miel 100% naturel produit par nos abeilles.",
+    "price": 7.5,
+    "quantity": 45,
+    "category": "Produits de la ruche",
+    "image": "https://example.com/images/miel.jpg"
+  },
+  {
+    "name": "Carottes nouvelles",
+    "description": "Carottes croquantes à cuisiner ou à croquer.",
+    "price": 2.3,
+    "quantity": 200,
+    "category": "Légumes",
+    "image": "https://example.com/images/carottes.jpg"
+  },
+  {
+    "name": "Paniers Découverte",
+    "description": "Panier varié de légumes et fruits de saison.",
+    "price": 15,
+    "quantity": 30,
+    "category": "Panier",
+    "image": "https://example.com/images/panier.jpg"
+  },
+  {
+    "name": "Oeufs Fermiers",
+    "description": "Oeufs frais de poules élevées en plein air.",
+    "price": 4.0,
+    "quantity": 100,
+    "category": "Produits laitiers",
+    "image": "https://example.com/images/oeufs.jpg"
+  },
+  {
+    "name": "Fromage de Chèvre",
+    "description": "Fromage crémeux au lait de chèvre local.",
+    "price": 6.0,
+    "quantity": 60,
+    "category": "Produits laitiers",
+    "image": "https://example.com/images/fromage.jpg"
+  },
+  {
+    "name": "Pain Complet",
+    "description": "Pain artisanal au levain, parfait pour le petit déjeuner.",
+    "price": 3.0,
+    "quantity": 50,
+    "category": "Boulangerie",
+    "image": "https://example.com/images/pain.jpg"
+  }
+]
