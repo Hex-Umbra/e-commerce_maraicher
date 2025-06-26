@@ -1,11 +1,11 @@
 import Product from "../models/productsModel.js";
 import { logger } from "../services/logger.js";
-import { handleError } from "../utils/handleError.js";
+import { catchAsync, handleError } from "../utils/handleError.js";
 
 // @desc    Create a new product
 // @route   POST /api/products
 // @access  Private (Producteur)
-export const createProduct = async (req, res) => {
+export const createProduct = catchAsync(async (req, res) => {
   try {
     const newProduct = new Product({ ...req.body, producteurId: req.user._id });
     await newProduct.save();
@@ -30,13 +30,13 @@ export const createProduct = async (req, res) => {
       error: error.message,
     });
   }
-};
+});
 
 // -------------------------------------------------------------------------------------- //
 // @desc    Get all products
 // @route   GET /api/products
 // @access  Public
-export const getAllProducts = async (req, res) => {
+export const getAllProducts = catchAsync(async (req, res) => {
   try {
     const products = await Product.find().populate(
       "producteurId",
@@ -47,7 +47,6 @@ export const getAllProducts = async (req, res) => {
     logger.debug(`Retrieved \x1b[1m${products.length}\x1b[0m products`, {
       userId: req.user ? req.user._id : "anonymous",
     });
-    
 
     res.status(200).json({
       message: "Products retrieved successfully",
@@ -61,4 +60,33 @@ export const getAllProducts = async (req, res) => {
       error: error.message,
     });
   }
-};
+});
+
+// -------------------------------------------------------------------------------------- //
+// @desc    Get a product by ID
+// @route   GET /api/products/:id
+// @access  Public
+export const getProductById = catchAsync(async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate(
+      "producteurId",
+      "name email"
+    );
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    // Log in development the successful retrieval of the product
+    logger.debug(`Product retrieved successfully: ${product._id}`, {
+      userId: req.user ? req.user._id : "anonymous",
+      productId: product._id,
+      productName: product.name,
+    });
+
+    // Respond with the retrieved product and a 200 status code
+    res.status(200).json({
+      message: "Product retrieved successfully",
+      product,
+    });
+  } catch (error) {}
+});
