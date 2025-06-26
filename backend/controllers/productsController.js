@@ -77,11 +77,14 @@ export const getProductById = catchAsync(async (req, res) => {
     }
 
     // Log en développement de la récupération réussie du produit
-    logger.debug(`Produit récupéré avec succès : ${product.name} - ${product._id}`, {
-      userId: req.user ? req.user._id : "anonymous",
-      productId: product._id,
-      productName: product.name,
-    });
+    logger.debug(
+      `Produit récupéré avec succès : ${product.name} - ${product._id}`,
+      {
+        userId: req.user ? req.user._id : "anonymous",
+        productId: product._id,
+        productName: product.name,
+      }
+    );
 
     res.status(200).json({
       message: "Produit récupéré avec succès.",
@@ -149,3 +152,41 @@ export const updateProduct = catchAsync(async (req, res) => {
     });
   }
 });
+
+// -------------------------------------------------------------------------------------- //
+export const deleteProduct = catchAsync(async (req, res) => {
+  try {
+    // Récupère le produit à supprimer
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Produit introuvable." });
+    }
+    // Vérifie si l'utilisateur est le producteur du produit
+    if (product.producteurId.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Vous n'êtes pas autorisé à supprimer ce produit." });
+    }
+    // Supprime le produit
+    await Product.findByIdAndDelete(req.params.id);
+    // Log de la suppression réussie du produit
+    logger.info(`Produit supprimé avec succès : ${product._id}`, {
+      userId: req.user._id,
+      productId: product._id,
+      productName: product.name,
+    });
+    // Répond avec un message de succès
+    res.status(200).json({
+      message: "Produit supprimé avec succès.",
+    });
+  } catch (error) {
+    // Log de l'erreur pour le débogage
+    handleError(error, "Suppression du produit", req);
+    res.status(500).json({
+      message: "Erreur lors de la suppression du produit.",
+      error: error.message,
+    });
+  }
+});
+
+

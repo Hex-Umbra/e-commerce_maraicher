@@ -162,7 +162,7 @@ export const login = catchAsync(async (req, res, next) => {
     return res.status(400).json({
       success: false,
       message:
-        "Request body is missing or empty. Please ensure you are sending JSON data with Content-Type: application/json header.",
+        "Veuillez fournir les informations de connexion",
     });
   }
 
@@ -182,7 +182,9 @@ export const login = catchAsync(async (req, res, next) => {
 
   const user = await User.findOne({ email });
   if (!user) {
-    return res.status(400).json({ success: false, message: "User not found" });
+    return res
+      .status(400)
+      .json({ success: false, message: " Utilisateur non trouvé" });
   }
 
   const isMatch = await user.comparePassword(password);
@@ -196,7 +198,7 @@ export const login = catchAsync(async (req, res, next) => {
   logger.info(
     `Le \x1b[1m${user.role}\x1b[0m \x1b[31m${user.name}\x1b[0m \x1b[32m(${user.email})\x1b[0m  s'est \x1b[47m\x1b[1m connecté \x1b[0m`
   );
-  createSendToken(user, 200, res, "Logged in successfully");
+  createSendToken(user, 200, res, "Connexion réussie");
 });
 
 // ----------------------------------------------------------------------------------------------------- //

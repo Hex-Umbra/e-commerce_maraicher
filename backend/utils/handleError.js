@@ -22,7 +22,6 @@ export class AppError extends Error {
 // @param   {string} context - Additional context about where the error occurred
 // @param   {Object} req - The request object (optional)
 export const handleError = (err, context = "", req = null) => {
-  const timestamp = new Date().toISOString();
 
   //  Log the error details
   const logEntry = `
