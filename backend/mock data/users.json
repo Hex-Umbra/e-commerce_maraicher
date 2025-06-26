@@ -1,0 +1,65 @@
+[
+  {
+    "name": "Alice Dupont",
+    "email": "alice.dupont@example.com",
+    "password": "Password123!",
+    "address": "12 Rue des Lilas, Lyon",
+    "role": "admin"
+  },
+  {
+    "name": "Jean Martin",
+    "email": "jean.martin@example.com",
+    "password": "Password123!",
+    "address": "45 Avenue Victor Hugo, Paris",
+    "role": "producteur"
+  },
+  {
+    "name": "Sophie Bernard",
+    "email": "sophie.bernard@example.com",
+    "password": "Password123!",
+    "address": "67 Rue Lafayette, Marseille",
+    "role": "producteur"
+  },
+  {
+    "name": "Paul Girard",
+    "email": "paul.girard@example.com",
+    "password": "Password123!",
+    "address": "98 Boulevard Haussmann, Paris"
+  },
+  {
+    "name": "Emma Lefevre",
+    "email": "emma.lefevre@example.com",
+    "password": "Password123!",
+    "address": "25 Rue de la République, Lille"
+  },
+  {
+    "name": "Lucas Fontaine",
+    "email": "lucas.fontaine@example.com",
+    "password": "Password123!",
+    "address": "3 Rue des Jardins, Nantes"
+  },
+  {
+    "name": "Manon Roussel",
+    "email": "manon.roussel@example.com",
+    "password": "Password123!",
+    "address": "78 Chemin du Lac, Toulouse"
+  },
+  {
+    "name": "Tom Renault",
+    "email": "tom.renault@example.com",
+    "password": "Password123!",
+    "address": "15 Place Bellecour, Lyon"
+  },
+  {
+    "name": "Julie Charpentier",
+    "email": "julie.charpentier@example.com",
+    "password": "Password123!",
+    "address": "200 Avenue Foch, Bordeaux"
+  },
+  {
+    "name": "Nathan Morel",
+    "email": "nathan.morel@example.com",
+    "password": "Password123!",
+    "address": "56 Rue des Acacias, Strasbourg"
+  }
+]

@@ -17,6 +17,10 @@ export class AppError extends Error {
 // It can be used in middleware or route handlers to handle errors consistently.
 // It also includes a context parameter to provide additional information about where the error occurred.
 
+// @desc    Handle errors in the application
+// @param   {Error} err - The error object
+// @param   {string} context - Additional context about where the error occurred
+// @param   {Object} req - The request object (optional)
 export const handleError = (err, context = "", req = null) => {
   const timestamp = new Date().toISOString();
 

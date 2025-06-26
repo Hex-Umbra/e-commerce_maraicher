@@ -30,7 +30,7 @@ export const connectDB = async () => {
       logger.info(`
         ----- Démarrage du serveur Express -----
 
-        🚀 Serveur démarré ici : http://localhost:${PORT}
+        🚀 Serveur démarré ici : \x1b[31mhttp://localhost:${PORT}\x1b[0m
         🔗 Environment: ${process.env.NODE_ENV || "dev"}
 
         ------------------------------

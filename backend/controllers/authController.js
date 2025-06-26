@@ -20,9 +20,9 @@ export const limiter = rateLimiter({
 // ----------------------------------------------------------------------------------------------------- //
 
 // Function to sign JWT token
-const signToken = (id, role) => {
+const signToken = (_id, role) => {
   return jwt.sign(
-    { id, role, iat: Math.floor(Date.now() / 1000) },
+    { _id, role, iat: Math.floor(Date.now() / 1000) },
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRATION,
@@ -143,7 +143,9 @@ export const register = catchAsync(async (req, res, next) => {
 
   // Send token and response
   logger.info(
-    `Nouvel utilisateur créé: \x1b[31m${newUser.name} \x1b[32m(${newUser.email})`
+    `-----------------------------
+    Nouvel utilisateur créé: \x1b[31m${newUser.name} \x1b[32m(${newUser.email})
+    -----------------------------`
   );
 
   createSendToken(newUser, 201, res, "Utilisateur créé avec succès");
