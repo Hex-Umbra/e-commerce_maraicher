@@ -14,12 +14,18 @@ const userSchema = new Schema({
     enum: ["admin", "producteur", "client"],
     default: "client",
   },
+  cart: [
+    {
+      product: { type: Schema.Types.ObjectId, ref: "Product" },
+      quantity: { type: Number, default: 1 },
+      price: { type: Number, required: true },
+    },
+  ],
   createdAt: { type: Date, default: Date.now },
 });
 
 // Pre-save hook to hash password
 userSchema.pre("save", async function (next) {
-
   // Only hash if password is new or modified
   if (!this.isModified("password")) return next();
 

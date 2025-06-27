@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/authRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import producteurRouter from "./routes/producteurRoute.js";
+import cartRouter from "./routes/cartRoutes.js";
 
 // Importing Middlewares
 import { connectDB } from "./utils/dbConnection.js";
@@ -44,6 +45,7 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRouter);
 app.use("/api/products", productRouter);
 app.use("/api/producteurs", producteurRouter);
+app.use("/api/cart", cartRouter);
 
 // Error Handling Middleware
 app.use(globalErrorHandler);
