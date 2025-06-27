@@ -154,6 +154,9 @@ export const updateProduct = catchAsync(async (req, res) => {
 });
 
 // -------------------------------------------------------------------------------------- //
+// @desc    Delete a product by ID
+// @route   DELETE /api/products/:id
+// @access  Private (Producteur)
 export const deleteProduct = catchAsync(async (req, res) => {
   try {
     // Récupère le produit à supprimer
