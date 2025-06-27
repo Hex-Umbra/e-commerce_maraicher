@@ -10,8 +10,8 @@ const router = express.Router();
 // Route to get all producteurs
 router.get("/", getAllProducteurs);
 
-router.get("/:id/products", getProductsByProducteur);
-
 router.get("/:id", getProducteurById);
+
+router.get("/:id/products", getProductsByProducteur);
 
 export default router;
