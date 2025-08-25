@@ -145,7 +145,10 @@ export const register = catchAsync(async (req, res, next) => {
   logger.info(
     `
     -----------------------------
-    Nouvel utilisateur créé: \x1b[31m${newUser.name} \x1b[32m(${newUser.email})
+    Nouvel utilisateur créé: \x1b[31m${newUser.name} \x1b[32m(${newUser.email}) \x1b[0m
+    Rôle: \x1b[1m${newUser.role}\x1b
+    Id: \x1b[33m${newUser._id}\x1b[0m
+    Date: \x1b[36m${new Date().toLocaleString()}\x1b[0m
     -----------------------------
     `
   );

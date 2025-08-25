@@ -24,6 +24,11 @@ const orderSchema = new Schema(
           type: Number,
           required: true,
         },
+        status: {
+          type: String,
+          enum: [ "En cours", "Prêt", "Livré" ],
+          default: "En cours",
+        },
       },
     ],
     totalAmount: {
@@ -32,8 +37,8 @@ const orderSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "completed", "cancelled"],
-      default: "pending",
+      enum: ["En cours", "Complète", "Partiellement complète" ,"Annulée"],
+      default: "En cours",
     },
   },
   { timestamps: true }

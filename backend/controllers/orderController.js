@@ -22,41 +22,59 @@ export const createOrder = catchAsync(async (req, res, next) => {
       return next(new AppError("User not found", 404));
     }
 
-    if (!user.cart || Object.keys(user.cart).length === 0) {
+    if (!user.cart || user.cart.length === 0) {
       return next(new AppError("Cart is empty", 400));
     }
 
-    let totalAmount = 0;
     const orderProducts = [];
 
-    // Calculate total price and prepare order products
-    for (const cartItem of user.cart) {
-      logger.debug(cartItem.product);
+    for (const item of user.cart) {
+      const product = await Product.findById(item.product._id).session(session);
 
-      const product = await Product.findById(cartItem.product).session(session);
       if (!product) {
-        return next(new AppError(`Product with ID ${cartItem} not found`, 404));
-      }
-      if (product.quantity < cartItem.quantity) {
-        return next(
-          new AppError(`Insufficient stock for product ${product.name}`, 400)
+        throw new AppError(
+          `Product with ID ${item.product._id} not found`,
+          404
         );
       }
 
-      // Update product stock
-      product.quantity -= cartItem.quantity;
+      if (product.quantity < item.quantity) {
+        throw new AppError(
+          `Insufficient stock for product: ${product.name} (Available: ${product.quantity}, Requested: ${item.quantity})`,
+          400
+        );
+      }
+
+      // Deduct stock
+      product.quantity -= item.quantity;
       await product.save({ session });
-      logger.info(`Updated product stock for ${product.name}`);
 
-      // Create order product entry
+      logger.info(
+        `Stock updated for ${product.name}: -${item.quantity}, Remaining: ${product.quantity}`
+      );
+
       orderProducts.push({
-        productId: cartItem.product,
-        quantity: cartItem.quantity,
-        price: cartItem.price,
+        productId: product._id,
+        quantity: item.quantity,
+        price: item.price,
       });
-
-      totalAmount += product.price * cartItem.quantity;
     }
+
+    logger.table(
+      "Products in order",
+      orderProducts.map((p) => ({
+        productId: p.productId,
+        quantity: p.quantity,
+        price: p.price,
+        status: p.status,
+      }))
+    );
+
+    const floatAmount = orderProducts.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    const totalAmount = parseFloat(floatAmount.toFixed(2));
 
     // Create the order
     const order = await orderModel.create(
@@ -65,7 +83,6 @@ export const createOrder = catchAsync(async (req, res, next) => {
           clientId: userId,
           products: orderProducts,
           totalAmount,
-          status: "pending",
         },
       ],
       { session }
@@ -119,12 +136,14 @@ export const getUserOrders = catchAsync(async (req, res, next) => {
     .sort({ createdAt: -1 });
 
   logger.debug(`Orders found: ${orders.length}`);
-  logger.table(orders.map(order => ({
-    id: order._id,
-    totalAmount: `${order.totalAmount}€`,
-    status: order.status,
-    createdAt: order.createdAt,
-  })));
+  logger.table(
+    orders.map((order) => ({
+      id: order._id,
+      totalAmount: `${order.totalAmount}€`,
+      status: order.status,
+      createdAt: order.createdAt,
+    }))
+  );
 
   if (!orders || orders.length === 0) {
     return next(new AppError("No orders found for this user", 404));
@@ -132,7 +151,10 @@ export const getUserOrders = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    message: "Orders retrieved successfully", orders
+    message: "Orders retrieved successfully",
+    data: {
+      orders,
+    },
   });
 });
 
@@ -163,4 +185,72 @@ export const getAllOrders = catchAsync(async (req, res, next) => {
   });
 });
 
+// @desc getProductedOrder
+// @route GET /api/orders/producteur
+// @access Private/Producteur
+export const getProducerOrders = catchAsync(async (req, res, next) => {
+  const producteurId = req.user._id;
 
+  logger.info(`Fetching orders for producer: ${producteurId} - ${req.user.name}`);
+
+  // Find all orders, but only populate products that belong to this producer
+  const orders = await orderModel
+    .find({ "products.productId": { $exists: true } })
+    .populate({
+      path: "products.productId",
+      match: { producteurId: producteurId }, // only keep products from this producer
+      select: "name price image createdBy",
+    })
+    .populate("clientId", "name email address")
+    .sort({ createdAt: -1 });
+
+  logger.debug(`Total orders fetched: ${orders.length}`);
+  logger.table(
+    orders.map((order) => ({
+      id: order._id,
+      totalAmount: `${order.totalAmount}€`,
+      status: order.status,
+      createdAt: order.createdAt,
+    }))
+  );
+
+  // Keep only orders where this producer has products, and recalc producerTotal
+  const filteredOrders = orders
+    .map((order) => {
+      const filteredProducts = order.products.filter((p) => p.productId);
+
+      const producerTotal = filteredProducts.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+
+      return {
+        ...order.toObject(),
+        products: filteredProducts,
+        producerTotal: parseFloat(producerTotal.toFixed(2)),
+      };
+    })
+    .filter((order) => order.products.length > 0);
+
+    // If no orders found for this producer
+  if (filteredOrders.length === 0) {
+    return next(new AppError("No orders found for your products", 404));
+  }
+
+  // logging the filtered orders
+  logger.debug(`Orders found for producer: ${filteredOrders.length}`);
+  logger.table(
+    filteredOrders.map((order) => ({
+      id: order._id,
+      producerTotal: `${order.producerTotal}€`,
+      status: order.status,
+      createdAt: order.createdAt,
+    }))
+  );
+
+  res.status(200).json({
+    status: "success",
+    message: "Orders retrieved successfully",
+    data: { orders: filteredOrders },
+  });
+});
