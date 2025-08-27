@@ -453,6 +453,18 @@ export const cancelOrder = catchAsync(async (req, res, next) => {
     }
 
     logger.info(`Restocked products for order ${orderId}`);
+    // ✅ Restock products
+    for (const item of order.products) {
+      const updatedProduct = await Product.findByIdAndUpdate(
+        item.productId,
+        { $inc: { stock: item.quantity } },
+        { session, new: true }
+      );
+
+      logger.info(
+        `Restocked product ${item.productId}: +${item.quantity} units → new stock: ${updatedProduct.quantity}`
+      );
+    }
 
     await session.commitTransaction();
     session.endSession();
