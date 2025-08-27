@@ -64,7 +64,7 @@ export const addToCart = catchAsync(async (req, res, next) => {
 // ---------------------------------------------------------------------------------------------- //
 // Remove Product from Cart
 // @desc Remove product from cart
-// @route DELETE /api/cart/:productId
+// @route DELETE /api/cart/:cartItemId
 // @access Private
 export const removeFromCart = catchAsync(async (req, res, next) => {
   const { cartItemId } = req.params;
@@ -104,12 +104,21 @@ export const removeFromCart = catchAsync(async (req, res, next) => {
 // ---------------------------------------------------------------------------------------------- //
 // Update Product Quantity in Cart
 // @desc Update product quantity in cart
-// @route PUT /api/cart/:productId
+// @route PUT /api/cart/:cartItemId
 // @access Private
 
 export const updateCartItemQuantity = catchAsync(async (req, res, next) => {
   const { cartItemId } = req.params;
   const { quantity } = req.body;
+
+  // Validate cartItemId
+  if (!mongoose.Types.ObjectId.isValid(cartItemId)) {
+    res.status(400).json({
+      status: "error",
+      message: "ID du produit dans le panier invalide",
+    });
+    return next(new AppError("Invalid cart item ID", 400));
+  }
 
   // Validate request body
   if (!quantity || quantity <= 0) {
@@ -128,14 +137,6 @@ export const updateCartItemQuantity = catchAsync(async (req, res, next) => {
     return next(new AppError("User not found", 404));
   }
 
-  // Validate cartItemId
-  if (!mongoose.Types.ObjectId.isValid(cartItemId)) {
-    res.status(400).json({
-      status: "error",
-      message: "ID du produit dans le panier invalide",
-    });
-    return next(new AppError("Invalid cart item ID", 400));
-  }
   // Find the cart item to update
   const cartItem = user.cart.id(cartItemId);
   if (!cartItem) {
@@ -147,7 +148,7 @@ export const updateCartItemQuantity = catchAsync(async (req, res, next) => {
   if (!product) {
     return res.status(404).json({
       status: "error",
-      message: "Produit introuvable"
+      message: "Produit introuvable",
     });
   }
 
@@ -155,7 +156,7 @@ export const updateCartItemQuantity = catchAsync(async (req, res, next) => {
   if (quantity > product.quantity) {
     return res.status(400).json({
       status: "error",
-      message: `Stock insuffisant. Quantité disponible : ${product.quantity}`
+      message: `Stock insuffisant. Quantité disponible : ${product.quantity}`,
     });
   }
 
@@ -170,6 +171,27 @@ export const updateCartItemQuantity = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "Quantité mise à jour avec succès",
+    cart: user.cart,
+  });
+});
+
+// ---------------------------------------------------------------------------------------------- //
+// Clear Cart
+// @desc Clear the user's cart
+// @route DELETE /api/cart/clear
+// @access Private
+export const clearCart = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { cart: [] } },
+    { new: true }
+  );
+
+  logger.debug(`Cart cleared for user: ${req.user.id}`, user);
+
+  res.status(200).json({
+    status: "success",
+    message: "Panier vidé avec succès",
     cart: user.cart,
   });
 });

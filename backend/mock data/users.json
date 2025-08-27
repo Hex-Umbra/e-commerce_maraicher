@@ -1,5 +1,9 @@
 [
   {
+    "email": "lina.dupont@example.com",
+    "password": "MyStrongP@ssword123"
+  },
+  {
     "name": "Alice Dupont",
     "email": "alice.dupont@example.com",
     "password": "Password123!",
