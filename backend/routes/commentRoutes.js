@@ -4,7 +4,8 @@ import {
   getCommentsForProducteur,
   getAverageRatingForProducteur,
   updateComment,
-  deleteComment
+  deleteComment,
+  getUserComments,
 } from "../controllers/commentsController.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { verifyRole } from "../middlewares/verifyRole.js";
@@ -28,5 +29,8 @@ router.put("/:commentId", verifyToken, verifyRole("client"), updateComment);
 
 // Route to delete a comment
 router.delete("/:commentId", verifyToken, verifyRole("client"), deleteComment);
+
+// Route to get comments made by the requested user
+router.get("/user/:userId", getUserComments);
 
 export default router;

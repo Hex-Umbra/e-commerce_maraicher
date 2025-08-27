@@ -399,6 +399,9 @@ export const updateProductStatuses = catchAsync(async (req, res, next) => {
   }
 });
 
+// @desc Cancel an order
+// @route DELETE /api/orders/:orderId/cancel
+// @access Private (only the user who created the order can cancel)
 export const cancelOrder = catchAsync(async (req, res, next) => {
   // Implementation for cancelling an order
   const { orderId } = req.params;
@@ -484,3 +487,4 @@ export const cancelOrder = catchAsync(async (req, res, next) => {
     next(err); // let globalErrorHandler handle it
   }
 });
+

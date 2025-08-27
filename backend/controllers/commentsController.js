@@ -179,16 +179,20 @@ export const deleteComment = catchAsync(async (req, res, next) => {
     return next(new AppError("Comment not found", 404));
   }
 
-  // Check if the user is the owner of the comment 
+  // Check if the user is the owner of the comment
   if (existingComment.userId.toString() !== userId.toString()) {
-    logger.warn(`User ${userId} is not authorized to delete comment ${commentId}`);
+    logger.warn(
+      `User ${userId} is not authorized to delete comment ${commentId}`
+    );
     return next(
       new AppError("You are not authorized to delete this comment", 403)
     );
   }
 
   logger.info(`User ${userId} authorized to delete comment ${commentId}`);
-  logger.info(`Deleting comment "${existingComment.comment}" by user ${existingComment.userId}`);
+  logger.info(
+    `Deleting comment "${existingComment.comment}" by user ${existingComment.userId}`
+  );
 
   // Delete the comment
   await existingComment.deleteOne();
@@ -198,5 +202,41 @@ export const deleteComment = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: null,
+  });
+});
+
+// @desc User can see all their written comments
+// @route GET /api/comments/:userId
+// @access Public
+export const getUserComments = catchAsync(async (req, res, next) => {
+  const { userId } = req.params;
+
+  logger.info(`Fetching comments for user ${userId}`);
+
+  const comments = await commentModel
+    .find({ userId: userId })
+    .populate("ProducteurId", "name");
+
+    logger.info(`User ${userId} - 
+                      ${comments} `);
+
+  if (!comments || comments.length === 0) {
+    return next(new AppError("No comments found for this user", 404));
+  }
+
+  logger.info(`Found ${comments.length} comments for user ${userId}`);
+
+  logger.table(
+    comments.map((c) => ({
+      Comment: c.comment,
+      Rating: c.rating,
+      Producteur: c.ProducteurId.name,
+    }))
+  );
+
+  res.status(200).json({
+    status: "success",
+    results: comments.length,
+    data: comments,
   });
 });
