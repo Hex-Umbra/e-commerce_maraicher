@@ -10,6 +10,7 @@ import productRouter from "./routes/productRoutes.js";
 import producteurRouter from "./routes/producteurRoute.js";
 import cartRouter from "./routes/cartRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
+import commentRouter from "./routes/commentRoutes.js";
 
 // Importing Middlewares
 import { connectDB } from "./utils/dbConnection.js";
@@ -45,6 +46,7 @@ app.use("/api/products", productRouter);
 app.use("/api/producteurs", producteurRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/comments", commentRouter);
 
 // Error Handling Middleware
 app.use(globalErrorHandler);
