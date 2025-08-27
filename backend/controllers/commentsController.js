@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import commentModel from "../models/commentsModel.js";
 import { catchAsync, AppError } from "../utils/handleError.js";
 import { logger } from "../services/logger.js";
@@ -10,7 +10,9 @@ export const createComment = catchAsync(async (req, res, next) => {
   const { ProducteurId, comment, rating } = req.body;
   const userId = req.user._id;
 
-  logger.info(`User ${userId} is attempting to create a comment for producer ${ProducteurId}`);
+  logger.info(
+    `User ${userId} is attempting to create a comment for producer ${ProducteurId}`
+  );
 
   // Validate input
   if (!ProducteurId || !comment || !rating) {
@@ -46,7 +48,9 @@ export const getCommentsForProducteur = catchAsync(async (req, res, next) => {
 
   logger.info(`Fetching comments for producer ${producteurId}`);
 
-  const comments = await commentModel.find({ ProducteurId: producteurId }).populate('userId', 'username');
+  const comments = await commentModel
+    .find({ ProducteurId: producteurId })
+    .populate("userId", "username");
 
   if (!comments || comments.length === 0) {
     return next(new AppError("No comments found for this producer", 404));
@@ -59,47 +63,51 @@ export const getCommentsForProducteur = catchAsync(async (req, res, next) => {
     results: comments.length,
     data: comments,
   });
-})
+});
 
 // @desc Get average rating for a specific Producteur
 // @route GET /api/comments/producteur/:producteurId/average-rating
 // @access Public
-export const getAverageRatingForProducteur = catchAsync(async (req, res, next) =>{
-  const { producteurId } = req.params;
+export const getAverageRatingForProducteur = catchAsync(
+  async (req, res, next) => {
+    const { producteurId } = req.params;
 
-  if (!producteurId) {
-    return next(new AppError("Producteur ID is required", 400));
-  }
-
-  logger.info(`Calculating average rating for producer ${producteurId}`);
-
-  const result = await commentModel.aggregate([
-    { $match: { ProducteurId: new mongoose.Types.ObjectId(producteurId) } },
-    {
-      $group: {
-        _id: "$ProducteurId",
-        averageRating: { $avg: "$rating" },
-        totalRatings: { $sum: 1 }
-      }
+    if (!producteurId) {
+      return next(new AppError("Producteur ID is required", 400));
     }
-  ]);
 
-  if (result.length === 0) {
-    return next(new AppError("No ratings found for this producer", 404));
-  }
+    logger.info(`Calculating average rating for producer ${producteurId}`);
 
-  const { averageRating, totalRatings } = result[0];
+    const result = await commentModel.aggregate([
+      { $match: { ProducteurId: new mongoose.Types.ObjectId(producteurId) } },
+      {
+        $group: {
+          _id: "$ProducteurId",
+          averageRating: { $avg: "$rating" },
+          totalRatings: { $sum: 1 },
+        },
+      },
+    ]);
 
-  logger.info(`Average rating for producer ${producteurId} is ${averageRating} based on ${totalRatings} ratings`);
-
-  res.status(200).json({
-    status: "success",
-    data: {
-      averageRating,
-      totalRatings
+    if (result.length === 0) {
+      return next(new AppError("No ratings found for this producer", 404));
     }
-  });
-})
+
+    const { averageRating, totalRatings } = result[0];
+
+    logger.info(
+      `Average rating for producer ${producteurId} is ${averageRating} based on ${totalRatings} ratings`
+    );
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        averageRating,
+        totalRatings,
+      },
+    });
+  }
+);
 
 // @desc update a comment
 // @route PUT /api/comments/:commentId
@@ -113,7 +121,12 @@ export const updateComment = catchAsync(async (req, res, next) => {
 
   // Validate input
   if (!comment && !rating) {
-    return next(new AppError("At least one field (comment or rating) is required to update", 400));
+    return next(
+      new AppError(
+        "At least one field (comment or rating) is required to update",
+        400
+      )
+    );
   }
 
   // Validate rating if provided
@@ -130,7 +143,9 @@ export const updateComment = catchAsync(async (req, res, next) => {
 
   // Check if the user is the owner of the comment
   if (existingComment.userId.toString() !== userId.toString()) {
-    return next(new AppError("You are not authorized to update this comment", 403));
+    return next(
+      new AppError("You are not authorized to update this comment", 403)
+    );
   }
 
   // Update the comment
@@ -145,4 +160,43 @@ export const updateComment = catchAsync(async (req, res, next) => {
     status: "success",
     data: existingComment,
   });
-})
+});
+
+// @desc Delete a comment
+// @route DELETE /api/comments/:commentId
+// @access Private (only the user who created the comment or an admin can delete)
+export const deleteComment = catchAsync(async (req, res, next) => {
+  const { commentId } = req.params;
+  const userId = req.user._id;
+
+  logger.info(`User ${userId} is attempting to delete comment ${commentId}`);
+
+  // Find the comment to delete
+  const existingComment = await commentModel.findById(commentId);
+
+  if (!existingComment) {
+    logger.warn(`Comment ${commentId} not found for deletion`);
+    return next(new AppError("Comment not found", 404));
+  }
+
+  // Check if the user is the owner of the comment 
+  if (existingComment.userId.toString() !== userId.toString()) {
+    logger.warn(`User ${userId} is not authorized to delete comment ${commentId}`);
+    return next(
+      new AppError("You are not authorized to delete this comment", 403)
+    );
+  }
+
+  logger.info(`User ${userId} authorized to delete comment ${commentId}`);
+  logger.info(`Deleting comment "${existingComment.comment}" by user ${existingComment.userId}`);
+
+  // Delete the comment
+  await existingComment.deleteOne();
+
+  logger.info(`Comment ${commentId} deleted by user ${userId}`);
+
+  res.status(200).json({
+    status: "success",
+    data: null,
+  });
+});
