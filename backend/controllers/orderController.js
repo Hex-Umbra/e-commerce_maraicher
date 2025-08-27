@@ -188,10 +188,12 @@ export const getAllOrders = catchAsync(async (req, res, next) => {
 // @desc getProductedOrder
 // @route GET /api/orders/producteur
 // @access Private/Producteur
-export const getProducerOrders = catchAsync(async (req, res, next) => {
+export const getProducteurOrders = catchAsync(async (req, res, next) => {
   const producteurId = req.user._id;
 
-  logger.info(`Fetching orders for producer: ${producteurId} - ${req.user.name}`);
+  logger.info(
+    `Fetching orders for producer: ${producteurId} - ${req.user.name}`
+  );
 
   // Find all orders, but only populate products that belong to this producer
   const orders = await orderModel
@@ -199,7 +201,8 @@ export const getProducerOrders = catchAsync(async (req, res, next) => {
     .populate({
       path: "products.productId",
       match: { producteurId: producteurId }, // only keep products from this producer
-      select: "name price image createdBy",
+      select: "name price image producteurId",
+      populate: { path: "producteurId", select: "name" },
     })
     .populate("clientId", "name email address")
     .sort({ createdAt: -1 });
@@ -232,7 +235,7 @@ export const getProducerOrders = catchAsync(async (req, res, next) => {
     })
     .filter((order) => order.products.length > 0);
 
-    // If no orders found for this producer
+  // If no orders found for this producer
   if (filteredOrders.length === 0) {
     return next(new AppError("No orders found for your products", 404));
   }
@@ -253,4 +256,219 @@ export const getProducerOrders = catchAsync(async (req, res, next) => {
     message: "Orders retrieved successfully",
     data: { orders: filteredOrders },
   });
+});
+
+// @desc Update order status
+// @route PUT /api/orders/:orderId/products/status
+// @access Private/Producteur
+export const updateProductStatuses = catchAsync(async (req, res, next) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const producteurId = req.user._id;
+    const { orderId } = req.params;
+    const { updates } = req.body; // [{ productId, status }, ...]
+
+    logger.info(
+      `Producteur ${producteurId} requested status update for order ${orderId}`
+    );
+
+    // Validate payload
+    if (!updates || !Array.isArray(updates) || updates.length === 0) {
+      logger.warn(
+        `Invalid or empty updates payload from producteur ${producteurId}`
+      );
+      return next(new AppError("No product updates provided", 400));
+    }
+
+    const PRODUCT_STATUS_ENUM =
+      orderModel.schema.path("products.0.status").enumValues;
+
+    // Fetch the order with products and client
+    const order = await orderModel
+      .findById(orderId)
+      .populate("products.productId")
+      .session(session);
+
+    // If order not found
+    if (!order) {
+      logger.warn(`Order ${orderId} not found for producteur ${producteurId}`);
+      return next(new AppError("Order not found", 404));
+    }
+
+    logger.debug(
+      `Fetched order ${orderId} with ${order.products.length} products`
+    );
+
+    // Track if at least one product got updated
+    let hasUpdates = false;
+
+    // Process each update
+    for (const { productId, status } of updates) {
+      // Validate status
+      if (!PRODUCT_STATUS_ENUM.includes(status)) {
+        logger.warn(
+          `Invalid status "${status}" provided for product ${productId}`
+        );
+        throw new AppError(`Invalid status: ${status}`, 400);
+      }
+
+      // Find product in order
+      const productEntry = order.products.find(
+        (p) => p.productId && p.productId._id.toString() === productId
+      );
+
+      if (!productEntry) {
+        logger.warn(`Product ${productId} not found in order ${orderId}`);
+        throw new AppError(
+          `Product not found in this order: ${productId}`,
+          404
+        );
+      }
+
+      // DEBUGGING INFO -----------------------------------------------------
+      logger.debug(
+        `Updating product ${productId} - ${productEntry.productId.name} to status "${status}"`
+      );
+      logger.debug(
+        `Producteur of the product: ${productEntry.productId.producteurId}`
+      );
+      logger.debug(`Requesting producteur: ${producteurId}`);
+      // ---------------------------------------------------------------------
+
+      // Check ownership
+      if (
+        String(productEntry.productId.producteurId) !== String(producteurId)
+      ) {
+        logger.warn(
+          `Unauthorized attempt: producteur ${producteurId} tried updating product ${productId}`
+        );
+        throw new AppError("Not authorized to update this product", 403);
+      }
+
+      // Update status
+      productEntry.status = status;
+      hasUpdates = true;
+
+      logger.info(
+        `Updated product ${productEntry.productId.name} (${productId}) to status "${status}"`
+      );
+    }
+
+    if (!hasUpdates) {
+      logger.warn(`No valid updates applied for order ${orderId}`);
+      return next(new AppError("No valid updates applied", 400));
+    }
+
+    // Recalculate order status based on products
+    const productStatuses = order.products.map((p) => p.status);
+
+    if (productStatuses.every((s) => s === "Livré")) {
+      order.status = "Complète";
+    } else if (productStatuses.some((s) => s === "Prêt" || s === "Livré")) {
+      order.status = "Partiellement complète";
+    } else {
+      order.status = "En cours";
+    }
+
+    logger.info(`Order ${orderId} status recalculated to "${order.status}"`);
+
+    // Save
+    await order.save({ session });
+    await session.commitTransaction();
+    session.endSession();
+
+    logger.info(
+      `Order ${orderId} successfully updated by producteur ${producteurId}`
+    );
+
+    res.status(200).json({
+      status: "success",
+      message: "Product statuses updated successfully",
+      data: { order },
+    });
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+
+    logger.error(
+      `Failed updating products in order ${req.params.orderId}: ${err.message}`
+    );
+    next(err); // let globalErrorHandler handle it
+  }
+});
+
+export const cancelOrder = catchAsync(async (req, res, next) => {
+  // Implementation for cancelling an order
+  const { orderId } = req.params;
+  const userId = req.user._id;
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const order = await orderModel
+      .findOne({ _id: orderId, clientId: userId })
+      .session(session);
+    if (!order) {
+      return next(new AppError("Order not found", 404));
+    }
+
+    logger.info(`Cancelling order ${orderId} for user ${userId}`);
+    logger.debug(`Current order status: ${order.status}`);
+    logger.table(
+      order.products.map((p) => ({
+        productId: p.productId,
+        quantity: p.quantity,
+        status: p.status,
+      }))
+    );
+
+    // Update orders status
+    if (order.status === "Annulée") {
+      return next(new AppError("Order is already cancelled", 400));
+    }
+    order.status = "Annulée";
+
+    logger.info(`Order ${orderId} status set to Annulée`);
+
+    // Update product status
+    order.products.forEach((product) => {
+      product.status = "Annulée";
+    });
+    await order.save({ session });
+
+    logger.info(`Product statuses in order ${orderId} set to Annulée`);
+
+    // Reset product stock
+    for (const item of order.products) {
+      await Product.findByIdAndUpdate(
+        item.productId,
+        {
+          $inc: { quantity: item.quantity },
+        },
+        { session }
+      );
+    }
+
+    logger.info(`Restocked products for order ${orderId}`);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({
+      status: "success",
+      message: "Order cancelled successfully",
+      data: { order },
+    });
+  } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
+    res.status(500).json({
+      status: "error",
+      message: "Erreur lors de l'annulation de la commande.",
+    });
+    next(err); // let globalErrorHandler handle it
+  }
 });

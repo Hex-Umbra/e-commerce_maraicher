@@ -102,7 +102,7 @@ const validatorDataInputs = (data) => {
 export const register = catchAsync(async (req, res, next) => {
   const { name, email, password, address, role } = req.body;
 
-  if (!name || !email || !password || !address || !role) {
+  if (!name || !email || !password || !address ) {
     return next(new AppError("Tous les champs sont requis", 400));
   }
 
