@@ -100,3 +100,49 @@ export const getAverageRatingForProducteur = catchAsync(async (req, res, next) =
     }
   });
 })
+
+// @desc update a comment
+// @route PUT /api/comments/:commentId
+// @access Private
+export const updateComment = catchAsync(async (req, res, next) => {
+  const { commentId } = req.params;
+  const { comment, rating } = req.body;
+  const userId = req.user._id;
+
+  logger.info(`User ${userId} is attempting to update comment ${commentId}`);
+
+  // Validate input
+  if (!comment && !rating) {
+    return next(new AppError("At least one field (comment or rating) is required to update", 400));
+  }
+
+  // Validate rating if provided
+  if (rating && (rating < 1 || rating > 5)) {
+    return next(new AppError("Rating must be between 1 and 5", 400));
+  }
+
+  // Find the comment to update
+  const existingComment = await commentModel.findById(commentId);
+
+  if (!existingComment) {
+    return next(new AppError("Comment not found", 404));
+  }
+
+  // Check if the user is the owner of the comment
+  if (existingComment.userId.toString() !== userId.toString()) {
+    return next(new AppError("You are not authorized to update this comment", 403));
+  }
+
+  // Update the comment
+  if (comment) existingComment.comment = comment;
+  if (rating) existingComment.rating = rating;
+
+  await existingComment.save();
+
+  logger.info(`Comment ${commentId} updated by user ${userId}`);
+
+  res.status(200).json({
+    status: "success",
+    data: existingComment,
+  });
+})

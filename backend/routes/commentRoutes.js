@@ -1,5 +1,5 @@
 import express from 'express';
-import { createComment, getCommentsForProducteur, getAverageRatingForProducteur } from '../controllers/commentsController.js';
+import { createComment, getCommentsForProducteur, getAverageRatingForProducteur, updateComment } from '../controllers/commentsController.js';
 import {verifyToken} from '../middlewares/verifyToken.js';
 import {verifyRole} from '../middlewares/verifyRole.js';
 
@@ -13,5 +13,8 @@ router.get('/producteur/:producteurId', getCommentsForProducteur);
 
 // Route to get average rating for a specific Producteur
 router.get('/producteur/:producteurId/average-rating', getAverageRatingForProducteur);
+
+// Route to update a comment
+router.put('/:commentId', verifyToken, verifyRole("client"), updateComment);
 
 export default router;
