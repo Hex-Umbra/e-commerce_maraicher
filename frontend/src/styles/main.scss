@@ -1,4 +1,5 @@
 @use './variables' as *;
+@use './mixins' as *;
 
 body {
   margin: 0;
@@ -10,4 +11,168 @@ body {
 .container {
   margin: 0 auto;
   padding: 0 1rem;
+}
+
+// ===== SHARED PAGE LAYOUT CLASSES =====
+
+.page-container {
+  @include page-container;
+}
+
+.page-title {
+  @include page-title;
+}
+
+.section-background {
+  @include section-background;
+}
+
+.content-wrapper {
+  @include content-wrapper;
+}
+
+// ===== SHARED FORM CLASSES =====
+
+.form-container {
+  @include form-container;
+}
+
+.form-group {
+  @include form-group;
+}
+
+.form-label {
+  @include form-label;
+}
+
+.form-input {
+  @include input-base;
+  
+  &.error {
+    @include input-error;
+  }
+}
+
+.field-error {
+  @include field-error;
+}
+
+// ===== SHARED BUTTON CLASSES =====
+
+.btn-primary {
+  @include button-primary;
+}
+
+.btn-secondary {
+  @include button-secondary;
+}
+
+.btn-loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+// ===== SHARED MESSAGE CLASSES =====
+
+.message-success {
+  @include message-success;
+}
+
+.message-error {
+  @include message-error;
+}
+
+.message-info {
+  @include message-base;
+  background: $info-bg;
+  color: $info-color;
+  border-color: $info-border;
+}
+
+.message-warning {
+  @include message-base;
+  background: $warning-bg;
+  color: $warning-color;
+  border-color: $warning-border;
+}
+
+// ===== SHARED NAVIGATION CLASSES =====
+
+.nav-link {
+  @include nav-link;
+}
+
+.user-icon {
+  @include user-icon;
+}
+
+// ===== SHARED UTILITY CLASSES =====
+
+.flex-center {
+  @include flex-center;
+}
+
+.flex-column {
+  @include flex-column;
+}
+
+.text-truncate {
+  @include text-truncate;
+}
+
+.shadow-light {
+  @include shadow-light;
+}
+
+.shadow-medium {
+  @include shadow-medium;
+}
+
+.shadow-heavy {
+  @include shadow-heavy;
+}
+
+// ===== RESPONSIVE UTILITIES =====
+
+.mobile-only {
+  @include mobile {
+    display: block;
+  }
+  
+  @include tablet {
+    display: none;
+  }
+  
+  @include desktop {
+    display: none;
+  }
+}
+
+.desktop-only {
+  @include mobile {
+    display: none;
+  }
+  
+  @include tablet {
+    display: none;
+  }
+  
+  @include desktop {
+    display: block;
+  }
+}
+
+.tablet-only {
+  @include mobile {
+    display: none;
+  }
+  
+  @include tablet {
+    display: block;
+  }
+  
+  @include desktop {
+    display: none;
+  }
 }
