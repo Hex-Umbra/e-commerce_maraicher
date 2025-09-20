@@ -1,0 +1,26 @@
+/* Main colors variables */
+$emerald: #50C878;
+$burgundy: #6C0036;
+$lapis: #5064C8;
+
+/* Neutral colors */
+$white: #FFFFFF;
+$black: #000000;
+$gray-light: #F5F5F5;
+$gray-medium: #777777;
+$gray-dark: #333333;
+
+$border: rgba(0,0,0,0.35);
+$radius-lg: 14px;
+$radius-md: 12px;
+$shadow: 0 2px 8px rgba(0,0,0,0.12);
+$container: 1400px;
+$header-h: 120px;
+
+/* Main aliases */
+$primary: $emerald;
+$secondary: $lapis;
+$accent: $burgundy;
+$text: $gray-dark;
+$muted: $gray-medium;
+$bg: $white;

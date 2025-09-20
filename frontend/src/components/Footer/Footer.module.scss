@@ -1,0 +1,70 @@
+@import '../../styles/variables';
+
+.footer {
+  background-color: $primary;
+  padding: 3rem 0;
+  color: $black;
+  font-size: 0.9rem;
+}
+
+.footerContainer {
+  max-width: $container;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  border-top: 1px solid rgba(0,0,0,0.15);
+  padding-top: 2rem;
+}
+
+.about {
+  h3 {
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+
+  p {
+    max-width: 280px;
+  }
+}
+
+.quickLinks, .support {
+  h3 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: 0.5rem;
+
+      a {
+        color: darken($primary, 40%);
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+.support {
+  border-right: 1px solid rgba(0,0,0,0.1);
+  padding-left: 1.5rem;
+}
+
+.copyright {
+  text-align: right;
+  font-style: italic;
+  color: darken($primary, 40%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}

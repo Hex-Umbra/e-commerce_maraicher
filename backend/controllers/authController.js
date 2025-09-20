@@ -225,3 +225,35 @@ export const logout = (req, res) => {
       message: "Logged out successfully",
     });
 };
+
+// ----------------------------------------------------------------------------------------------------- //
+
+// Get current user (me) - Check if user is authenticated
+export const getMe = catchAsync(async (req, res, next) => {
+  // If we reach here, user is authenticated (token was verified by middleware)
+  const user = await User.findById(req.user._id).select('-password');
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "Utilisateur non trouvé",
+    });
+  }
+
+  logger.info(
+    `Le \x1b[1m${user.role}\x1b[0m \x1b[31m${user.name}\x1b[0m \x1b[32m(${user.email})\x1b[0m a vérifié son authentification`
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Utilisateur authentifié",
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      address: user.address,
+      createdAt: user.createdAt,
+    },
+  });
+});

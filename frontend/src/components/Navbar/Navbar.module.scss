@@ -1,0 +1,284 @@
+@import '../../styles/variables';
+
+.navbar {
+  height: $header-h;
+  background-color: $primary;
+  display: flex;
+  align-items: center;
+  box-shadow: $shadow;
+  position: relative;
+}
+
+.navbarContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: $black;
+  z-index: 1001;
+}
+
+// Hamburger Menu Button
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+
+  span {
+    width: 100%;
+    height: 3px;
+    background-color: $black;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  &.hamburgerOpen {
+    span:nth-child(1) {
+      transform: rotate(45deg) translate(7px, 7px);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+    }
+
+    span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+  }
+}
+
+.navLinks {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+
+  a {
+    color: $black;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: $radius-md;
+    transition: all 0.3s ease;
+    position: relative;
+
+    &:hover {
+      color: $accent;
+      background-color: rgba(0, 0, 0, 0.08);
+      transform: scale(1.05);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  z-index: 1001;
+}
+
+.userIcon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.userName {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: $black;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profileIcon {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signupLink {
+  color: $black;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: $radius-md;
+  background-color: $accent;
+  color: white;
+  transition: all 0.3s ease;
+  position: relative;
+
+  &:hover {
+    background-color: darken($accent, 10%);
+    transform: scale(1.05);
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// Mobile Responsive Styles
+@media (max-width: 768px) {
+  .navbarContainer {
+    justify-content: space-between;
+    padding: 0 1rem;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .navLinks {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: $primary;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+
+    a {
+      font-size: 1.2rem;
+      font-weight: 600;
+      padding: 1.25rem 2rem;
+      border-radius: $radius-lg;
+      transition: all 0.3s ease;
+      min-width: 200px;
+      text-align: center;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.12);
+        color: $accent;
+        transform: scale(1.08);
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      &:active {
+        transform: scale(1.02);
+      }
+    }
+
+    &.navLinksOpen {
+      transform: translateX(0);
+    }
+  }
+
+  .userIcon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .logo {
+    font-size: 1.3rem;
+  }
+}
+
+// Tablet Responsive Styles
+@media (max-width: 1024px) and (min-width: 769px) {
+  .navbarContainer {
+    padding: 0 1.5rem;
+  }
+
+  .navLinks {
+    gap: 1rem;
+
+    a {
+      font-size: 0.95rem;
+      padding: 0.7rem 1.1rem;
+
+      &:hover {
+        transform: scale(1.06);
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  .logo {
+    font-size: 1.4rem;
+  }
+}
+
+// Small Mobile Devices
+@media (max-width: 480px) {
+  .navbar {
+    height: calc($header-h - 10px);
+  }
+
+  .navbarContainer {
+    padding: 0 0.75rem;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  .userIcon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .hamburger {
+    width: 25px;
+    height: 25px;
+
+    span {
+      height: 2px;
+    }
+  }
+
+  .navLinks {
+    a {
+      font-size: 1.1rem;
+      padding: 1rem 1.5rem;
+      min-width: 180px;
+
+      &:hover {
+        transform: scale(1.06);
+      }
+    }
+  }
+}

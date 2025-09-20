@@ -1,0 +1,13 @@
+@import './variables';
+
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: $gray-light;
+  color: $text;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 0 1rem;
+}

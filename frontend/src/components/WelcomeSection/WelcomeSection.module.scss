@@ -1,0 +1,164 @@
+@import '../../styles/variables';
+
+.welcomeSection {
+  background-color: $gray-light;
+  padding: 4rem 0;
+}
+
+.contentWrapper {
+  display: flex;
+  max-width: $container;
+  margin: 0 auto;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.welcomeText {
+  background-color: $primary;
+  border-radius: $radius-lg;
+  padding: 2rem;
+  flex: 2;
+  color: $black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  h2 {
+    margin: 0 0 1rem 0;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 2rem;
+    color: $white;
+  }
+
+  p {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: darken($primary, 30%);
+  }
+}
+
+.signupForm {
+  background-color: $primary;
+  border-radius: $radius-lg;
+  padding: 2rem;
+  flex: 1;
+  border: 1px solid $border;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  label {
+    font-size: 0.85rem;
+    color: darken($primary, 50%);
+    margin-bottom: 0.25rem;
+    display: block;
+  }
+
+  input {
+    height: 36px;
+    border-radius: $radius-md;
+    border: 1px solid $border;
+    padding: 0 0.5rem;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      border-color: $secondary;
+      box-shadow: 0 0 5px $secondary;
+    }
+
+    &:disabled {
+      background-color: rgba(255, 255, 255, 0.7);
+      cursor: not-allowed;
+    }
+  }
+
+  button {
+    background-color: $secondary;
+    color: $white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: $radius-md;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover:not(:disabled) {
+      background-color: darken($secondary, 10%);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+}
+
+// Success and Error Messages
+.successMessage {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  padding: 0.75rem;
+  border-radius: $radius-md;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.errorMessage {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  padding: 0.75rem;
+  border-radius: $radius-md;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+// Form Group
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+// Input Error State
+.inputError {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 5px rgba(220, 53, 69, 0.3) !important;
+
+  &:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.3) !important;
+  }
+}
+
+// Field Error Message
+.fieldError {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+// Submit Button States
+.submitBtn {
+  margin-top: 0.5rem;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+}
+
+.submitBtnLoading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
