@@ -1,8 +1,9 @@
 @use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
 
 .footer {
   background-color: $primary;
-  padding: 3rem 0;
+  padding: $spacing-xxl 0;
   color: $black;
   font-size: 0.9rem;
 }
@@ -12,10 +13,10 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 2rem;
+  gap: $spacing-xl;
   align-items: start;
-  border-top: 1px solid rgba(0,0,0,0.15);
-  padding-top: 2rem;
+  border-top: 1px solid $border;
+  padding-top: $spacing-xl;
 }
 
 .about {
@@ -64,7 +65,7 @@
   text-align: right;
   font-style: italic;
   color: $primary-dark;
-  display: flex;
-  align-items: flex-end;
+  @include flex-center;
   justify-content: flex-end;
+  align-items: flex-end;
 }
