@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./Navbar.module.scss";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isAuthenticated } = useAuth();
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -63,9 +65,22 @@ const Navbar = () => {
               <div className={styles.profileIcon}>👤</div>
             </div>
           ) : (
-            <a href="#accueil" className={styles.signupLink}>
-              S'inscrire
-            </a>
+            <div className={styles.authLinks}>
+              <Link 
+                to="/login" 
+                className={`${styles.authLink} ${location.pathname === '/login' ? styles.active : ''}`}
+                onClick={closeMenu}
+              >
+                Connexion
+              </Link>
+              <Link 
+                to="/register" 
+                className={`${styles.authLink} ${styles.signupLink} ${location.pathname === '/register' ? styles.active : ''}`}
+                onClick={closeMenu}
+              >
+                S'inscrire
+              </Link>
+            </div>
           )}
         </div>
       </div>

@@ -130,20 +130,49 @@
   justify-content: center;
 }
 
-.signupLink {
+.authLinks {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.authLink {
   color: $black;
   text-decoration: none;
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 0.75rem 1.25rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.6rem 1rem;
   border-radius: $radius-md;
-  background-color: $accent;
-  color: white;
   transition: all 0.3s ease;
   position: relative;
 
   &:hover {
-    background-color: $accent-dark;
+    color: $accent;
+    background-color: rgba(0, 0, 0, 0.08);
+    transform: scale(1.05);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &.active {
+    color: $accent;
+    background-color: rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+  }
+}
+
+.signupLink {
+  background-color: $accent;
+  color: white !important;
+  font-weight: 600;
+
+  &:hover {
+    background-color: $accent-dark !important;
+    color: white !important;
     transform: scale(1.05);
     font-weight: 700;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -151,6 +180,11 @@
 
   &:active {
     transform: scale(0.98);
+  }
+
+  &.active {
+    background-color: $accent-dark !important;
+    color: white !important;
   }
 }
 

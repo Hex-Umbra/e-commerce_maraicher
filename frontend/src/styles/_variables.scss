@@ -41,3 +41,7 @@ $secondary-muted: color.adjust($secondary, $saturation: -30%);
 $accent-light: color.adjust($accent, $lightness: 20%);
 $accent-dark: color.adjust($accent, $lightness: -20%);
 $accent-muted: color.adjust($accent, $saturation: -30%);
+
+/* Font families */
+$font-primary: 'Lato', sans-serif;
+$font-fallback: 'Arial', sans-serif;
