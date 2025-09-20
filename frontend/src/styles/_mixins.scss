@@ -1,0 +1,323 @@
+@use './variables' as *;
+
+// ===== BUTTON MIXINS =====
+
+// Base button styling
+@mixin button-base {
+  border: none;
+  border-radius: $radius-md;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.75rem;
+  transition: all 0.3s ease;
+  outline: none;
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// Primary button (using secondary color as primary button color)
+@mixin button-primary {
+  @include button-base;
+  background-color: $secondary;
+  color: $white;
+
+  &:hover:not(:disabled) {
+    background-color: $secondary-dark;
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
+// Secondary button (outline style)
+@mixin button-secondary {
+  @include button-base;
+  background-color: transparent;
+  border: 2px solid $accent;
+  color: $accent;
+
+  &:hover:not(:disabled) {
+    background-color: $accent;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba($accent, 0.3);
+  }
+}
+
+// Interactive hover effect for links/buttons
+@mixin interactive-hover($scale: 1.05) {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale($scale);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// ===== FORM INPUT MIXINS =====
+
+// Base input styling
+@mixin input-base {
+  height: 36px;
+  border-radius: $radius-md;
+  border: 1px solid $border;
+  padding: 0 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: $secondary;
+    box-shadow: 0 0 5px $secondary;
+  }
+
+  &:disabled {
+    background-color: rgba(255, 255, 255, 0.7);
+    cursor: not-allowed;
+  }
+}
+
+// Input error state
+@mixin input-error {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 5px rgba(220, 53, 69, 0.3) !important;
+
+  &:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.3) !important;
+  }
+}
+
+// Form label styling
+@mixin form-label {
+  font-size: 0.85rem;
+  color: $primary-dark;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+// Form group container
+@mixin form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+// ===== MESSAGE/ALERT MIXINS =====
+
+// Base message styling
+@mixin message-base {
+  padding: 0.75rem;
+  border-radius: $radius-md;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  border: 1px solid;
+}
+
+// Success message
+@mixin message-success {
+  @include message-base;
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  border-color: rgba(40, 167, 69, 0.3);
+}
+
+// Error message
+@mixin message-error {
+  @include message-base;
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  border-color: rgba(220, 53, 69, 0.3);
+}
+
+// Field error message
+@mixin field-error {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+// ===== LAYOUT MIXINS =====
+
+// Page container layout
+@mixin page-container {
+  padding: 2rem;
+  min-height: calc(100vh - $header-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Page title styling
+@mixin page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $black;
+  text-align: center;
+}
+
+// Form container styling
+@mixin form-container {
+  background-color: $primary;
+  border-radius: $radius-lg;
+  padding: 2rem;
+  border: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+// Content wrapper for sections
+@mixin content-wrapper {
+  display: flex;
+  max-width: $container;
+  margin: 0 auto;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+// Section background
+@mixin section-background {
+  background-color: $gray-light;
+  padding: 4rem 0;
+}
+
+// ===== RESPONSIVE MIXINS =====
+
+// Mobile breakpoint
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+// Tablet breakpoint
+@mixin tablet {
+  @media (max-width: 1024px) and (min-width: 769px) {
+    @content;
+  }
+}
+
+// Small mobile breakpoint
+@mixin small-mobile {
+  @media (max-width: 480px) {
+    @content;
+  }
+}
+
+// Desktop breakpoint
+@mixin desktop {
+  @media (min-width: 1025px) {
+    @content;
+  }
+}
+
+// ===== NAVIGATION MIXINS =====
+
+// Navigation link styling
+@mixin nav-link {
+  color: $black;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: $radius-md;
+  transition: all 0.3s ease;
+  position: relative;
+
+  &:hover {
+    color: $accent;
+    background-color: rgba(0, 0, 0, 0.08);
+    transform: scale(1.05);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &.active {
+    color: $accent !important;
+    background-color: rgba(0, 0, 0, 0.08) !important;
+    transform: scale(1.05) !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+// User icon styling
+@mixin user-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// ===== UTILITY MIXINS =====
+
+// Flexbox center
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Flexbox column
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Text truncation
+@mixin text-truncate($max-width: 120px) {
+  max-width: $max-width;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Box shadow variations
+@mixin shadow-light {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@mixin shadow-medium {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+@mixin shadow-heavy {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
