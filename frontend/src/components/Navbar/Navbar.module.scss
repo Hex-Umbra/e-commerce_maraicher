@@ -65,28 +65,36 @@
   display: flex;
   gap: 1.5rem;
   align-items: center;
+}
 
-  a {
-    color: $black;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 1rem;
-    padding: 0.75rem 1.25rem;
-    border-radius: $radius-md;
-    transition: all 0.3s ease;
-    position: relative;
+.navLink {
+  color: $black;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: $radius-md;
+  transition: all 0.3s ease;
+  position: relative;
 
-    &:hover {
-      color: $accent;
-      background-color: rgba(0, 0, 0, 0.08);
-      transform: scale(1.05);
-      font-weight: 600;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
+  &:hover {
+    color: $accent;
+    background-color: rgba(0, 0, 0, 0.08);
+    transform: scale(1.05);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
 
-    &:active {
-      transform: scale(0.98);
-    }
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &.active {
+    color: $accent !important;
+    background-color: rgba(0, 0, 0, 0.08) !important;
+    transform: scale(1.05) !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
   }
 }
 
@@ -94,6 +102,12 @@
   display: flex;
   align-items: center;
   z-index: 1001;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .userIcon {
@@ -110,6 +124,36 @@
     background-color: rgba(0, 0, 0, 0.1);
     transform: scale(1.05);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.logoutButton {
+  background-color: transparent;
+  border: 2px solid $accent;
+  color: $accent;
+  padding: 0.5rem 1rem;
+  border-radius: $radius-md;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: $accent;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($accent, 0.3);
   }
 }
 
@@ -141,10 +185,11 @@
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
-  padding: 0.6rem 1rem;
+  padding: 0.75rem 1.25rem;
   border-radius: $radius-md;
   transition: all 0.3s ease;
   position: relative;
+  background-color: transparent;
 
   &:hover {
     color: $accent;
@@ -160,22 +205,25 @@
 
   &.active {
     color: $accent;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.08);
+    transform: scale(1.05);
     font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 }
 
 .signupLink {
-  background-color: $accent;
-  color: white !important;
-  font-weight: 600;
+  // Remove all default styling - inherit from .authLink
+  background-color: transparent !important;
+  color: $black !important;
+  font-weight: 500 !important;
 
   &:hover {
-    background-color: $accent-dark !important;
-    color: white !important;
+    color: $accent !important;
+    background-color: rgba(0, 0, 0, 0.08) !important;
     transform: scale(1.05);
-    font-weight: 700;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   &:active {
@@ -183,8 +231,11 @@
   }
 
   &.active {
-    background-color: $accent-dark !important;
-    color: white !important;
+    color: $accent !important;
+    background-color: rgba(0, 0, 0, 0.08) !important;
+    transform: scale(1.05);
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 }
 
@@ -214,7 +265,11 @@
     transition: transform 0.3s ease;
     z-index: 1000;
 
-    a {
+    &.navLinksOpen {
+      transform: translateX(0);
+    }
+
+    .navLink {
       font-size: 1.2rem;
       font-weight: 600;
       padding: 1.25rem 2rem;
@@ -234,16 +289,29 @@
       &:active {
         transform: scale(1.02);
       }
-    }
 
-    &.navLinksOpen {
-      transform: translateX(0);
+      &.active {
+        background-color: rgba(0, 0, 0, 0.12);
+        color: $accent;
+        transform: scale(1.08);
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
     }
+  }
+
+  .userInfo {
+    gap: 0.5rem;
   }
 
   .userIcon {
     width: 35px;
     height: 35px;
+  }
+
+  .logoutButton {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
   }
 
   .logo {
@@ -260,13 +328,21 @@
   .navLinks {
     gap: 1rem;
 
-    a {
+    .navLink {
       font-size: 0.95rem;
       padding: 0.7rem 1.1rem;
 
       &:hover {
         transform: scale(1.06);
         background-color: rgba(0, 0, 0, 0.1);
+      }
+
+      &.active {
+        color: $accent !important;
+        background-color: rgba(0, 0, 0, 0.08) !important;
+        transform: scale(1.05) !important;
+        font-weight: 600 !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
       }
     }
   }
@@ -290,9 +366,18 @@
     font-size: 1.1rem;
   }
 
+  .userInfo {
+    gap: 0.4rem;
+  }
+
   .userIcon {
     width: 30px;
     height: 30px;
+  }
+
+  .logoutButton {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
   }
 
   .hamburger {
@@ -305,13 +390,21 @@
   }
 
   .navLinks {
-    a {
+    .navLink {
       font-size: 1.1rem;
       padding: 1rem 1.5rem;
       min-width: 180px;
 
       &:hover {
         transform: scale(1.06);
+      }
+
+      &.active {
+        color: $accent !important;
+        background-color: rgba(0, 0, 0, 0.12) !important;
+        transform: scale(1.08) !important;
+        font-weight: 700 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
       }
     }
   }
