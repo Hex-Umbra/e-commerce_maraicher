@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
 
 .welcomeSection {
   background-color: $gray-light;
@@ -22,19 +22,20 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 
   h2 {
     margin: 0 0 1rem 0;
     font-style: italic;
     font-weight: 700;
-    font-size: 2rem;
+    font-size: 4rem;
     color: $white;
   }
 
   p {
     font-weight: 600;
     font-size: 1.2rem;
-    color: darken($primary, 30%);
+    color: $primary-dark
   }
 }
 
@@ -51,7 +52,7 @@
 
   label {
     font-size: 0.85rem;
-    color: darken($primary, 50%);
+    color: $primary-dark;
     margin-bottom: 0.25rem;
     display: block;
   }
@@ -88,7 +89,7 @@
     transition: background-color 0.3s ease;
 
     &:hover:not(:disabled) {
-      background-color: darken($secondary, 10%);
+      background-color: $secondary-dark;
     }
 
     &:disabled {

@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
 
 .footer {
   background-color: $primary;
@@ -44,7 +44,7 @@
       margin-bottom: 0.5rem;
 
       a {
-        color: darken($primary, 40%);
+        color: $primary-dark;
         text-decoration: none;
 
         &:hover {
@@ -63,7 +63,7 @@
 .copyright {
   text-align: right;
   font-style: italic;
-  color: darken($primary, 40%);
+  color: $primary-dark;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;

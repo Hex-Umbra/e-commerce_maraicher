@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
 
 .navbar {
   height: $header-h;
@@ -143,7 +143,7 @@
   position: relative;
 
   &:hover {
-    background-color: darken($accent, 10%);
+    background-color: $accent-dark;
     transform: scale(1.05);
     font-weight: 700;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
