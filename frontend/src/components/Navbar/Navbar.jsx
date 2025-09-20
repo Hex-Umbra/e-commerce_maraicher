@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./Navbar.module.scss";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, signOut } = useAuth();
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -12,6 +14,15 @@ const Navbar = () => {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      closeMenu(); // Close mobile menu if open
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   return (
@@ -38,34 +49,76 @@ const Navbar = () => {
             isMenuOpen ? styles.navLinksOpen : ""
           }`}
         >
-          <a href="#accueil" onClick={closeMenu}>
+          <Link 
+            to="/accueil" 
+            className={`${styles.navLink} ${location.pathname === '/accueil' ? styles.active : ''}`}
+            onClick={closeMenu}
+          >
             Accueil
-          </a>
-          <a href="#fermiers" onClick={closeMenu}>
+          </Link>
+          <Link 
+            to="/nosfermiers" 
+            className={`${styles.navLink} ${location.pathname === '/nosfermiers' ? styles.active : ''}`}
+            onClick={closeMenu}
+          >
             Nos fermiers
-          </a>
-          <a href="#produits" onClick={closeMenu}>
+          </Link>
+          <Link 
+            to="/produits" 
+            className={`${styles.navLink} ${location.pathname === '/produits' ? styles.active : ''}`}
+            onClick={closeMenu}
+          >
             Produits
-          </a>
-          <a href="#apropos" onClick={closeMenu}>
+          </Link>
+          <Link 
+            to="/apropos" 
+            className={`${styles.navLink} ${location.pathname === '/apropos' ? styles.active : ''}`}
+            onClick={closeMenu}
+          >
             À Propos
-          </a>
-          <a href="#contact" onClick={closeMenu}>
+          </Link>
+          <Link 
+            to="/contact" 
+            className={`${styles.navLink} ${location.pathname === '/contact' ? styles.active : ''}`}
+            onClick={closeMenu}
+          >
             Contact
-          </a>
+          </Link>
         </nav>
 
         {/* User Section */}
         <div className={styles.userSection}>
           {isAuthenticated ? (
-            <div className={styles.userIcon}>
-              <span className={styles.userName}>{user?.name}</span>
-              <div className={styles.profileIcon}>👤</div>
+            <div className={styles.userInfo}>
+              <div className={styles.userIcon}>
+                <span className={styles.userName}>{user?.name}</span>
+                <div className={styles.profileIcon}>👤</div>
+              </div>
+              <button 
+                className={styles.logoutButton}
+                onClick={handleLogout}
+                aria-label="Se déconnecter"
+              >
+                Déconnexion
+              </button>
             </div>
           ) : (
-            <a href="#accueil" className={styles.signupLink}>
-              S'inscrire
-            </a>
+            <div className={styles.authLinks}>
+              <Link 
+                to="/login" 
+                className={`${styles.authLink} ${location.pathname === '/login' ? styles.active : ''}`}
+                onClick={closeMenu}
+              >
+                Connexion
+              </Link>
+              <Link 
+                to="/register" 
+                className={`${styles.authLink} ${styles.signupLink} ${location.pathname === '/register' ? styles.active : ''}`}
+                onClick={closeMenu}
+              >
+                S'inscrire
+              </Link>
+            </div>
           )}
         </div>
       </div>
