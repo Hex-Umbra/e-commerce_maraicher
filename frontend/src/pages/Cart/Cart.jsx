@@ -5,7 +5,7 @@ import { cartAPI } from '../../services/api';
 import { ROUTES } from '../../utils/routes';
 
 const Cart = () => {
-  const { isAuthenticated, showNotification } = useAuth();
+  const { isAuthenticated, showNotification, loading: authLoading } = useAuth();
   const [items, setItems] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [loading, setLoading] = useState(true);
@@ -32,9 +32,11 @@ const Cart = () => {
   };
 
   useEffect(() => {
-    fetchCart();
+    if (isAuthenticated) {
+      fetchCart();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuthenticated]);
 
   const total = useMemo(() => {
     return items.reduce((sum, it) => sum + (Number(it.price || 0) * Number(it.quantity || 0)), 0);
@@ -96,7 +98,11 @@ const Cart = () => {
   };
 
   return (
-    !isAuthenticated ? (
+    authLoading ? (
+      <section className="container" style={{ padding: '1.5rem 0' }}>
+        <p>Vérification de la session...</p>
+      </section>
+    ) : !isAuthenticated ? (
       <Navigate to={ROUTES.login} replace />
     ) : (
       <section className="container" style={{ padding: '1.5rem 0' }}>
