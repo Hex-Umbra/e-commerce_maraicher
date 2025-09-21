@@ -8,6 +8,7 @@ export const ROUTES = {
   fermier: (id = ":id") => `/fermier/${id}`,
   login: "/login",
   register: "/register",
+  cart: "/cart",
   notFound: "/404",
 };
 

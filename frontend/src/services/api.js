@@ -116,4 +116,56 @@ export const commentsAPI = {
   },
 };
 
+export const cartAPI = {
+  // Get current user's cart
+  getCart: async () => {
+    try {
+      const response = await apiClient.get('/cart');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération du panier');
+    }
+  },
+
+  // Add product to cart
+  addToCart: async (productId, quantity = 1) => {
+    try {
+      const response = await apiClient.post('/cart', { productId, quantity });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de l'ajout au panier");
+    }
+  },
+
+  // Update cart item quantity
+  updateCartItem: async (cartItemId, quantity) => {
+    try {
+      const response = await apiClient.put(`/cart/${cartItemId}`, { quantity });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la mise à jour du panier');
+    }
+  },
+
+  // Remove a specific cart item
+  removeCartItem: async (cartItemId) => {
+    try {
+      const response = await apiClient.delete(`/cart/${cartItemId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la suppression de l'article du panier");
+    }
+  },
+
+  // Clear the cart
+  clearCart: async () => {
+    try {
+      const response = await apiClient.delete('/cart/clear');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors du vidage du panier');
+    }
+  },
+};
+
 export default apiClient;
