@@ -1,85 +1,97 @@
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ProducerShowcase from "../../components/ProducerShowcase/ProducerShowcase";
+import { producerAPI } from "../../services/api";
+import { transformProducerData, transformProductData } from "../../utils/defaults";
 import styles from "./Accueil.module.scss";
 
-const producers = [
-  {
-    name: "Jean Martin",
-    specialty: "Spécialiste en produits laitiers",
-    description:
-      "Producteur artisanal de fromages et laits fermiers, engagé pour une agriculture durable.",
-    avatar: "https://i.pravatar.cc/100?img=11",
-    products: [
-      {
-        id: "jm-1",
-        name: "Emmental",
-        image: "https://picsum.photos/seed/cheese1/400/300",
-        price: 1.9,
-        tags: ["Nouveau"],
-      },
-      {
-        id: "jm-2",
-        name: "Comté",
-        image: "https://picsum.photos/seed/cheese2/400/300",
-        price: 2.5,
-        tags: ["Promo"],
-      },
-      {
-        id: "jm-3",
-        name: "Beaufort",
-        image: "https://picsum.photos/seed/cheese3/400/300",
-        price: 3.2,
-        tags: [],
-      },
-      {
-        id: "jm-4",
-        name: "Tomme",
-        image: "https://picsum.photos/seed/cheese4/400/300",
-        price: 2.1,
-        tags: [],
-      },
-    ],
-  },
-  {
-    name: "Claire Dupont",
-    specialty: "Fruits et légumes de saison",
-    description:
-      "Agricultrice familiale, ses fruits et légumes sont cueillis à maturité pour un goût optimal.",
-    avatar: "https://i.pravatar.cc/100?img=32",
-    products: [
-      {
-        id: "cd-1",
-        name: "Pommes bio",
-        image: "https://picsum.photos/seed/apples1/400/300",
-        price: 1.9,
-        tags: ["Nouveau"],
-      },
-      {
-        id: "cd-2",
-        name: "Poires",
-        image: "https://picsum.photos/seed/pears1/400/300",
-        price: 2.1,
-        tags: [],
-      },
-      {
-        id: "cd-3",
-        name: "Carottes",
-        image: "https://picsum.photos/seed/carrots1/400/300",
-        price: 1.2,
-        tags: ["Promo"],
-      },
-      {
-        id: "cd-4",
-        name: "Tomates",
-        image: "https://picsum.photos/seed/tomatoes1/400/300",
-        price: 2.0,
-        tags: [],
-      },
-    ],
-  },
-];
-
 const Accueil = () => {
+  const [producers, setProducers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchProducersWithProducts();
+  }, []);
+
+  const fetchProducersWithProducts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Fetch all producers
+      const producersResponse = await producerAPI.getAllProducers();
+      
+      if (!producersResponse.success || !producersResponse.producteurs) {
+        throw new Error('Aucun producteur trouvé');
+      }
+
+      // Transform producer data and fetch products for each
+      const producersWithProducts = await Promise.all(
+        producersResponse.producteurs.map(async (producer, index) => {
+          try {
+            // Transform producer data with defaults
+            const transformedProducer = transformProducerData(producer, index);
+
+            // Fetch products for this producer
+            const productsResponse = await producerAPI.getProductsByProducer(producer._id);
+            
+            if (productsResponse.success && productsResponse.products) {
+              // Transform and limit products to 3 items
+              const transformedProducts = productsResponse.products
+                .map(transformProductData)
+                .slice(0, 3); // Limit to 3 products
+              
+              transformedProducer.products = transformedProducts;
+            }
+
+            return transformedProducer;
+          } catch (productError) {
+            console.warn(`Erreur lors de la récupération des produits pour ${producer.name}:`, productError);
+            // Return producer without products if product fetch fails
+            const transformedProducer = transformProducerData(producer, index);
+            transformedProducer.products = [];
+            return transformedProducer;
+          }
+        })
+      );
+
+      setProducers(producersWithProducts);
+    } catch (err) {
+      console.error('Erreur lors de la récupération des producteurs:', err);
+      setError(err.message || 'Erreur lors du chargement des producteurs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className={styles.accueil}>
+        <div className="container">
+          <div className={styles.loading}>
+            <p>Chargement des producteurs...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.accueil}>
+        <div className="container">
+          <div className={styles.error}>
+            <p>Erreur: {error}</p>
+            <button onClick={fetchProducersWithProducts} className={styles.retryBtn}>
+              Réessayer
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.accueil}>
       <div className="container">
@@ -99,12 +111,18 @@ const Accueil = () => {
         </section>
 
         {/* Producers showcase */}
-        <h3 className={styles.sectionHeading}>Nos Agriculteurs partenaire</h3>
-        <div className={styles.producers}>
-          {producers.map((producer) => (
-            <ProducerShowcase key={producer.name} producer={producer} />
-          ))}
-        </div>
+        <h3 className={styles.sectionHeading}>Nos Agriculteurs partenaires</h3>
+        {producers.length > 0 ? (
+          <div className={styles.producers}>
+            {producers.map((producer) => (
+              <ProducerShowcase key={producer.id} producer={producer} />
+            ))}
+          </div>
+        ) : (
+          <div className={styles.noProducers}>
+            <p>Aucun producteur disponible pour le moment.</p>
+          </div>
+        )}
       </div>
     </div>
   );

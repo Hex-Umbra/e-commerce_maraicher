@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { getCategoryBadgeClass } from "../../utils/defaults";
 import styles from "./ProducerShowcase.module.scss";
 
 const ProducerShowcase = ({ producer, onViewAllHref = "/produits" }) => {
@@ -27,16 +28,22 @@ const ProducerShowcase = ({ producer, onViewAllHref = "/produits" }) => {
         <h4 className={styles.productsTitle}>Produits</h4>
         <div className={styles.grid}>
           {products.map((p) => {
-            const tagElems = (p.tags || []).map((t) => {
+            const tagElems = (p.tags || []).map((t, index) => {
               const tLower = String(t).toLowerCase();
-              const tagClass =
-                tLower === "nouveau"
-                  ? styles.tagNew
-                  : tLower === "promo"
-                  ? styles.tagPromo
-                  : "";
+              let tagClass = "";
+              
+              // Check for special tags first
+              if (tLower === "nouveau") {
+                tagClass = styles.tagNew;
+              } else if (tLower === "promo") {
+                tagClass = styles.tagPromo;
+              } else {
+                // Use category-based styling
+                tagClass = styles[getCategoryBadgeClass(p.category || t)];
+              }
+              
               return (
-                <span key={`${p.id}-${t}`} className={`${styles.tag} ${tagClass}`}>
+                <span key={`${p.id}-${t}-${index}`} className={`${styles.tag} ${tagClass}`}>
                   {t}
                 </span>
               );
@@ -59,7 +66,9 @@ const ProducerShowcase = ({ producer, onViewAllHref = "/produits" }) => {
                         : p.price}
                       €{/* price per unit could be added later */}
                     </span>
-                    <span className={styles.badge} title="Producteur vérifié">✓</span>
+                    <button className={styles.cartBtn} title="Ajouter au panier">
+                      🛒
+                    </button>
                   </div>
                 </div>
               </article>

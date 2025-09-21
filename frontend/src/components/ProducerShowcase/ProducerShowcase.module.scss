@@ -96,6 +96,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1rem;
+  justify-content: center;
+  justify-items: center;
 
   @include mobile {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -116,11 +118,24 @@
   border-radius: $radius-md;
   overflow: hidden;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 220px;
+  min-height: 280px;
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0,0,0,0.12);
     transition: transform $transition-normal, box-shadow $transition-normal;
+  }
+
+  @include mobile {
+    max-width: 180px;
+    min-height: 260px;
+  }
+
+  @include small-mobile {
+    max-width: none;
+    min-height: 240px;
   }
 }
 
@@ -143,6 +158,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1;
+  justify-content: space-between;
 }
 
 .productHeader {
@@ -187,6 +204,103 @@
   border-color: color.adjust($secondary, $lightness: 10%);
 }
 
+// Category-based tag styles
+.tagDairy {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-color: #90caf9;
+}
+
+.tagFruit {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border-color: #ce93d8;
+}
+
+.tagVegetable {
+  background: #e8f5e8;
+  color: #2e7d32;
+  border-color: #a5d6a7;
+}
+
+.tagMeat {
+  background: #ffebee;
+  color: #c62828;
+  border-color: #ef9a9a;
+}
+
+.tagGrain {
+  background: #fff8e1;
+  color: #f57f17;
+  border-color: #fff176;
+}
+
+.tagHoney {
+  background: #fff3e0;
+  color: #ef6c00;
+  border-color: #ffcc02;
+}
+
+.tagEgg {
+  background: #fafafa;
+  color: #424242;
+  border-color: #e0e0e0;
+}
+
+.tagBread {
+  background: #efebe9;
+  color: #5d4037;
+  border-color: #bcaaa4;
+}
+
+.tagPreserved {
+  background: #e0f2f1;
+  color: #00695c;
+  border-color: #80cbc4;
+}
+
+.tagBeverage {
+  background: #e1f5fe;
+  color: #0277bd;
+  border-color: #81d4fa;
+}
+
+.tagHerb {
+  background: #f1f8e9;
+  color: #33691e;
+  border-color: #aed581;
+}
+
+.tagSpice {
+  background: #fce4ec;
+  color: #ad1457;
+  border-color: #f8bbd9;
+}
+
+.tagBio {
+  background: #e8f5e8;
+  color: #1b5e20;
+  border-color: #4caf50;
+}
+
+.tagLocal {
+  background: #fff3e0;
+  color: #e65100;
+  border-color: #ffb74d;
+}
+
+.tagArtisan {
+  background: #f3e5f5;
+  color: #4a148c;
+  border-color: #ba68c8;
+}
+
+.tagDefault {
+  background: rgba(0,0,0,0.15);
+  color: $black;
+  border-color: rgba(0,0,0,0.12);
+}
+
 .priceRow {
   display: flex;
   align-items: center;
@@ -198,17 +312,28 @@
   color: $black;
 }
 
-.badge {
-  width: 24px;
-  height: 24px;
+.cartBtn {
+  width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  color: $secondary;
-  background: $white;
-  border: 2px solid $secondary;
-  font-size: 0.8rem;
+  border-radius: $radius-sm;
+  background: $primary;
+  border: 1px solid rgba(0,0,0,0.1);
+  font-size: 1rem;
+  color: $black;
+  cursor: pointer;
+  transition: all $transition-normal;
+
+  &:hover {
+    background: color.adjust($primary, $lightness: -10%);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 .actions {
