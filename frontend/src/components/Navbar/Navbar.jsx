@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import Notification from "../Notification/Notification";
 import styles from "./Navbar.module.scss";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, isAuthenticated, signOut } = useAuth();
+  const { user, isAuthenticated, signOut, notification, hideNotification } = useAuth();
   const location = useLocation();
+
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -27,8 +29,21 @@ const Navbar = () => {
 
   return (
     <header className={styles.navbar}>
+      {/* Notification */}
+      {notification && (
+        <div className={styles.notificationContainer}>
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            onClose={hideNotification}
+            isVisible={notification.isVisible}
+          />
+        </div>
+      )}
+      
       <div className={`container ${styles.navbarContainer}`}>
         <h1 className={styles.logo}>Marché Frais Fermier</h1>
+
 
         {/* Hamburger Button */}
         <button
