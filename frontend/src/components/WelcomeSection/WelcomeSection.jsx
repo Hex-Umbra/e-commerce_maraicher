@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./WelcomeSection.module.scss";
@@ -219,6 +220,12 @@ const WelcomeSection = () => {
       </div>
     </section>
   );
+};
+
+// PropTypes validation
+WelcomeSection.propTypes = {
+  // Currently no props are passed to this component
+  // Adding this for future-proofing and consistency
 };
 
 export default WelcomeSection;

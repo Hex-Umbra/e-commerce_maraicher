@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { createContext, useContext, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const AuthContext = createContext();
 
@@ -278,4 +279,9 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+// PropTypes validation
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

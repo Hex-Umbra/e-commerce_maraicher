@@ -1,11 +1,9 @@
 @use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
 
 .accueil {
-  padding: 2rem;
+  padding: 2rem 0 3rem;
   min-height: calc(100vh - $header-h);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .title {
@@ -13,4 +11,71 @@
   font-weight: 700;
   color: $black;
   text-align: center;
+}
+
+/* Hero section inside the page */
+.hero {
+  background: $primary;
+  border-radius: $radius-lg;
+  border: 1px solid $border;
+  margin: 1rem 0 2rem;
+}
+
+.heroInner {
+  padding: 3rem 1.5rem;
+  text-align: center;
+
+  @include mobile {
+    padding: 2rem 1rem;
+  }
+}
+
+.headline {
+  margin: 0 0 0.75rem;
+  font-size: 2rem;
+  line-height: 1.2;
+  color: $black;
+
+  @include mobile {
+    font-size: 1.5rem;
+  }
+}
+
+.subtitle {
+  margin: 0 auto 1.25rem;
+  max-width: 820px;
+  color: $black;
+  opacity: 0.9;
+  font-size: 1rem;
+
+  @include mobile {
+    font-size: 0.9rem;
+    max-width: 100%;
+  }
+}
+
+.cta {
+  @include button-primary;
+  text-decoration: none;
+  display: inline-block;
+  padding: 0.75rem 1.25rem;
+
+  @include mobile {
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+/* Producers section */
+.sectionHeading {
+  margin: 1.5rem 0;
+  text-align: center;
+  font-size: 1.5rem;
+  color: $black;
+}
+
+.producers {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
