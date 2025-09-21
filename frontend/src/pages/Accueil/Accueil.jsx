@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ProducerShowcase from "../../components/ProducerShowcase/ProducerShowcase";
 import { producerAPI } from "../../services/api";
 import { transformProducerData, transformProductData } from "../../utils/defaults";
+import { ROUTES } from "../../utils/routes";
 import styles from "./Accueil.module.scss";
 
 const Accueil = () => {
@@ -105,7 +106,7 @@ const Accueil = () => {
               fermiers familiaux.
             </p>
             <Link
-              to="/nosfermiers"
+              to={ROUTES.nosFermiers}
               className={styles.cta}
               onKeyDown={(e) => {
                 if (e.key === " " || e.key === "Spacebar" || e.code === "Space") {
@@ -124,7 +125,7 @@ const Accueil = () => {
         {producers.length > 0 ? (
           <div className={styles.producers}>
             {producers.map((producer) => (
-              <ProducerShowcase key={producer.id} producer={producer} onViewAllHref={`/fermier/${producer.id}`} />
+              <ProducerShowcase key={producer.id} producer={producer} onViewAllHref={ROUTES.fermier(producer.id)} />
             ))}
           </div>
         ) : (

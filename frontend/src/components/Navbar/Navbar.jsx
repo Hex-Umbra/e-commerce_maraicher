@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Notification from "../Notification/Notification";
 import styles from "./Navbar.module.scss";
+import { NAV_LINKS, ROUTES } from "../../utils/routes";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isAuthenticated, signOut, notification, hideNotification } = useAuth();
-  const location = useLocation();
+  // Using NavLink to handle active state; location not required
 
 
   const toggleMenu = () => {
@@ -43,7 +44,7 @@ const Navbar = () => {
       
       <div className={`container ${styles.navbarContainer}`}>
         <h1 className={styles.logo}>
-          <Link to="/accueil" onClick={closeMenu}>Marché Frais Fermier</Link>
+          <Link to={ROUTES.accueil} onClick={closeMenu}>Marché Frais Fermier</Link>
         </h1>
 
 
@@ -66,41 +67,18 @@ const Navbar = () => {
             isMenuOpen ? styles.navLinksOpen : ""
           }`}
         >
-          <Link 
-            to="/accueil" 
-            className={`${styles.navLink} ${location.pathname === '/accueil' ? styles.active : ''}`}
-            onClick={closeMenu}
-          >
-            Accueil
-          </Link>
-          <Link 
-            to="/nosfermiers" 
-            className={`${styles.navLink} ${location.pathname === '/nosfermiers' ? styles.active : ''}`}
-            onClick={closeMenu}
-          >
-            Nos fermiers
-          </Link>
-          <Link 
-            to="/produits" 
-            className={`${styles.navLink} ${location.pathname === '/produits' ? styles.active : ''}`}
-            onClick={closeMenu}
-          >
-            Produits
-          </Link>
-          <Link 
-            to="/apropos" 
-            className={`${styles.navLink} ${location.pathname === '/apropos' ? styles.active : ''}`}
-            onClick={closeMenu}
-          >
-            À Propos
-          </Link>
-          <Link 
-            to="/contact" 
-            className={`${styles.navLink} ${location.pathname === '/contact' ? styles.active : ''}`}
-            onClick={closeMenu}
-          >
-            Contact
-          </Link>
+          {NAV_LINKS.map(({ to, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                `${styles.navLink} ${isActive ? styles.active : ""}`
+              }
+              onClick={closeMenu}
+            >
+              {label}
+            </NavLink>
+          ))}
         </nav>
 
         {/* User Section */}
@@ -121,20 +99,20 @@ const Navbar = () => {
             </div>
           ) : (
             <div className={styles.authLinks}>
-              <Link 
-                to="/login" 
-                className={`${styles.authLink} ${location.pathname === '/login' ? styles.active : ''}`}
+              <NavLink 
+                to={ROUTES.login} 
+                className={({ isActive }) => `${styles.authLink} ${isActive ? styles.active : ""}`}
                 onClick={closeMenu}
               >
                 Connexion
-              </Link>
-              <Link 
-                to="/register" 
-                className={`${styles.authLink} ${styles.signupLink} ${location.pathname === '/register' ? styles.active : ''}`}
+              </NavLink>
+              <NavLink 
+                to={ROUTES.register} 
+                className={({ isActive }) => `${styles.authLink} ${styles.signupLink} ${isActive ? styles.active : ""}`}
                 onClick={closeMenu}
               >
                 S'inscrire
-              </Link>
+              </NavLink>
             </div>
           )}
         </div>

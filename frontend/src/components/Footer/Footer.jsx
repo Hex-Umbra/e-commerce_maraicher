@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ROUTES } from '../../utils/routes';
 import styles from './Footer.module.scss';
 
 const Footer = () => {
@@ -13,17 +14,17 @@ const Footer = () => {
         <nav className={styles.quickLinks}>
           <h3>Liens rapides</h3>
           <ul>
-            <li><Link to="/accueil">Accueil</Link></li>
-            <li><Link to="/nosfermiers">Fermiers</Link></li>
-            <li><Link to="/produits">Produits</Link></li>
-            <li><Link to="/apropos">À Propos</Link></li>
+            <li><Link to={ROUTES.accueil}>Accueil</Link></li>
+            <li><Link to={ROUTES.nosFermiers}>Fermiers</Link></li>
+            <li><Link to={ROUTES.produits}>Produits</Link></li>
+            <li><Link to={ROUTES.apropos}>À Propos</Link></li>
           </ul>
         </nav>
 
         <nav className={styles.support}>
           <h3>Support</h3>
           <ul>
-            <li><Link to="/contact">Contact</Link></li>
+            <li><Link to={ROUTES.contact}>Contact</Link></li>
           </ul>
         </nav>
 
