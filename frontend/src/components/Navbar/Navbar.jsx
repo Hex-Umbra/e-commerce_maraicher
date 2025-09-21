@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
 import Notification from "../Notification/Notification";
 import styles from "./Navbar.module.scss";
 import { NAV_LINKS, ROUTES } from "../../utils/routes";
+import { BsCart3 } from "react-icons/bs";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isAuthenticated, signOut, notification, hideNotification } = useAuth();
+  const { cartCount } = useCart();
   // Using NavLink to handle active state; location not required
 
 
@@ -96,7 +99,15 @@ const Navbar = () => {
                 onClick={closeMenu}
                 title="Panier"
               >
-                🛒
+                <BsCart3 aria-hidden="true" />
+                {cartCount > 0 && (
+                  <span
+                    className={styles.cartBadge}
+                    aria-label={`${cartCount} article(s) dans le panier`}
+                  >
+                    {cartCount}
+                  </span>
+                )}
               </Link>
               <button 
                 className={styles.logoutButton}

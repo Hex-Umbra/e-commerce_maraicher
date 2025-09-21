@@ -149,6 +149,42 @@
   @include flex-center;
 }
 
+.cartButton {
+  position: relative;
+  @include flex-center;
+  font-size: 1.4rem;
+  color: $black;
+  padding: 0.25rem;
+  border-radius: 6px;
+  line-height: 1;
+
+  &:hover {
+    color: $accent;
+    background-color: rgba(0, 0, 0, 0.08);
+    transform: scale(1.03);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.cartBadge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background-color: $accent;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  @include flex-center;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.2);
+}
+
 .authLinks {
   @include flex-center;
   gap: 0.75rem;

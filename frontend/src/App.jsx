@@ -5,6 +5,7 @@ import WelcomeSection from './components/WelcomeSection/WelcomeSection';
 import LoginSection from './components/LoginSection/LoginSection';
 import Footer from './components/Footer/Footer';
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 
 // Import page components
 import Accueil from './pages/Accueil/Accueil';
@@ -21,26 +22,28 @@ import './styles/main.scss';
 const App = () => {
   return (
     <AuthProvider>
-      <Router>
-        <Navbar />
-        <main>
-          <Routes>
-            <Route path="/" element={<Navigate to="/accueil" replace />} />
-            <Route path="/accueil" element={<Accueil />} />
-            <Route path="/nosfermiers" element={<Nosfermiers />} />
-            <Route path="/produits" element={<Produits />} />
-            <Route path="/apropos" element={<Apropos />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/fermier/:id" element={<Fermier />} />
-            <Route path="/register" element={<WelcomeSection />} />
-            <Route path="/login" element={<LoginSection />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/404" element={<NotFound />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-        <Footer />
-      </Router>
+      <CartProvider>
+        <Router>
+          <Navbar />
+          <main>
+            <Routes>
+              <Route path="/" element={<Navigate to="/accueil" replace />} />
+              <Route path="/accueil" element={<Accueil />} />
+              <Route path="/nosfermiers" element={<Nosfermiers />} />
+              <Route path="/produits" element={<Produits />} />
+              <Route path="/apropos" element={<Apropos />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/fermier/:id" element={<Fermier />} />
+              <Route path="/register" element={<WelcomeSection />} />
+              <Route path="/login" element={<LoginSection />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/404" element={<NotFound />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+          <Footer />
+        </Router>
+      </CartProvider>
     </AuthProvider>
   );
 };

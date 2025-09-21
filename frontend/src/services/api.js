@@ -168,4 +168,52 @@ export const cartAPI = {
   },
 };
 
+export const ordersAPI = {
+  // Get orders for the authenticated user
+  getUserOrders: async () => {
+    try {
+      const response = await apiClient.get('/orders');
+      // Backend returns: { status, message, data: { orders } }
+      return response.data?.data?.orders || [];
+    } catch (error) {
+      if (error.response?.status === 404) {
+        // No orders found for this user
+        return [];
+      }
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des commandes');
+    }
+  },
+
+  // Create an order from current user's cart (for later use)
+  createOrder: async () => {
+    try {
+      const response = await apiClient.post('/orders');
+      // Backend returns: { status, data: { order } } where order is an array from Mongoose.create
+      return response.data?.data?.order;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la création de la commande');
+    }
+  },
+
+  // Cancel an order with backend method fallback (PATCH primary, DELETE fallback)
+  cancelOrder: async (orderId) => {
+    try {
+      const response = await apiClient.patch(`/orders/${orderId}/cancel`);
+      return response.data?.data?.order;
+    } catch (error) {
+      // Fallback to DELETE if server expects DELETE for cancel
+      try {
+        const response = await apiClient.delete(`/orders/${orderId}/cancel`);
+        return response.data?.data?.order;
+      } catch (e2) {
+        throw new Error(
+          e2.response?.data?.message ||
+            error.response?.data?.message ||
+            "Erreur lors de l'annulation de la commande"
+        );
+      }
+    }
+  },
+};
+
 export default apiClient;

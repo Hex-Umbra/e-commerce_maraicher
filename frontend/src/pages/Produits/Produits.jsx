@@ -4,8 +4,9 @@ import styles from "./Produits.module.scss";
 import accueilStyles from "../Accueil/Accueil.module.scss";
 import cardStyles from "../../components/ProducerShowcase/ProducerShowcase.module.scss";
 import { BsCart3, BsFilter } from "react-icons/bs";
-import { productAPI, cartAPI } from "../../services/api";
+import { productAPI } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
 import { ROUTES } from "../../utils/routes";
 import { transformProductData, getCategoryBadgeClass, getCategoryBadge } from "../../utils/defaults";
 
@@ -22,6 +23,7 @@ const Produits = () => {
 
   const navigate = useNavigate();
   const { isAuthenticated, showNotification } = useAuth();
+  const { addToCart } = useCart();
 
   // Fetch all products from backend
   useEffect(() => {
@@ -115,7 +117,7 @@ const Produits = () => {
     }
 
     try {
-      const data = await cartAPI.addToCart(product.id, 1);
+      const data = await addToCart(product.id, 1);
       showNotification(data?.message || "Produit ajouté au panier", "success");
     } catch (err) {
       showNotification(err.message || "Erreur lors de l'ajout au panier", "error");
@@ -389,15 +391,32 @@ const Produits = () => {
                       >
                         {formatPrice(product.price)}€
                       </span>
-                      <button
-                        className={cardStyles.cartBtn}
-                        onClick={(e) => handleAddToCart(product, e)}
-                        aria-label={`Ajouter ${product.name} au panier`}
-                        title={Number(product.quantity || 0) <= 0 ? "Rupture de stock" : "Ajouter au panier"}
-                        disabled={Number(product.quantity || 0) <= 0}
+                      {Number(product.quantity || 0) <= 0 ? (
+                        <span
+                          style={{ color: 'crimson', fontWeight: 600 }}
+                          role="status"
+                          aria-label="Rupture de stock"
+                          title="Rupture de stock"
+                        >
+                          Rupture de stock
+                        </span>
+                      ) : (
+                        <button
+                          className={cardStyles.cartBtn}
+                          onClick={(e) => handleAddToCart(product, e)}
+                          aria-label={`Ajouter ${product.name} au panier`}
+                          title="Ajouter au panier"
+                        >
+                          <BsCart3 aria-hidden="true" />
+                        </button>
+                      )}
+                      <span
+                        style={{ marginLeft: '0.5rem', fontSize: '0.9rem', color: '#555' }}
+                        aria-label={`Stock disponible: ${Number(product.quantity || 0)}`}
+                        title={`Stock: ${Number(product.quantity || 0)}`}
                       >
-                        <BsCart3 aria-hidden="true" />
-                      </button>
+                        Stock: {Number(product.quantity || 0)}
+                      </span>
                     </div>
                   </div>
                 </article>
