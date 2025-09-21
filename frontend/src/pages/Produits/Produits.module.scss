@@ -14,3 +14,88 @@
   color: $black;
   text-align: center;
 }
+
+/* Section heading */
+.sectionHeading {
+  margin: 1.5rem 0;
+  text-align: center;
+  font-size: 1.5rem;
+  color: $black;
+}
+
+/* Products grid - 5 columns */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  justify-items: center;
+}
+
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  padding: 3rem 0;
+  
+  p {
+    font-size: 1.1rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
+
+/* Error state */
+.error {
+  text-align: center;
+  padding: 3rem 0;
+  
+  p {
+    font-size: 1.1rem;
+    color: #dc3545;
+    margin-bottom: 1rem;
+  }
+}
+
+.retryBtn {
+  background: $primary;
+  border: 1px solid $border;
+  color: $black;
+  padding: 0.6rem 1rem;
+  border-radius: $radius-md;
+  cursor: pointer;
+}
+
+/* Empty state */
+.noProducts {
+  text-align: center;
+  padding: 3rem 0;
+  
+  p {
+    font-size: 1.1rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
