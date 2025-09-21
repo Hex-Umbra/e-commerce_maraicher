@@ -9,7 +9,7 @@
 
 /* Section heading */
 .sectionHeading {
-  margin: 1.5rem 0;
+  @include section-heading();
   text-align: center;
   font-size: 1.5rem;
   color: $black;
@@ -17,37 +17,14 @@
 
 /* 3-column grid for producer cards */
 .grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
-@media (max-width: 992px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+  @include grid-cols(3, 1rem, 2, 2, 1, 1);
 }
 
 /* Producer card styling (inspired by product card) */
 .producerCard {
-  background: color.adjust($primary, $lightness: 30%);
+  @include card-base(color.adjust($primary, $lightness: 30%), 1.25rem, $radius-lg, 0 1px 4px rgba(0,0,0,0.08));
   border: 1px solid rgba(0,0,0,0.1);
-  border-radius: $radius-lg;
-  padding: 1.25rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
   cursor: pointer;
-
-  &:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  }
 
   &:focus {
     outline: 2px solid $secondary;

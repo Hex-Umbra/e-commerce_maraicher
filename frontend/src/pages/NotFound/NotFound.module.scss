@@ -33,13 +33,13 @@
 }
 
 .linkBtn {
+  @include link-reset;
   @include button-primary;
-  text-decoration: none;
   padding: 0.6rem 1rem;
 }
 
 .linkBtnSecondary {
+  @include link-reset;
   @include button-secondary;
-  text-decoration: none;
   padding: 0.6rem 1rem;
 }

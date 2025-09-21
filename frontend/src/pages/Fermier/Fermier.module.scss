@@ -60,7 +60,7 @@
 }
 
 .sectionHeading {
-  margin: 1.5rem 0 1rem;
+  @include section-heading(1.5rem, 1rem);
   text-align: left;
   font-size: 1.35rem;
   color: $black;
@@ -68,25 +68,13 @@
 
 /* Force 4 columns grid for product cards, but stay responsive on small screens */
 .grid4 {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
+  @include grid-cols(4, 1rem, 3, 2, 2, 1);
   justify-items: center;
 
   /* Use the same card size constraints from card styles */
   > * {
     width: 100%;
     max-width: 260px; /* allow a bit wider than ProducerShowcase default */
-  }
-
-  @include tablet {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  @include mobile {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  @include small-mobile {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -268,7 +256,7 @@
 }
 
 .backLink {
+  @include link-reset;
   @include button-secondary;
-  text-decoration: none;
   padding: 0.5rem 0.85rem;
 }
