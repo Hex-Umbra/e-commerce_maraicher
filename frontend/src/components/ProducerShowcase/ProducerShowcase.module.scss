@@ -87,9 +87,31 @@
 
 .productsTitle {
   margin: 1.25rem 0 0.75rem;
-  text-align: left;
+  text-align: center;
   font-size: 1.15rem;
   color: $black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.productCount {
+  font-size: 0.9rem;
+  color: $gray-dark;
+  font-weight: normal;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: $gray-dark;
+  font-style: italic;
+  
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
 }
 
 .grid {
@@ -123,10 +145,21 @@
   min-height: 280px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 
   &:hover {
     transform: translateY(-4px) scale(1.02);
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+
+  &:focus {
+    outline: 2px solid $secondary;
+    outline-offset: 2px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $secondary;
+    outline-offset: 2px;
   }
 
   @include mobile {
@@ -145,12 +178,19 @@
   height: 140px;
   background: rgba(0,0,0,0.05);
   border-bottom: 1px solid rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .productCard:hover & img {
+    transform: scale(1.05);
   }
 }
 
@@ -168,29 +208,50 @@
   align-items: start;
   justify-content: space-between;
   gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
 
-  h5 {
-    margin: 0;
-    font-size: 1rem;
-    color: $black;
-    @include text-truncate(140px);
+.productName {
+  margin: 0;
+  font-size: 1rem;
+  color: $black;
+  font-weight: 600;
+  line-height: 1.2;
+  @include text-truncate(140px);
+  
+  @include mobile {
+    @include text-truncate(120px);
+  }
+  
+  @include small-mobile {
+    @include text-truncate(100px);
   }
 }
 
 .tags {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.25rem;
   flex-wrap: wrap;
+  align-items: center;
+  min-height: 20px; // Prevent layout shift when no tags
 }
 
 .tag {
   display: inline-block;
-  font-size: 0.7rem;
-  padding: 0.15rem 0.4rem;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.35rem;
   border-radius: $radius-sm;
   background: rgba(0,0,0,0.15);
   color: $black;
   border: 1px solid rgba(0,0,0,0.12);
+  font-weight: 500;
+  text-transform: capitalize;
+  white-space: nowrap;
+  
+  @include small-mobile {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.3rem;
+  }
 }
 
 .tagNew {
@@ -302,15 +363,41 @@
   border-color: rgba(0,0,0,0.12);
 }
 
+.productDescription {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 0.8rem;
+  color: $gray-dark;
+  opacity: 0.85;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  
+  @include small-mobile {
+    font-size: 0.75rem;
+    -webkit-line-clamp: 1;
+  }
+}
+
 .priceRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: auto; // Push to bottom of card
+  padding-top: 0.5rem;
 }
 
 .price {
   font-weight: 700;
   color: $black;
+  font-size: 1.05rem;
+  
+  @include small-mobile {
+    font-size: 1rem;
+  }
 }
 
 .cartBtn {
@@ -326,14 +413,31 @@
   color: $black;
   cursor: pointer;
   transition: all $transition-normal;
-
+  position: relative;
+  
   &:hover {
     background: color.adjust($primary, $lightness: -10%);
     transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
 
   &:active {
     transform: scale(0.95);
+  }
+  
+  &:focus {
+    outline: 2px solid $secondary;
+    outline-offset: 2px;
+  }
+  
+  // Add subtle animation on hover
+  &:hover::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: $radius-sm;
+    background: linear-gradient(45deg, transparent, rgba(0,0,0,0.1), transparent);
+    z-index: -1;
   }
 }
 
