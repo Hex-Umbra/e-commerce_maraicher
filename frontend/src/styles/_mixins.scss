@@ -1,3 +1,4 @@
+@use "sass:color";
 @use './variables' as *;
 
 // ===== BUTTON MIXINS =====
@@ -320,4 +321,89 @@
 
 @mixin shadow-heavy {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== DRY mixins added for shared patterns ===== */
+
+/* Section heading utility: only margins to keep visuals identical */
+@mixin section-heading($mt: 1.5rem, $mb: 1rem) {
+  margin: $mt 0 $mb;
+}
+
+/* Reset link visuals when using button mixins on anchors/Links */
+@mixin link-reset {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Responsive grid columns generator
+   Example: @include grid-cols(5, 1rem, 4, 3, 2, 1); */
+@mixin grid-cols(
+  $desktop,
+  $gap: 1rem,
+  $cols-1200: null,
+  $cols-992: null,
+  $cols-768: null,
+  $cols-480: 1
+) {
+  display: grid;
+  grid-template-columns: repeat($desktop, 1fr);
+  gap: $gap;
+
+  @media (max-width: 1200px) {
+    @if $cols-1200 {
+      grid-template-columns: repeat($cols-1200, 1fr);
+    }
+  }
+  @media (max-width: 992px) {
+    @if $cols-992 {
+      grid-template-columns: repeat($cols-992, 1fr);
+    }
+  }
+  @media (max-width: 768px) {
+    @if $cols-768 {
+      grid-template-columns: repeat($cols-768, 1fr);
+    }
+  }
+  @media (max-width: 480px) {
+    @if $cols-480 {
+      grid-template-columns: repeat($cols-480, 1fr);
+    }
+  }
+}
+
+/* Base card styling with subtle hover/scale/shadow */
+@mixin card-base(
+  $bg: color.adjust($primary, $lightness: 30%),
+  $padding: 1rem,
+  $radius: $radius-md,
+  $shadow: 0 1px 4px rgba(0,0,0,0.08)
+) {
+  background: $bg;
+  padding: $padding;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+}
+
+/* Base chip/badge style for tag-like UI with safe defaults */
+@mixin chip-base(
+  $padding: 0.4rem 0.75rem,
+  $font-size: 0.9rem,
+  $font-weight: 600,
+  $radius: $radius-md
+) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $padding;
+  border-radius: $radius;
+  font-size: $font-size;
+  font-weight: $font-weight;
+  transition: transform $transition-fast, box-shadow $transition-fast, background-color $transition-fast;
 }

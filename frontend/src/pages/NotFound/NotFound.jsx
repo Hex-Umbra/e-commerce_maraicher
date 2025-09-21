@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./NotFound.module.scss";
 import accueilStyles from "../Accueil/Accueil.module.scss";
+import { ROUTES } from "../../utils/routes";
 
 const NotFound = () => {
   return (
@@ -14,9 +15,9 @@ const NotFound = () => {
               Désolé, la page que vous recherchez n&apos;existe pas ou a été déplacée.
             </p>
             <div className={styles.links}>
-              <Link to="/accueil" className={styles.linkBtn}>Aller à l&apos;accueil</Link>
-              <Link to="/nosfermiers" className={styles.linkBtnSecondary}>Voir nos fermiers</Link>
-              <Link to="/produits" className={styles.linkBtnSecondary}>Explorer les produits</Link>
+              <Link to={ROUTES.accueil} className={styles.linkBtn}>Aller à l&apos;accueil</Link>
+              <Link to={ROUTES.nosFermiers} className={styles.linkBtnSecondary}>Voir nos fermiers</Link>
+              <Link to={ROUTES.produits} className={styles.linkBtnSecondary}>Explorer les produits</Link>
             </div>
           </div>
         </section>

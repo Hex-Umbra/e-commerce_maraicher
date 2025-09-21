@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { BsCart3 } from "react-icons/bs";
 import { getCategoryBadgeClass } from "../../utils/defaults";
 import styles from "./ProducerShowcase.module.scss";
+import { Link } from "react-router-dom";
 
 const ProducerShowcase = ({ producer, onViewAllHref = "/produits", onAddToCart }) => {
   const {
@@ -175,13 +176,13 @@ const ProducerShowcase = ({ producer, onViewAllHref = "/produits", onAddToCart }
         )}
 
         <div className={styles.actions}>
-          <a 
-            href={onViewAllHref} 
+          <Link 
+            to={onViewAllHref} 
             className={styles.cta}
-            aria-label={`Voir tous les produits de ${name}`}
+            aria-label="Voir tout les produits de ce producteur"
           >
-            Voir tous les produits
-          </a>
+            Voir tout les produits de ce producteur
+          </Link>
         </div>
       </div>
     </section>

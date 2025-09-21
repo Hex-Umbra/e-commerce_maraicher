@@ -455,8 +455,8 @@
 }
 
 .cta {
+  @include link-reset;
   @include button-primary;
-  text-decoration: none;
   display: inline-block;
   padding: 0.6rem 1rem;
   border: 2px solid transparent; // prevent layout shift on focus
