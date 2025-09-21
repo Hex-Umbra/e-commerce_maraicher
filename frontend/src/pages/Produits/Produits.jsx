@@ -12,6 +12,9 @@ const Produits = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showAllCats, setShowAllCats] = useState(false);
+  const [producers, setProducers] = useState([]);
+  const [selectedProducer, setSelectedProducer] = useState("all");
+  const [showAllProducers, setShowAllProducers] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -40,6 +43,22 @@ const Produits = () => {
           label: getCategoryBadge(val),
         }));
         setCategories(cats);
+
+        // Build unique producers list from transformed products
+        const producerMap = new Map();
+        transformed.forEach((p) => {
+          const id = p.producerId ? String(p.producerId) : null;
+          const name = p.producerName ? String(p.producerName).trim() : "";
+          if (!id && !name) return;
+          const key = id || `name:${name.toLowerCase()}`;
+          if (!producerMap.has(key)) {
+            producerMap.set(key, {
+              value: id || `name:${name.toLowerCase()}`,
+              label: name || "—",
+            });
+          }
+        });
+        setProducers(Array.from(producerMap.values()));
       } catch (err) {
         console.error("Erreur lors de la récupération des produits:", err);
         setError(err.message || "Erreur lors du chargement des produits");
@@ -93,12 +112,20 @@ const Produits = () => {
   };
 
   // Filtered products by selected category
-  const visibleProducts =
-    selectedCategory === "all"
-      ? products
-      : products.filter(
-          (p) => String(p.category || "").toLowerCase() === selectedCategory
-        );
+  const visibleProducts = products.filter((p) => {
+    const matchesCategory =
+      selectedCategory === "all" ||
+      String(p.category || "").toLowerCase() === selectedCategory;
+
+    const producerKey = p.producerId
+      ? String(p.producerId)
+      : `name:${String(p.producerName || "").toLowerCase()}`;
+
+    const matchesProducer =
+      selectedProducer === "all" || producerKey === selectedProducer;
+
+    return matchesCategory && matchesProducer;
+  });
 
   return (
     <div className={styles.produits}>
@@ -118,6 +145,7 @@ const Produits = () => {
 
             <div className={styles.filtersWrap} aria-label="Filtres de catégorie">
               <div className={styles.chipRow} role="listbox" aria-label="Catégories">
+                <span className={styles.filterLabel}>Catégories</span>
                 <span className={styles.filterIcon} aria-hidden="true">
                   <BsFilter />
                 </span>
@@ -176,6 +204,74 @@ const Produits = () => {
                       }}
                     >
                       {c.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Producer filters */}
+            <div className={styles.filterRow}>
+              <div className={styles.chipRow} role="listbox" aria-label="Producteurs">
+                <span className={styles.filterLabel}>Producteurs</span>
+                <span className={styles.filterIcon} aria-hidden="true">
+                  <BsFilter />
+                </span>
+                <button
+                  type="button"
+                  className={`${styles.chip} ${selectedProducer === "all" ? styles.chipActive : ""}`}
+                  aria-pressed={selectedProducer === "all"}
+                  onClick={() => setSelectedProducer("all")}
+                >
+                  Tous
+                </button>
+                {producers.slice(0, 5).map((pr) => (
+                  <button
+                    type="button"
+                    key={pr.value}
+                    className={`${styles.chip} ${selectedProducer === pr.value ? styles.chipActive : ""}`}
+                    aria-pressed={selectedProducer === pr.value}
+                    onClick={() => setSelectedProducer(pr.value)}
+                  >
+                    {pr.label}
+                  </button>
+                ))}
+                {producers.length > 5 && (
+                  <button
+                    type="button"
+                    className={styles.chip}
+                    aria-haspopup="menu"
+                    aria-expanded={showAllProducers}
+                    aria-controls="all-producers-menu"
+                    onClick={() => setShowAllProducers((v) => !v)}
+                    title="Voir tous les producteurs"
+                  >
+                    ...
+                    <span className={styles.srOnly}>Voir tous les producteurs</span>
+                  </button>
+                )}
+              </div>
+
+              {showAllProducers && producers.length > 5 && (
+                <div
+                  id="all-producers-menu"
+                  className={styles.menuPanel}
+                  role="menu"
+                  aria-label="Autres producteurs"
+                >
+                  {producers.slice(5).map((pr) => (
+                    <button
+                      type="button"
+                      key={pr.value}
+                      role="menuitem"
+                      className={`${styles.chip} ${selectedProducer === pr.value ? styles.chipActive : ""}`}
+                      aria-pressed={selectedProducer === pr.value}
+                      onClick={() => {
+                        setSelectedProducer(pr.value);
+                        setShowAllProducers(false);
+                      }}
+                    >
+                      {pr.label}
                     </button>
                   ))}
                 </div>
