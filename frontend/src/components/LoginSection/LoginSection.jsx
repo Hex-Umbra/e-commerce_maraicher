@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./LoginSection.module.scss";
@@ -143,6 +144,12 @@ const LoginSection = () => {
       </div>
     </section>
   );
+};
+
+// PropTypes validation
+LoginSection.propTypes = {
+  // Currently no props are passed to this component
+  // Adding this for future-proofing and consistency
 };
 
 export default LoginSection;
