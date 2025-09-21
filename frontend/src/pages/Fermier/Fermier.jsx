@@ -311,7 +311,6 @@ const Fermier = () => {
                     <div className={styles.vRule} aria-hidden="true" />
 
                     <div className={styles.commentBody}>
-                      <div className={styles.commentLabel}>Commentaire</div>
                       <div className={styles.commentText}>{c.comment}</div>
                       <div className={styles.rating}>Rating : <strong>{c.rating}</strong>/5</div>
                       {c.createdAt && (
