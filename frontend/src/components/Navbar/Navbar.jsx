@@ -42,7 +42,9 @@ const Navbar = () => {
       )}
       
       <div className={`container ${styles.navbarContainer}`}>
-        <h1 className={styles.logo}>Marché Frais Fermier</h1>
+        <h1 className={styles.logo}>
+          <Link to="/accueil" onClick={closeMenu}>Marché Frais Fermier</Link>
+        </h1>
 
 
         {/* Hamburger Button */}

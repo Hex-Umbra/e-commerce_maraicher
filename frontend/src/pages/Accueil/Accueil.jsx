@@ -124,7 +124,7 @@ const Accueil = () => {
         {producers.length > 0 ? (
           <div className={styles.producers}>
             {producers.map((producer) => (
-              <ProducerShowcase key={producer.id} producer={producer} />
+              <ProducerShowcase key={producer.id} producer={producer} onViewAllHref={`/fermier/${producer.id}`} />
             ))}
           </div>
         ) : (
