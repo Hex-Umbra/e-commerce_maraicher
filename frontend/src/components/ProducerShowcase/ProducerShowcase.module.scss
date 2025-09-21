@@ -87,15 +87,39 @@
 
 .productsTitle {
   margin: 1.25rem 0 0.75rem;
-  text-align: left;
+  text-align: center;
   font-size: 1.15rem;
   color: $black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.productCount {
+  font-size: 0.9rem;
+  color: $gray-dark;
+  font-weight: normal;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: $gray-dark;
+  font-style: italic;
+  
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1rem;
+  justify-content: center;
+  justify-items: center;
 
   @include mobile {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -116,11 +140,36 @@
   border-radius: $radius-md;
   overflow: hidden;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 220px;
+  min-height: 280px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.12);
-    transition: transform $transition-normal, box-shadow $transition-normal;
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+
+  &:focus {
+    outline: 2px solid $secondary;
+    outline-offset: 2px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $secondary;
+    outline-offset: 2px;
+  }
+
+  @include mobile {
+    max-width: 180px;
+    min-height: 260px;
+  }
+
+  @include small-mobile {
+    max-width: none;
+    min-height: 240px;
   }
 }
 
@@ -129,12 +178,19 @@
   height: 140px;
   background: rgba(0,0,0,0.05);
   border-bottom: 1px solid rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .productCard:hover & img {
+    transform: scale(1.05);
   }
 }
 
@@ -143,6 +199,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1;
+  justify-content: space-between;
 }
 
 .productHeader {
@@ -150,29 +208,50 @@
   align-items: start;
   justify-content: space-between;
   gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
 
-  h5 {
-    margin: 0;
-    font-size: 1rem;
-    color: $black;
-    @include text-truncate(140px);
+.productName {
+  margin: 0;
+  font-size: 1rem;
+  color: $black;
+  font-weight: 600;
+  line-height: 1.2;
+  @include text-truncate(140px);
+  
+  @include mobile {
+    @include text-truncate(120px);
+  }
+  
+  @include small-mobile {
+    @include text-truncate(100px);
   }
 }
 
 .tags {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.25rem;
   flex-wrap: wrap;
+  align-items: center;
+  min-height: 20px; // Prevent layout shift when no tags
 }
 
 .tag {
   display: inline-block;
-  font-size: 0.7rem;
-  padding: 0.15rem 0.4rem;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.35rem;
   border-radius: $radius-sm;
   background: rgba(0,0,0,0.15);
   color: $black;
   border: 1px solid rgba(0,0,0,0.12);
+  font-weight: 500;
+  text-transform: capitalize;
+  white-space: nowrap;
+  
+  @include small-mobile {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.3rem;
+  }
 }
 
 .tagNew {
@@ -187,28 +266,179 @@
   border-color: color.adjust($secondary, $lightness: 10%);
 }
 
+// Category-based tag styles
+.tagDairy {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-color: #90caf9;
+}
+
+.tagFruit {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border-color: #ce93d8;
+}
+
+.tagVegetable {
+  background: #e8f5e8;
+  color: #2e7d32;
+  border-color: #a5d6a7;
+}
+
+.tagMeat {
+  background: #ffebee;
+  color: #c62828;
+  border-color: #ef9a9a;
+}
+
+.tagGrain {
+  background: #fff8e1;
+  color: #f57f17;
+  border-color: #fff176;
+}
+
+.tagHoney {
+  background: #fff3e0;
+  color: #ef6c00;
+  border-color: #ffcc02;
+}
+
+.tagEgg {
+  background: #fafafa;
+  color: #424242;
+  border-color: #e0e0e0;
+}
+
+.tagBread {
+  background: #efebe9;
+  color: #5d4037;
+  border-color: #bcaaa4;
+}
+
+.tagPreserved {
+  background: #e0f2f1;
+  color: #00695c;
+  border-color: #80cbc4;
+}
+
+.tagBeverage {
+  background: #e1f5fe;
+  color: #0277bd;
+  border-color: #81d4fa;
+}
+
+.tagHerb {
+  background: #f1f8e9;
+  color: #33691e;
+  border-color: #aed581;
+}
+
+.tagSpice {
+  background: #fce4ec;
+  color: #ad1457;
+  border-color: #f8bbd9;
+}
+
+.tagBio {
+  background: #e8f5e8;
+  color: #1b5e20;
+  border-color: #4caf50;
+}
+
+.tagLocal {
+  background: #fff3e0;
+  color: #e65100;
+  border-color: #ffb74d;
+}
+
+.tagArtisan {
+  background: #f3e5f5;
+  color: #4a148c;
+  border-color: #ba68c8;
+}
+
+.tagDefault {
+  background: rgba(0,0,0,0.15);
+  color: $black;
+  border-color: rgba(0,0,0,0.12);
+}
+
+.productDescription {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 0.8rem;
+  color: $gray-dark;
+  opacity: 0.85;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  
+  @include small-mobile {
+    font-size: 0.75rem;
+    -webkit-line-clamp: 1;
+  }
+}
+
 .priceRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: auto; // Push to bottom of card
+  padding-top: 0.5rem;
 }
 
 .price {
   font-weight: 700;
   color: $black;
+  font-size: 1.05rem;
+  
+  @include small-mobile {
+    font-size: 1rem;
+  }
 }
 
-.badge {
-  width: 24px;
-  height: 24px;
+.cartBtn {
+  width: 32px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  color: $secondary;
-  background: $white;
-  border: 2px solid $secondary;
-  font-size: 0.8rem;
+  border-radius: $radius-sm;
+  background: $primary;
+  border: 1px solid rgba(0,0,0,0.1);
+  font-size: 1rem;
+  color: $black;
+  cursor: pointer;
+  transition: all $transition-normal;
+  position: relative;
+  
+  &:hover {
+    background: color.adjust($primary, $lightness: -10%);
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:focus {
+    outline: 2px solid $secondary;
+    outline-offset: 2px;
+  }
+  
+  // Add subtle animation on hover
+  &:hover::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: $radius-sm;
+    background: linear-gradient(45deg, transparent, rgba(0,0,0,0.1), transparent);
+    z-index: -1;
+  }
 }
 
 .actions {
