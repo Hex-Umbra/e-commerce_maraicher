@@ -111,7 +111,7 @@ export const transformProducerData = (backendProducer, index = 0) => {
   };
 };
 
-// Transform backend product data to frontend format
+ // Transform backend product data to frontend format
 export const transformProductData = (backendProduct) => {
   return {
     id: backendProduct._id,
@@ -121,6 +121,8 @@ export const transformProductData = (backendProduct) => {
     description: backendProduct.description,
     category: backendProduct.category,
     quantity: backendProduct.quantity,
+    producerId: backendProduct.producteurId?._id || backendProduct.producteurId || null,
+    producerName: backendProduct.producteurId?.name || '—',
     tags: [getCategoryBadge(backendProduct.category)], // Convert category to tag
     createdAt: backendProduct.createdAt,
   };

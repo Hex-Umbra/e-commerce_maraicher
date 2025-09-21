@@ -228,6 +228,13 @@
   }
 }
 
+.producerName {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: $gray-dark;
+  opacity: 0.85;
+}
+
 .tags {
   display: flex;
   gap: 0.25rem;
