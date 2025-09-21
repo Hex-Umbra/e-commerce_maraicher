@@ -11,6 +11,20 @@ body {
 .container {
   margin: 0 auto;
   padding: 0 1rem;
+  max-width: $container;
+  width: 100%;
+}
+
+@include tablet {
+  .container {
+    max-width: $container-tablet;
+  }
+}
+
+@include mobile {
+  .container {
+    max-width: $container-mobile;
+  }
 }
 
 // ===== SHARED PAGE LAYOUT CLASSES =====
