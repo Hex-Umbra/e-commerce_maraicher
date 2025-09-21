@@ -121,6 +121,7 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok && data.success) {
         setUser(data.user);
+        showNotification(data.message, 'success');
         return {
           success: true,
           message: data.message,
@@ -170,6 +171,7 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok && data.success) {
         setUser(data.user);
+        showNotification(data.message, 'success');
         return {
           success: true,
           message: data.message,

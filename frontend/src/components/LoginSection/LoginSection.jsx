@@ -12,7 +12,6 @@ const LoginSection = () => {
     password: "",
   });
   const [formErrors, setFormErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -57,7 +56,6 @@ const LoginSection = () => {
     e.preventDefault();
 
     // Clear previous messages
-    setSuccessMessage("");
     clearError();
 
     // Validate form
@@ -74,16 +72,13 @@ const LoginSection = () => {
       const result = await signIn(formData);
 
       if (result.success) {
-        setSuccessMessage(result.message);
         // Reset form
         setFormData({
           email: "",
           password: "",
         });
-        // Navigate to homepage after 2 seconds
-        setTimeout(() => {
-          navigate("/accueil");
-        }, 2000);
+        // Navigate to homepage immediately
+        navigate("/accueil");
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -94,11 +89,6 @@ const LoginSection = () => {
     <section className={styles.loginSection}>
       <div className={`container ${styles.contentWrapper}`}>
         <form className={styles.loginForm} onSubmit={handleSubmit}>
-          {/* Success Message */}
-          {successMessage && (
-            <div className={styles.successMessage}>{successMessage}</div>
-          )}
-
           {/* General Error Message */}
           {error && <div className={styles.errorMessage}>{error}</div>}
 

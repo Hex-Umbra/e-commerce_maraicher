@@ -238,36 +238,63 @@
   }
 }
 
-// Tablet Responsive Styles
+ // Tablet Responsive Styles
 @include tablet {
   .navbarContainer {
-    padding: 0 1.5rem;
+    width: 95%;
+    padding: 0 0.5rem;
+    gap: 0.4rem;
   }
 
   .navLinks {
-    gap: 1rem;
+    gap: 0.4rem;
+    justify-content: center;
+    align-items: center;
 
     .navLink {
-      font-size: 0.95rem;
-      padding: 0.7rem 1.1rem;
+      font-size: 0.8rem;
+      padding: 0.35rem 0.6rem;
 
       &:hover {
-        transform: scale(1.06);
-        background-color: rgba(0, 0, 0, 0.1);
+        transform: scale(1.03);
+        background-color: rgba(0, 0, 0, 0.08);
       }
 
       &.active {
         color: $accent !important;
         background-color: rgba(0, 0, 0, 0.08) !important;
-        transform: scale(1.05) !important;
+        transform: scale(1.03) !important;
         font-weight: 600 !important;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
       }
     }
   }
 
+  .authLink,
+  .signupLink {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.6rem;
+  }
+
+  .logoutButton {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .userInfo {
+    gap: 0.4rem;
+  }
+
+  .userName {
+    display: none;
+  }
+
+  .profileIcon {
+    font-size: 1.1rem;
+  }
+
   .logo {
-    font-size: 1.4rem;
+    font-size: 0.95rem;
   }
 }
 
