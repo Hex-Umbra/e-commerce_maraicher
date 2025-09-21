@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { BsCart3 } from "react-icons/bs";
 import { getCategoryBadgeClass } from "../../utils/defaults";
 import styles from "./ProducerShowcase.module.scss";
 
@@ -67,7 +68,7 @@ const ProducerShowcase = ({ producer, onViewAllHref = "/produits" }) => {
                       €{/* price per unit could be added later */}
                     </span>
                     <button className={styles.cartBtn} title="Ajouter au panier">
-                      🛒
+                      <BsCart3 />
                     </button>
                   </div>
                 </div>
