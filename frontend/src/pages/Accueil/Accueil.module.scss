@@ -24,6 +24,10 @@
 .heroInner {
   padding: 3rem 1.5rem;
   text-align: center;
+
+  @include mobile {
+    padding: 2rem 1rem;
+  }
 }
 
 .headline {
@@ -31,6 +35,10 @@
   font-size: 2rem;
   line-height: 1.2;
   color: $black;
+
+  @include mobile {
+    font-size: 1.5rem;
+  }
 }
 
 .subtitle {
@@ -39,6 +47,11 @@
   color: $black;
   opacity: 0.9;
   font-size: 1rem;
+
+  @include mobile {
+    font-size: 0.9rem;
+    max-width: 100%;
+  }
 }
 
 .cta {
@@ -46,6 +59,11 @@
   text-decoration: none;
   display: inline-block;
   padding: 0.75rem 1.25rem;
+
+  @include mobile {
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+  }
 }
 
 /* Producers section */
