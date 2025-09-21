@@ -89,6 +89,15 @@ const Navbar = () => {
                 <span className={styles.userName}>{user?.name}</span>
                 <div className={styles.profileIcon}>👤</div>
               </div>
+              <Link
+                to={ROUTES.cart}
+                className={styles.cartButton}
+                aria-label="Voir le panier"
+                onClick={closeMenu}
+                title="Panier"
+              >
+                🛒
+              </Link>
               <button 
                 className={styles.logoutButton}
                 onClick={handleLogout}

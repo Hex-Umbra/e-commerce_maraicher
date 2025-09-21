@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./Produits.module.scss";
 import accueilStyles from "../Accueil/Accueil.module.scss";
 import cardStyles from "../../components/ProducerShowcase/ProducerShowcase.module.scss";
 import { BsCart3, BsFilter } from "react-icons/bs";
-import { productAPI } from "../../services/api";
+import { productAPI, cartAPI } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
+import { ROUTES } from "../../utils/routes";
 import { transformProductData, getCategoryBadgeClass, getCategoryBadge } from "../../utils/defaults";
 
 const Produits = () => {
@@ -17,6 +19,9 @@ const Produits = () => {
   const [showAllProducers, setShowAllProducers] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
+  const { isAuthenticated, showNotification } = useAuth();
 
   // Fetch all products from backend
   useEffect(() => {
@@ -99,11 +104,22 @@ const Produits = () => {
     });
   };
 
-  const handleAddToCart = (product, event) => {
+  const handleAddToCart = async (product, event) => {
     event.preventDefault();
     event.stopPropagation();
-    // Hook into cart context here if available
-    console.log("Ajout au panier:", product.name);
+
+    if (!isAuthenticated) {
+      showNotification("Veuillez vous connecter pour ajouter des produits au panier.", "warning");
+      navigate(ROUTES.login);
+      return;
+    }
+
+    try {
+      const data = await cartAPI.addToCart(product.id, 1);
+      showNotification(data?.message || "Produit ajouté au panier", "success");
+    } catch (err) {
+      showNotification(err.message || "Erreur lors de l'ajout au panier", "error");
+    }
   };
 
   const formatPrice = (price) => {
@@ -377,7 +393,8 @@ const Produits = () => {
                         className={cardStyles.cartBtn}
                         onClick={(e) => handleAddToCart(product, e)}
                         aria-label={`Ajouter ${product.name} au panier`}
-                        title="Ajouter au panier"
+                        title={Number(product.quantity || 0) <= 0 ? "Rupture de stock" : "Ajouter au panier"}
+                        disabled={Number(product.quantity || 0) <= 0}
                       >
                         <BsCart3 aria-hidden="true" />
                       </button>
