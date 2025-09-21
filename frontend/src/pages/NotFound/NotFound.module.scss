@@ -1,0 +1,45 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
+.notFound {
+  padding: 2rem 0 3rem;
+  min-height: calc(100vh - $header-h);
+}
+
+.center {
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 0.75rem;
+  font-size: 2rem;
+  line-height: 1.2;
+  color: $black;
+}
+
+.subtitle {
+  margin: 0 auto 1.25rem;
+  max-width: 820px;
+  color: $black;
+  opacity: 0.9;
+  font-size: 1rem;
+}
+
+.links {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.linkBtn {
+  @include button-primary;
+  text-decoration: none;
+  padding: 0.6rem 1rem;
+}
+
+.linkBtnSecondary {
+  @include button-secondary;
+  text-decoration: none;
+  padding: 0.6rem 1rem;
+}

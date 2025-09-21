@@ -94,4 +94,26 @@ export const productAPI = {
   },
 };
 
+// Comments API functions
+export const commentsAPI = {
+  // Get comments for a producer
+  getCommentsByProducer: async (producteurId) => {
+    try {
+      const response = await apiClient.get(`/comments/producteur/${producteurId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la récupération des commentaires");
+    }
+  },
+  // Get average rating for a producer
+  getAverageRatingByProducer: async (producteurId) => {
+    try {
+      const response = await apiClient.get(`/comments/producteur/${producteurId}/average-rating`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la récupération de la note moyenne");
+    }
+  },
+};
+
 export default apiClient;

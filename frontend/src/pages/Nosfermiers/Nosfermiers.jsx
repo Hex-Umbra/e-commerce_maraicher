@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./Nosfermiers.module.scss";
 import accueilStyles from "../Accueil/Accueil.module.scss";
 import { producerAPI } from "../../services/api";
@@ -9,6 +9,8 @@ const Nosfermiers = () => {
   const [producers, setProducers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducers();
@@ -102,9 +104,11 @@ const Nosfermiers = () => {
                   role="gridcell"
                   tabIndex="0"
                   aria-labelledby={`producer-name-${p.id}`}
+                  onClick={() => navigate(`/fermier/${p.id}`)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
+                      navigate(`/fermier/${p.id}`);
                     }
                   }}
                 >
