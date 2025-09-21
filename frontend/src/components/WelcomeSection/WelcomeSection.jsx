@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./WelcomeSection.module.scss";
 
 const WelcomeSection = () => {
   const { signUp, loading, error, clearError } = useAuth();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -104,6 +106,10 @@ const WelcomeSection = () => {
           password: "",
           confirmPassword: "",
         });
+        // Navigate to homepage after 2 seconds
+        setTimeout(() => {
+          navigate("/accueil");
+        }, 2000);
       }
     } catch (err) {
       console.error("Signup error:", err);

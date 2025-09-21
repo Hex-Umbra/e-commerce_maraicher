@@ -7,6 +7,16 @@
   @include flex-center;
   box-shadow: $shadow;
   position: relative;
+  flex-direction: column;
+}
+
+.notificationContainer {
+  position: fixed;
+  top: $header-h;
+  right: 1rem;
+  z-index: $z-fixed + 5;
+  margin-top: 0.5rem;
+  pointer-events: auto;
 }
 
 .navbarContainer {
@@ -144,6 +154,12 @@
 
 // Mobile Responsive Styles
 @include mobile {
+  .notificationContainer {
+    right: 0.5rem;
+    left: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
   .navbarContainer {
     justify-content: space-between;
     padding: 0 1rem;
@@ -257,6 +273,12 @@
 
 // Small Mobile Devices
 @include small-mobile {
+  .notificationContainer {
+    right: 0.25rem;
+    left: 0.25rem;
+    margin-top: 0.25rem;
+  }
+
   .navbar {
     height: calc($header-h - 10px);
   }

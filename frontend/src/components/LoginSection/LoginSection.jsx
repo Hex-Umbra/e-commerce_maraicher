@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./LoginSection.module.scss";
 
 const LoginSection = () => {
   const { signIn, loading, error, clearError } = useAuth();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -78,6 +80,10 @@ const LoginSection = () => {
           email: "",
           password: "",
         });
+        // Navigate to homepage after 2 seconds
+        setTimeout(() => {
+          navigate("/accueil");
+        }, 2000);
       }
     } catch (err) {
       console.error("Login error:", err);
