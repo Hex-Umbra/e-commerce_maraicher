@@ -139,7 +139,16 @@ const Produits = () => {
               saison, directement des producteurs partenaires.
             </p>
 
-            <Link to="/nosfermiers" className={accueilStyles.cta}>
+            <Link
+              to="/nosfermiers"
+              className={accueilStyles.cta}
+              onKeyDown={(e) => {
+                if (e.key === " " || e.key === "Spacebar" || e.code === "Space") {
+                  e.preventDefault();
+                  e.currentTarget.click();
+                }
+              }}
+            >
               Découvrir nos fermiers !
             </Link>
 

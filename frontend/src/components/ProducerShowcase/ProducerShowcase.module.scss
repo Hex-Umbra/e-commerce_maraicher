@@ -459,4 +459,11 @@
   text-decoration: none;
   display: inline-block;
   padding: 0.6rem 1rem;
+  border: 2px solid transparent; // prevent layout shift on focus
+  outline: none;
+
+  &:focus-visible {
+    border-color: $accent;
+    box-shadow: 0 0 0 3px rgba($accent, 0.35);
+  }
 }

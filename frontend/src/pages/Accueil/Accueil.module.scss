@@ -59,6 +59,13 @@
   text-decoration: none;
   display: inline-block;
   padding: 0.75rem 1.25rem;
+  border: 2px solid transparent; // avoid layout shift when focusing
+  outline: none;
+
+  &:focus-visible {
+    border-color: $accent;
+    box-shadow: 0 0 0 3px rgba($accent, 0.35);
+  }
 
   @include mobile {
     padding: 0.6rem 1rem;

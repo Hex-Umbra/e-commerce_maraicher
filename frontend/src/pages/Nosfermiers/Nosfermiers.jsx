@@ -60,7 +60,16 @@ const Nosfermiers = () => {
               Rencontrez les producteurs passionnés derrière nos produits frais et artisanaux.
               Parcourez leurs spécialités et soutenez l&apos;agriculture locale.
             </p>
-            <Link to="/produits" className={accueilStyles.cta}>
+            <Link
+              to="/produits"
+              className={accueilStyles.cta}
+              onKeyDown={(e) => {
+                if (e.key === " " || e.key === "Spacebar" || e.code === "Space") {
+                  e.preventDefault();
+                  e.currentTarget.click();
+                }
+              }}
+            >
               Explorer les produits
             </Link>
           </div>
