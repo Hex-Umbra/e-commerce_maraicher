@@ -69,12 +69,17 @@ const ProducerShowcase = ({ producer, onViewAllHref = "/produits", onAddToCart }
         <header className={styles.header}>
           <img 
             className={styles.avatar} 
-            src={avatar} 
+            src={avatar && String(avatar).trim() !== "" ? avatar : "https://i.pravatar.cc/100?img=12"} 
             alt={`Photo de ${name}`}
             loading="lazy"
             onError={(e) => {
-              e.target.src = "https://i.pravatar.cc/100?img=12";
+              const fallback = "https://i.pravatar.cc/100?img=12";
+              if (!e.currentTarget.src.includes("i.pravatar.cc/100?img=12")) {
+                e.currentTarget.src = fallback;
+              }
             }}
+            decoding="async"
+            referrerPolicy="no-referrer"
           />
           <div className={styles.meta}>
             <div className={styles.nameRow}>
@@ -116,12 +121,17 @@ const ProducerShowcase = ({ producer, onViewAllHref = "/produits", onAddToCart }
               >
                 <div className={styles.thumbWrap}>
                   <img 
-                    src={product.image} 
+                    src={product.image && String(product.image).trim() !== "" ? product.image : "/placeholder-product.jpg"} 
                     alt={`Image de ${product.name}`}
                     loading="lazy"
                     onError={(e) => {
-                      e.target.src = "/placeholder-product.jpg";
+                      const fallback = "/placeholder-product.jpg";
+                      if (!e.currentTarget.src.endsWith(fallback)) {
+                        e.currentTarget.src = fallback;
+                      }
                     }}
+                    decoding="async"
+                    referrerPolicy="no-referrer"
                   />
                 </div>
                 <div className={styles.productBody}>

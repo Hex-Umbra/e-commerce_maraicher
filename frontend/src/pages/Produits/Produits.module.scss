@@ -1,11 +1,8 @@
 @use '../../styles/variables' as *;
 
 .produits {
-  padding: 2rem;
+  padding: 2rem 0 3rem; // match Accueil top/bottom padding to align hero gap
   min-height: calc(100vh - $header-h);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .title {
@@ -13,6 +10,110 @@
   font-weight: 700;
   color: $black;
   text-align: center;
+}
+
+/* Hero filters */
+.filtersWrap {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.filterControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: $black;
+
+  label {
+    font-weight: 600;
+  }
+}
+
+.filterSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: $radius-md;
+  border: 1px solid $border;
+  background: $white;
+  color: $black;
+  cursor: pointer;
+}
+
+/* Chip-based category filters */
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+.filterIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $black;
+  font-size: 1.5rem;
+  opacity: 0.8;
+  margin-right: 0.25rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  border-radius: $radius-md;
+  background: $accent; 
+  color: $white; /* white text */
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: transform $transition-fast, box-shadow $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    background: $accent-light
+  }
+
+  &:focus {
+    outline: 2px solid $black;
+    outline-offset: 2px;
+  }
+}
+
+.chipActive {
+  background: $accent-light;
+}
+
+.menuPanel {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.srOnly {
+  position: absolute !important;
+  width: 1px; 
+  height: 1px; 
+  padding: 0; 
+  margin: -1px; 
+  overflow: hidden; 
+  clip: rect(0, 0, 0, 0); 
+  white-space: nowrap; 
+  border: 0;
 }
 
 /* Section heading */

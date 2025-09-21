@@ -3,12 +3,15 @@ import { Link } from "react-router-dom";
 import styles from "./Produits.module.scss";
 import accueilStyles from "../Accueil/Accueil.module.scss";
 import cardStyles from "../../components/ProducerShowcase/ProducerShowcase.module.scss";
-import { BsCart3 } from "react-icons/bs";
+import { BsCart3, BsFilter } from "react-icons/bs";
 import { productAPI } from "../../services/api";
-import { transformProductData, getCategoryBadgeClass } from "../../utils/defaults";
+import { transformProductData, getCategoryBadgeClass, getCategoryBadge } from "../../utils/defaults";
 
 const Produits = () => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [showAllCats, setShowAllCats] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -22,6 +25,21 @@ const Produits = () => {
         const rawProducts = response.products || [];
         const transformed = rawProducts.map(transformProductData);
         setProducts(transformed);
+
+        // Build unique categories list from transformed products
+        const uniqueCatValues = Array.from(
+          new Set(
+            transformed
+              .map((p) => p.category)
+              .filter(Boolean)
+              .map((c) => String(c).toLowerCase())
+          )
+        );
+        const cats = uniqueCatValues.map((val) => ({
+          value: val,
+          label: getCategoryBadge(val),
+        }));
+        setCategories(cats);
       } catch (err) {
         console.error("Erreur lors de la récupération des produits:", err);
         setError(err.message || "Erreur lors du chargement des produits");
@@ -74,6 +92,14 @@ const Produits = () => {
     return String(price);
   };
 
+  // Filtered products by selected category
+  const visibleProducts =
+    selectedCategory === "all"
+      ? products
+      : products.filter(
+          (p) => String(p.category || "").toLowerCase() === selectedCategory
+        );
+
   return (
     <div className={styles.produits}>
       <div className="container">
@@ -85,9 +111,76 @@ const Produits = () => {
               Parcourez notre sélection complète de produits frais, artisanaux et de
               saison, directement des producteurs partenaires.
             </p>
+
             <Link to="/nosfermiers" className={accueilStyles.cta}>
               Découvrir nos fermiers !
             </Link>
+
+            <div className={styles.filtersWrap} aria-label="Filtres de catégorie">
+              <div className={styles.chipRow} role="listbox" aria-label="Catégories">
+                <span className={styles.filterIcon} aria-hidden="true">
+                  <BsFilter />
+                </span>
+                <button
+                  type="button"
+                  className={`${styles.chip} ${selectedCategory === "all" ? styles.chipActive : ""}`}
+                  aria-pressed={selectedCategory === "all"}
+                  onClick={() => setSelectedCategory("all")}
+                >
+                  Tous
+                </button>
+                {categories.slice(0, 5).map((c) => (
+                  <button
+                    type="button"
+                    key={c.value}
+                    className={`${styles.chip} ${selectedCategory === c.value ? styles.chipActive : ""}`}
+                    aria-pressed={selectedCategory === c.value}
+                    onClick={() => setSelectedCategory(c.value)}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+                {categories.length > 5 && (
+                  <button
+                    type="button"
+                    className={styles.chip}
+                    aria-haspopup="menu"
+                    aria-expanded={showAllCats}
+                    aria-controls="all-categories-menu"
+                    onClick={() => setShowAllCats((v) => !v)}
+                    title="Voir toutes les catégories"
+                  >
+                    ...
+                    <span className={styles.srOnly}>Voir toutes les catégories</span>
+                  </button>
+                )}
+              </div>
+
+              {showAllCats && categories.length > 5 && (
+                <div
+                  id="all-categories-menu"
+                  className={styles.menuPanel}
+                  role="menu"
+                  aria-label="Autres catégories"
+                >
+                  {categories.slice(5).map((c) => (
+                    <button
+                      type="button"
+                      key={c.value}
+                      role="menuitem"
+                      className={`${styles.chip} ${selectedCategory === c.value ? styles.chipActive : ""}`}
+                      aria-pressed={selectedCategory === c.value}
+                      onClick={() => {
+                        setSelectedCategory(c.value);
+                        setShowAllCats(false);
+                      }}
+                    >
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </section>
 
@@ -108,8 +201,14 @@ const Produits = () => {
         ) : (
           <>
             <h3 className={styles.sectionHeading}>Tous les produits</h3>
-            <div className={styles.grid} role="grid" aria-label="Grille des produits">
-              {products.map((product) => (
+
+            {visibleProducts.length === 0 ? (
+              <div className={styles.noProducts}>
+                <p>Aucun produit pour cette catégorie.</p>
+              </div>
+            ) : (
+              <div className={styles.grid} role="grid" aria-label="Grille des produits">
+              {visibleProducts.map((product) => (
                 <article
                   key={product.id}
                   className={cardStyles.productCard}
@@ -125,12 +224,16 @@ const Produits = () => {
                 >
                   <div className={cardStyles.thumbWrap}>
                     <img
-                      src={product.image}
+                      src={product.image && product.image.trim() !== "" ? product.image : "/placeholder-product.jpg"}
                       alt={`Image de ${product.name}`}
                       loading="lazy"
                       onError={(e) => {
-                        e.target.src = "/placeholder-product.jpg";
+                        if (!e.currentTarget.src.endsWith("/placeholder-product.jpg")) {
+                          e.currentTarget.src = "/placeholder-product.jpg";
+                        }
                       }}
+                      decoding="async"
+                      referrerPolicy="no-referrer"
                     />
                   </div>
                   <div className={cardStyles.productBody}>
@@ -178,6 +281,7 @@ const Produits = () => {
                 </article>
               ))}
             </div>
+            )}
           </>
         )}
       </div>
