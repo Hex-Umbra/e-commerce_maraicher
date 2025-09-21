@@ -104,7 +104,16 @@ const Accueil = () => {
               fruits de saison directement de notre réseau de confiance de
               fermiers familiaux.
             </p>
-            <Link to="/nosfermiers" className={styles.cta}>
+            <Link
+              to="/nosfermiers"
+              className={styles.cta}
+              onKeyDown={(e) => {
+                if (e.key === " " || e.key === "Spacebar" || e.code === "Space") {
+                  e.preventDefault();
+                  e.currentTarget.click();
+                }
+              }}
+            >
               Découvrir nos fermiers !
             </Link>
           </div>

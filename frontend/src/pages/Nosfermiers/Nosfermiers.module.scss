@@ -1,16 +1,176 @@
+@use "sass:color";
 @use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
 
 .nosfermiers {
-  padding: 2rem;
+  padding: 2rem 0 3rem;
   min-height: calc(100vh - $header-h);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: $black;
+/* Section heading */
+.sectionHeading {
+  margin: 1.5rem 0;
   text-align: center;
+  font-size: 1.5rem;
+  color: $black;
+}
+
+/* 3-column grid for producer cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Producer card styling (inspired by product card) */
+.producerCard {
+  background: color.adjust($primary, $lightness: 30%);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: $radius-lg;
+  padding: 1.25rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+
+  &:focus {
+    outline: 2px solid $secondary;
+    outline-offset: 2px;
+  }
+}
+
+/* Header layout: avatar + meta */
+.header {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 1rem;
+  align-items: center;
+
+  @include small-mobile {
+    grid-template-columns: 72px 1fr;
+    gap: 0.75rem;
+  }
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(0,0,0,0.2);
+  background: #ddd;
+
+  @include small-mobile {
+    width: 72px;
+    height: 72px;
+  }
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.name {
+  margin: 0;
+  font-size: 1.35rem;
+  color: $black;
+  font-weight: 700;
+
+  @include mobile {
+    font-size: 1.2rem;
+  }
+}
+
+.specialty {
+  margin: 0;
+  font-size: 1rem;
+  color: $gray-dark;
+  opacity: 0.9;
+
+  @include mobile {
+    font-size: 0.95rem;
+  }
+}
+
+.productCount {
+  margin: 0.1rem 0 0;
+  font-size: 0.95rem;
+  color: $black;
+  font-weight: 600;
+}
+
+/* Description below header */
+.description {
+  margin: 1rem 0 0;
+  font-size: 0.95rem;
+  color: $black;
+  font-weight: 600;
+
+  @include mobile {
+    font-size: 0.9rem;
+  }
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  padding: 3rem 0;
+  
+  p {
+    font-size: 1.1rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
+
+/* Error state */
+.error {
+  text-align: center;
+  padding: 3rem 0;
+  
+  p {
+    font-size: 1.1rem;
+    color: #dc3545;
+    margin-bottom: 1rem;
+  }
+}
+
+.retryBtn {
+  @include button-primary;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: $radius-md;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Empty state */
+.noProducers {
+  text-align: center;
+  padding: 3rem 0;
+  
+  p {
+    font-size: 1.1rem;
+    color: $text-secondary;
+    margin: 0;
+  }
 }

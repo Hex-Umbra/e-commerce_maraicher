@@ -22,6 +22,17 @@
   flex-wrap: wrap;
 }
 
+.filterRow {
+  margin-top: 0.5rem;
+}
+
+.filterLabel {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: $black;
+  margin-right: 0.25rem;
+}
+
 .filterControl {
   display: flex;
   align-items: center;
