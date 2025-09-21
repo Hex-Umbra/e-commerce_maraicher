@@ -10,10 +10,7 @@ const Cart = () => {
   const [quantities, setQuantities] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to={ROUTES.login} replace />;
-  }
+  // Authentication redirect handled in render to avoid conditional hooks
 
   const fetchCart = async () => {
     try {
@@ -99,84 +96,88 @@ const Cart = () => {
   };
 
   return (
-    <section className="container" style={{ padding: '1.5rem 0' }}>
-      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-        <h2>Votre panier</h2>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Link to={ROUTES.produits} className="btn btn-secondary">Continuer vos achats</Link>
-          {items.length > 0 && (
-            <button onClick={handleClear} className="btn btn-danger">Vider le panier</button>
-          )}
-        </div>
-      </header>
+    !isAuthenticated ? (
+      <Navigate to={ROUTES.login} replace />
+    ) : (
+      <section className="container" style={{ padding: '1.5rem 0' }}>
+        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <h2>Votre panier</h2>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <Link to={ROUTES.produits} className="btn btn-secondary">Continuer vos achats</Link>
+            {items.length > 0 && (
+              <button onClick={handleClear} className="btn btn-danger">Vider le panier</button>
+            )}
+          </div>
+        </header>
 
-      {loading ? (
-        <p>Chargement du panier...</p>
-      ) : items.length === 0 ? (
-        <div>
-          <p>Votre panier est vide.</p>
-          <Link to={ROUTES.produits} className="btn btn-primary">Voir les produits</Link>
-        </div>
-      ) : (
-        <div>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {items.map((item) => {
-              const product = item.product || {};
-              const name = product.name || 'Produit';
-              const unitPrice = Number(item.price || 0);
-              const lineTotal = unitPrice * Number(item.quantity || 0);
+        {loading ? (
+          <p>Chargement du panier...</p>
+        ) : items.length === 0 ? (
+          <div>
+            <p>Votre panier est vide.</p>
+            <Link to={ROUTES.produits} className="btn btn-primary">Voir les produits</Link>
+          </div>
+        ) : (
+          <div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {items.map((item) => {
+                const product = item.product || {};
+                const name = product.name || 'Produit';
+                const unitPrice = Number(item.price || 0);
+                const lineTotal = unitPrice * Number(item.quantity || 0);
 
-              return (
-                <li
-                  key={item._id}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '2fr 1fr 1fr 1fr auto',
-                    alignItems: 'center',
-                    gap: '0.75rem',
-                    padding: '0.75rem 0',
-                    borderBottom: '1px solid rgba(0,0,0,0.1)',
-                  }}
-                >
-                  <div style={{ fontWeight: 500 }}>
-                    {name}
-                  </div>
-                  <div>
-                    Prix: {unitPrice.toFixed(2)} €
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <input
-                      type="number"
-                      min={1}
-                      value={quantities[item._id] ?? item.quantity ?? 1}
-                      onChange={(e) =>
-                        setQuantities((prev) => ({ ...prev, [item._id]: e.target.value }))
-                      }
-                      style={{ width: '70px' }}
-                    />
-                    <button className="btn btn-secondary" onClick={() => handleUpdateQuantity(item._id)}>
-                      Mettre à jour
-                    </button>
-                  </div>
-                  <div>
-                    Total: {lineTotal.toFixed(2)} €
-                  </div>
-                  <div>
-                    <button className="btn btn-danger" onClick={() => handleRemove(item._id)}>
-                      Retirer
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+                return (
+                  <li
+                    key={item._id}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '2fr 1fr 1fr 1fr auto',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      padding: '0.75rem 0',
+                      borderBottom: '1px solid rgba(0,0,0,0.1)',
+                    }}
+                  >
+                    <div style={{ fontWeight: 500 }}>
+                      {name}
+                    </div>
+                    <div>
+                      Prix: {unitPrice.toFixed(2)} €
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <input
+                        type="number"
+                        min={1}
+                        value={quantities[item._id] ?? item.quantity ?? 1}
+                        onChange={(e) =>
+                          setQuantities((prev) => ({ ...prev, [item._id]: e.target.value }))
+                        }
+                        style={{ width: '70px' }}
+                      />
+                      <button className="btn btn-secondary" onClick={() => handleUpdateQuantity(item._id)}>
+                        Mettre à jour
+                      </button>
+                    </div>
+                    <div>
+                      Total: {lineTotal.toFixed(2)} €
+                    </div>
+                    <div>
+                      <button className="btn btn-danger" onClick={() => handleRemove(item._id)}>
+                        Retirer
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
 
-          <footer style={{ marginTop: '1rem', textAlign: 'right', fontWeight: 700 }}>
-            Total Panier: {total.toFixed(2)} €
-          </footer>
-        </div>
-      )}
-    </section>
+            <footer style={{ marginTop: '1rem', textAlign: 'right', fontWeight: 700 }}>
+              Total Panier: {total.toFixed(2)} €
+            </footer>
+          </div>
+        )}
+      </section>
+    )
   );
 };
 
