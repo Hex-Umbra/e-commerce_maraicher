@@ -47,35 +47,35 @@ ecommerce-maraicher/
 ## 🗄️ Architecture de la base de données (MongoDB)
 
 ### 📦 User
-| Champ      | Type   | Description                  |
-|------------|--------|------------------------------|
-| _id        | ObjectId | Identifiant unique MongoDB   |
-| name       | String | Nom de l'utilisateur          |
-| email      | String | Email                         |
-| password   | String | Mot de passe hashé            |
-| role       | String | `client` ou `maraicher`       |
+| Champ    | Type     | Description                |
+| -------- | -------- | -------------------------- |
+| _id      | ObjectId | Identifiant unique MongoDB |
+| name     | String   | Nom de l'utilisateur       |
+| email    | String   | Email                      |
+| password | String   | Mot de passe hashé         |
+| role     | String   | `client` ou `maraicher`    |
 
 ### 📦 Product
-| Champ      | Type   | Description                  |
-|------------|--------|------------------------------|
-| _id        | ObjectId | Identifiant unique MongoDB   |
-| name       | String | Nom du produit                |
-| description| String | Description                   |
-| price      | Number | Prix                          |
-| quantity   | Number | Quantité disponible           |
-| image      | String | URL image produit             |
-| createdBy  | ObjectId | Référence au maraîcher       |
+| Champ       | Type     | Description                |
+| ----------- | -------- | -------------------------- |
+| _id         | ObjectId | Identifiant unique MongoDB |
+| name        | String   | Nom du produit             |
+| description | String   | Description                |
+| price       | Number   | Prix                       |
+| quantity    | Number   | Quantité disponible        |
+| image       | String   | URL image produit          |
+| createdBy   | ObjectId | Référence au maraîcher     |
 
 ### 📦 Order
-| Champ        | Type       | Description                |
-|--------------|------------|----------------------------|
-| _id          | ObjectId   | Identifiant unique MongoDB |
-| clientName   | String     | Nom du client              |
-| address      | String     | Adresse de livraison       |
-| phone        | String     | Numéro de téléphone        |
-| status       | String     | `En attente`, `Livrée`…    |
-| createdAt    | Date       | Date de commande           |
-| products     | Array      | Produits commandés (productId + quantity) |
+| Champ      | Type     | Description                               |
+| ---------- | -------- | ----------------------------------------- |
+| _id        | ObjectId | Identifiant unique MongoDB                |
+| clientName | String   | Nom du client                             |
+| address    | String   | Adresse de livraison                      |
+| phone      | String   | Numéro de téléphone                       |
+| status     | String   | `En attente`, `Livrée`…                   |
+| createdAt  | Date     | Date de commande                          |
+| products   | Array    | Produits commandés (productId + quantity) |
 
 ---
 
@@ -118,33 +118,11 @@ ecommerce-maraicher/
 5. Environment Variables:
    - `VITE_API_URL=https://your-backend.onrender.com/api`
 
-### Environment Variables
-
 #### Backend (Render)
-- **Required**:
-  - `MONGO_URI`: MongoDB connection string (e.g., `mongodb+srv://user:pass@cluster/dbname?retryWrites=true&w=majority`)
-  - `JWT_SECRET`: Strong secret for JWT signing (32+ chars, generate with `openssl rand -base64 32`)
-  - `NODE_ENV`: `production`
-- **Recommended**:
-  - `JWT_EXPIRATION`: `7d`
-  - `JWT_ISSUER`: `yourapp`
-  - `JWT_AUDIENCE`: `yourapp-users`
-  - `JWT_ALGORITHM`: `HS256`
-  - `JWT_COOKIE_EXPIRES_IN`: `604800000` (7 days in ms)
-  - `CORS_ORIGINS`: Comma-separated allowed origins (exact Vercel domain(s))
-  - `COOKIE_SAMESITE`: `None`
-  - `COOKIE_SECURE`: `true`
 
 #### Frontend (Vercel)
-- **Required**:
-  - `VITE_API_URL`: Base API URL with `/api` suffix from Render
-- **Optional**:
-  - `VITE_NODE_ENV`: `production`
 
-### Post-Deploy Verification
-- [ ] GET `https://your-backend.onrender.com/api/products` works
-- [ ] Login works from Vercel domain; browser shows "jwt" cookie
-- [ ] Authenticated endpoints succeed
-- [ ] No CORS errors in console
+### Site
+https://mff-7862otg0t-gabriels-projects-7c7a227b.vercel.app/accueil
 
 ---
