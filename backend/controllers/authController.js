@@ -41,8 +41,8 @@ const createSendToken = (user, statusCode, res, message) => {
 
   const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
+    secure: process.env.COOKIE_SECURE === "true" || process.env.NODE_ENV === "production",
+    sameSite: process.env.COOKIE_SAMESITE || "None",
     maxAge:
       parseInt(process.env.JWT_COOKIE_EXPIRES_IN) || 7 * 24 * 60 * 60 * 1000, // 7 days
   };
@@ -216,8 +216,8 @@ export const logout = (req, res) => {
     .cookie("jwt", "", {
       httpOnly: true,
       expires: new Date(0),
-      sameSite: "Strict",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.COOKIE_SAMESITE || "None",
+      secure: process.env.COOKIE_SECURE === "true" || process.env.NODE_ENV === "production",
     })
     .status(200)
     .json({
