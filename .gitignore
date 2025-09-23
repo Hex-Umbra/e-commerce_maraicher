@@ -3,3 +3,5 @@
 .DS_Store
 dist/
 TODO.md
+TODO-NodeMailer-Implementation.md
+DEPLOYMENT-TODO.md
