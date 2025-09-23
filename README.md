@@ -91,5 +91,60 @@ ecommerce-maraicher/
 - Architecture scalable et maintenable
 
 - Base MongoDB locale ou MongoDB Atlas
-  
+
+---
+
+## 🚀 Deployment
+
+### Backend on Render
+
+1. Create a new Web Service on Render, root directory: `backend`
+2. Runtime: Node
+   - Build Command: `npm install` (default)
+   - Start Command: `node server.js`
+3. Set Environment Variables:
+   - Required: `MONGO_URI`, `JWT_SECRET`, `NODE_ENV=production`
+   - Recommended: `JWT_EXPIRATION`, `JWT_ISSUER`, `JWT_AUDIENCE`, `JWT_ALGORITHM`, `JWT_COOKIE_EXPIRES_IN`
+   - CORS_ORIGINS: Vercel domain(s), comma-separated (e.g., `https://yourapp.vercel.app,https://yourapp-git-main-username.vercel.app`)
+   - `COOKIE_SAMESITE=None`, `COOKIE_SECURE=true`
+4. Deploy and note the service URL, e.g., `https://your-backend.onrender.com`
+
+### Frontend on Vercel
+
+1. Create Vercel Project from the repo with root path: `frontend`
+2. Framework Preset: Vite
+3. Build Command: `npm run build`
+4. Output Directory: `dist`
+5. Environment Variables:
+   - `VITE_API_URL=https://your-backend.onrender.com/api`
+
+### Environment Variables
+
+#### Backend (Render)
+- **Required**:
+  - `MONGO_URI`: MongoDB connection string (e.g., `mongodb+srv://user:pass@cluster/dbname?retryWrites=true&w=majority`)
+  - `JWT_SECRET`: Strong secret for JWT signing (32+ chars, generate with `openssl rand -base64 32`)
+  - `NODE_ENV`: `production`
+- **Recommended**:
+  - `JWT_EXPIRATION`: `7d`
+  - `JWT_ISSUER`: `yourapp`
+  - `JWT_AUDIENCE`: `yourapp-users`
+  - `JWT_ALGORITHM`: `HS256`
+  - `JWT_COOKIE_EXPIRES_IN`: `604800000` (7 days in ms)
+  - `CORS_ORIGINS`: Comma-separated allowed origins (exact Vercel domain(s))
+  - `COOKIE_SAMESITE`: `None`
+  - `COOKIE_SECURE`: `true`
+
+#### Frontend (Vercel)
+- **Required**:
+  - `VITE_API_URL`: Base API URL with `/api` suffix from Render
+- **Optional**:
+  - `VITE_NODE_ENV`: `production`
+
+### Post-Deploy Verification
+- [ ] GET `https://your-backend.onrender.com/api/products` works
+- [ ] Login works from Vercel domain; browser shows "jwt" cookie
+- [ ] Authenticated endpoints succeed
+- [ ] No CORS errors in console
+
 ---
