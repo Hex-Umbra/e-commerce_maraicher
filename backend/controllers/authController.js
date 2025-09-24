@@ -230,20 +230,44 @@ export const verifyEmail = catchAsync(async (req, res, next) => {
 
 // Resend email verification
 export const resendEmailVerification = catchAsync(async (req, res, next) => {
+  // Debug logging
+  logger.info(`Resend verification request received`);
+  logger.info(`Request body:`, req.body);
+  
+  // Check if req.body exists
+  if (!req.body || Object.keys(req.body).length === 0) {
+    logger.error("Request body is empty or undefined");
+    return res.status(400).json({
+      success: false,
+      message: "Corps de la requête manquant. Veuillez fournir un email.",
+    });
+  }
+
   const { email } = req.body;
 
   if (!email) {
-    return next(new AppError("Email est requis", 400));
+    logger.error("Email field is missing from request body");
+    return res.status(400).json({
+      success: false,
+      message: "Email est requis",
+    });
   }
+
+  logger.info(`Looking for user with email: ${email}`);
 
   // Find user by email
   const user = await User.findOne({ email: email.toLowerCase() });
   if (!user) {
-    return next(new AppError("Utilisateur non trouvé", 404));
+    logger.error(`User not found with email: ${email}`);
+    return res.status(404).json({
+      success: false,
+      message: "Utilisateur non trouvé",
+    });
   }
 
   // Check if email is already verified
   if (user.isEmailVerified) {
+    logger.info(`Email already verified for user: ${user.email}`);
     return res.status(400).json({
       success: false,
       message: "Email déjà vérifié",
@@ -252,9 +276,10 @@ export const resendEmailVerification = catchAsync(async (req, res, next) => {
 
   // Resend verification email
   try {
+    logger.info(`Attempting to resend verification email to: ${user.email}`);
     await emailService.resendEmailVerification(user);
     
-    logger.info(`Verification email resent to ${user.email}`);
+    logger.info(`Verification email resent successfully to ${user.email}`);
     
     res.status(200).json({
       success: true,
@@ -262,7 +287,12 @@ export const resendEmailVerification = catchAsync(async (req, res, next) => {
     });
   } catch (error) {
     logger.error(`Failed to resend verification email: ${error.message}`);
-    return next(new AppError("Erreur lors de l'envoi de l'email", 500));
+    logger.error(`Error stack: ${error.stack}`);
+    return res.status(500).json({
+      success: false,
+      message: "Erreur lors de l'envoi de l'email",
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
