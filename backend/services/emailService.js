@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 
 class EmailService {
   constructor() {
-    this.fromEmail = process.env.FROM_EMAIL || 'noreply@ecommerce-maraicher.com';
+    this.fromEmail = process.env.FROM_EMAIL || 'g.p.dacosta@hotmail.com';
     this.frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     this.isInitialized = false;
   }
