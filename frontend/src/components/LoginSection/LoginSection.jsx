@@ -1,18 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./LoginSection.module.scss";
 
 const LoginSection = () => {
-  const { signIn, loading, error, clearError } = useAuth();
+  const { signIn, loading, error, clearError, showNotification } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [formErrors, setFormErrors] = useState({});
+
+  // Handle email verification redirect messages
+  useEffect(() => {
+    const verified = searchParams.get('verified');
+    const message = searchParams.get('message');
+
+    if (verified && message) {
+      const decodedMessage = decodeURIComponent(message);
+      
+      if (verified === 'success') {
+        showNotification(decodedMessage, 'success');
+      } else if (verified === 'error') {
+        showNotification(decodedMessage, 'error');
+      } else if (verified === 'already') {
+        showNotification(decodedMessage, 'info');
+      }
+
+      // Clean up URL parameters after showing notification
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [searchParams, showNotification]);
 
   // Handle input changes
   const handleInputChange = (e) => {

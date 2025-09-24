@@ -196,20 +196,19 @@ export const verifyEmail = catchAsync(async (req, res, next) => {
     return next(new AppError("Utilisateur non trouvé", 404));
   }
 
+  // Get frontend URL for redirect
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
   // Check if email is already verified
   if (user.isEmailVerified) {
-    return res.status(200).json({
-      success: true,
-      message: "Email déjà vérifié",
-    });
+    logger.info(`Email already verified for user: ${user.name} (${user.email})`);
+    return res.redirect(`${frontendUrl}/login?verified=already&message=Email déjà vérifié`);
   }
 
   // Validate token using the method from User model (line 78-84 in userModel.js)
   if (!user.isEmailVerificationTokenValid(token)) {
-    return res.status(400).json({
-      success: false,
-      message: "Token de vérification invalide ou expiré",
-    });
+    logger.error(`Invalid verification token for user: ${user.email}`);
+    return res.redirect(`${frontendUrl}/login?verified=error&message=Token de vérification invalide ou expiré`);
   }
 
   // Mark email as verified and clear token
@@ -220,10 +219,8 @@ export const verifyEmail = catchAsync(async (req, res, next) => {
 
   logger.info(`Email verified successfully for user: ${user.name} (${user.email})`);
 
-  res.status(200).json({
-    success: true,
-    message: "Email vérifié avec succès ! Vous pouvez maintenant vous connecter.",
-  });
+  // Redirect to login page with success message
+  res.redirect(`${frontendUrl}/login?verified=success&message=Email vérifié avec succès ! Vous pouvez maintenant vous connecter.`);
 });
 
 // ----------------------------------------------------------------------------------------------------- //
