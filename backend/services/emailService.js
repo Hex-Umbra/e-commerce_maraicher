@@ -8,13 +8,27 @@ import { logger } from './logger.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Initialize SendGrid
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
 class EmailService {
   constructor() {
     this.fromEmail = process.env.FROM_EMAIL || 'noreply@ecommerce-maraicher.com';
     this.frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    this.isInitialized = false;
+  }
+
+  // Lazy initialization of SendGrid
+  initializeSendGrid() {
+    if (!this.isInitialized) {
+      const apiKey = process.env.SENDGRID_API_KEY;
+      if (!apiKey) {
+        throw new Error('SENDGRID_API_KEY environment variable is not set');
+      }
+      if (!apiKey.startsWith('SG.')) {
+        throw new Error('SENDGRID_API_KEY must start with "SG."');
+      }
+      sgMail.setApiKey(apiKey);
+      this.isInitialized = true;
+      logger.info('SendGrid initialized successfully');
+    }
   }
 
   // Load and compile email template
@@ -33,6 +47,9 @@ class EmailService {
   // Send email using SendGrid
   async sendEmail(to, subject, htmlContent, textContent = null) {
     try {
+      // Ensure SendGrid is initialized
+      this.initializeSendGrid();
+
       const msg = {
         to,
         from: {
@@ -57,7 +74,7 @@ class EmailService {
   async sendEmailVerification(user, token) {
     try {
       const verificationUrl = `${this.frontendUrl}/verify-email?token=${token}&email=${encodeURIComponent(user.email)}`;
-      
+
       const templateData = {
         userName: user.name,
         verificationUrl,
@@ -65,7 +82,7 @@ class EmailService {
       };
 
       const htmlContent = await this.loadTemplate('emailVerification', templateData);
-      
+
       await this.sendEmail(
         user.email,
         'Vérifiez votre adresse email - Marché Frais Fermier',
@@ -88,7 +105,7 @@ class EmailService {
 
       // Send verification email
       await this.sendEmailVerification(user, token);
-      
+
       logger.info(`Email verification resent to ${user.email}`);
     } catch (error) {
       logger.error(`Failed to resend verification email to ${user.email}: ${error.message}`);
