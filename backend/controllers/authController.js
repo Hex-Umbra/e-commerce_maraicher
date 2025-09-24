@@ -330,11 +330,21 @@ export const login = catchAsync(async (req, res, next) => {
       .json({ success: false, message: " Utilisateur non trouvé" });
   }
 
-  const isMatch = await user.comparePassword(password);
+const isMatch = await user.comparePassword(password);
   if (!isMatch) {
     return res
       .status(401)
       .json({ success: false, message: "Invalid credentials" });
+  }
+
+  // Check if email is verified
+  if (!user.isEmailVerified) {
+    return res.status(403).json({
+      success: false,
+      message: "Veuillez vérifier votre email avant de vous connecter. Vérifiez votre boîte de réception.",
+      requiresVerification: true,
+      email: user.email
+    });
   }
 
   // Send token and response
