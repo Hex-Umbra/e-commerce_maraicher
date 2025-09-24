@@ -73,7 +73,9 @@ class EmailService {
   // Send email verification email
   async sendEmailVerification(user, token) {
     try {
-      const verificationUrl = `${this.frontendUrl}/verify-email?token=${token}&email=${encodeURIComponent(user.email)}`;
+      // Point directly to backend API endpoint for verification
+      const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000';
+      const verificationUrl = `${backendUrl}/api/auth/verify-email?token=${token}&email=${encodeURIComponent(user.email)}`;
 
       const templateData = {
         userName: user.name,

@@ -66,20 +66,27 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 
 // Generate email verification token
 userSchema.methods.generateEmailVerificationToken = function () {
-  // Generate random token
-  const token = crypto.randomBytes(32).toString('hex');
+  // Generate random token (this will be sent in email)
+  const rawToken = crypto.randomBytes(32).toString('hex');
   
-  // Set token and expiration (24 hours from now)
-  this.emailVerificationToken = token;
+  // Hash the token before storing in database
+  const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+  
+  // Store hashed token and expiration (24 hours from now)
+  this.emailVerificationToken = hashedToken;
   this.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
   
-  return token;
+  // Return the raw token (to be sent in email)
+  return rawToken;
 };
 
 // Check if email verification token is valid
-userSchema.methods.isEmailVerificationTokenValid = function (token) {
+userSchema.methods.isEmailVerificationTokenValid = function (rawToken) {
+  // Hash the provided token to compare with stored hash
+  const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+  
   return (
-    this.emailVerificationToken === token &&
+    this.emailVerificationToken === hashedToken &&
     this.emailVerificationExpires &&
     this.emailVerificationExpires > new Date()
   );
