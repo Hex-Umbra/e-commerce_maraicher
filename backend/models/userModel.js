@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 import { logger } from "../services/logger.js";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import { AppError } from "../utils/handleError.js";
 
 const userSchema = new Schema({
@@ -13,6 +14,18 @@ const userSchema = new Schema({
     type: String,
     enum: ["admin", "producteur", "client"],
     default: "client",
+  },
+  isEmailVerified: {
+    type: Boolean,
+    default: false,
+  },
+  emailVerificationToken: {
+    type: String,
+    default: null,
+  },
+  emailVerificationExpires: {
+    type: Date,
+    default: null,
   },
   cart: [
     {
@@ -49,6 +62,27 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
     logger.error("Error comparing password:", error);
     return false;
   }
+};
+
+// Generate email verification token
+userSchema.methods.generateEmailVerificationToken = function () {
+  // Generate random token
+  const token = crypto.randomBytes(32).toString('hex');
+  
+  // Set token and expiration (24 hours from now)
+  this.emailVerificationToken = token;
+  this.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  
+  return token;
+};
+
+// Check if email verification token is valid
+userSchema.methods.isEmailVerificationTokenValid = function (token) {
+  return (
+    this.emailVerificationToken === token &&
+    this.emailVerificationExpires &&
+    this.emailVerificationExpires > new Date()
+  );
 };
 
 export default mongoose.model("User", userSchema);
