@@ -1,6 +1,9 @@
+import dotenv from "dotenv";
+// Load environment variables from .env file
+dotenv.config();
 // Importing npm packages
 import express from "express";
-import dotenv from "dotenv";
+// ------------------------------------------------------------------------------------------------ //
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -16,10 +19,6 @@ import commentRouter from "./routes/commentRoutes.js";
 import { connectDB } from "./utils/dbConnection.js";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler.js";
 import { logger } from "./services/logger.js";
-
-// ------------------------------------------------------------------------------------------------ //
-// Load environment variables from .env file
-dotenv.config();
 
 // ------------------------------------------------------------------------------------------------ //
 // Initialize Express application
