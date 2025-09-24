@@ -4,6 +4,7 @@ import { catchAsync, AppError } from "../utils/handleError.js";
 import rateLimiter from "express-rate-limit";
 import validator from "validator";
 import { logger } from "../services/logger.js";
+import emailService from "../services/emailService.js";
 
 // Rate limiting middleware to prevent brute force attacks
 export const limiter = rateLimiter({
@@ -139,7 +140,19 @@ export const register = catchAsync(async (req, res, next) => {
 
   // Create new user
   const newUser = await User.create(userData);
+  
+  // Generate email verification token
+  const verificationToken = newUser.generateEmailVerificationToken();
   await newUser.save();
+
+  // Send verification email
+  try {
+    await emailService.sendEmailVerification(newUser, verificationToken);
+    logger.info(`Verification email sent to ${newUser.email}`);
+  } catch (emailError) {
+    logger.error(`Failed to send verification email: ${emailError.message}`);
+    // Don't fail registration if email fails, but log the error
+  }
 
   // Send token and response
   logger.info(
@@ -149,11 +162,108 @@ export const register = catchAsync(async (req, res, next) => {
     Rôle: \x1b[1m${newUser.role}\x1b
     Id: \x1b[33m${newUser._id}\x1b[0m
     Date: \x1b[36m${new Date().toLocaleString()}\x1b[0m
+    Email Verification: \x1b[33mPending\x1b[0m
     -----------------------------
     `
   );
 
-  createSendToken(newUser, 201, res, "Utilisateur créé avec succès");
+  res.status(201).json({
+    success: true,
+    message: "Utilisateur créé avec succès. Veuillez vérifier votre email pour activer votre compte.",
+    user: {
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role,
+      isEmailVerified: newUser.isEmailVerified,
+    },
+  });
+});
+
+// ----------------------------------------------------------------------------------------------------- //
+
+// Email verification
+export const verifyEmail = catchAsync(async (req, res, next) => {
+  const { token, email } = req.query;
+
+  if (!token || !email) {
+    return next(new AppError("Token et email sont requis", 400));
+  }
+
+  // Find user by email
+  const user = await User.findOne({ email: email.toLowerCase() });
+  if (!user) {
+    return next(new AppError("Utilisateur non trouvé", 404));
+  }
+
+  // Check if email is already verified
+  if (user.isEmailVerified) {
+    return res.status(200).json({
+      success: true,
+      message: "Email déjà vérifié",
+    });
+  }
+
+  // Validate token using the method from User model (line 78-84 in userModel.js)
+  if (!user.isEmailVerificationTokenValid(token)) {
+    return res.status(400).json({
+      success: false,
+      message: "Token de vérification invalide ou expiré",
+    });
+  }
+
+  // Mark email as verified and clear token
+  user.isEmailVerified = true;
+  user.emailVerificationToken = null;
+  user.emailVerificationExpires = null;
+  await user.save();
+
+  logger.info(`Email verified successfully for user: ${user.name} (${user.email})`);
+
+  res.status(200).json({
+    success: true,
+    message: "Email vérifié avec succès ! Vous pouvez maintenant vous connecter.",
+  });
+});
+
+// ----------------------------------------------------------------------------------------------------- //
+
+// Resend email verification
+export const resendEmailVerification = catchAsync(async (req, res, next) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return next(new AppError("Email est requis", 400));
+  }
+
+  // Find user by email
+  const user = await User.findOne({ email: email.toLowerCase() });
+  if (!user) {
+    return next(new AppError("Utilisateur non trouvé", 404));
+  }
+
+  // Check if email is already verified
+  if (user.isEmailVerified) {
+    return res.status(400).json({
+      success: false,
+      message: "Email déjà vérifié",
+    });
+  }
+
+  // Resend verification email
+  try {
+    await emailService.resendEmailVerification(user);
+    
+    logger.info(`Verification email resent to ${user.email}`);
+    
+    res.status(200).json({
+      success: true,
+      message: "Email de vérification renvoyé avec succès",
+    });
+  } catch (error) {
+    logger.error(`Failed to resend verification email: ${error.message}`);
+    return next(new AppError("Erreur lors de l'envoi de l'email", 500));
+  }
 });
 
 // ----------------------------------------------------------------------------------------------------- //
