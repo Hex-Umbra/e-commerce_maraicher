@@ -121,7 +121,6 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        setUser(data.user);
         showNotification(data.message, 'success');
         return {
           success: true,
