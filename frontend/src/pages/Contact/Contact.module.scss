@@ -1,16 +1,115 @@
 @use '../../styles/variables' as *;
 
 .contact {
-  padding: 2rem;
+  padding: $page-padding;
   min-height: calc(100vh - $header-h);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: $page-title-size;
   font-weight: 700;
   color: $black;
   text-align: center;
+  margin-bottom: $spacing-lg;
+}
+
+/* Form styles */
+.form {
+  width: min(640px, 100%);
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  padding: $form-padding;
+  box-shadow: $shadow;
+  display: flex;
+  flex-direction: column;
+  gap: $form-gap;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.label {
+  font-size: $label-font-size;
+  font-weight: 600;
+  color: $text;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  padding: $input-padding;
+  height: $input-height;
+  font-size: $input-font-size;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+  outline: none;
+  color: $text;
+  background: $white;
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.15);
+  }
+}
+
+.textarea {
+  min-height: 140px;
+  height: auto;
+  padding: $spacing-sm;
+  resize: vertical;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: $spacing-md;
+}
+
+.button {
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  padding: $button-padding;
+  font-size: $button-font-size;
+  font-weight: $button-font-weight;
+  cursor: pointer;
+  transition: background-color $transition-fast, transform $transition-fast;
+
+  &:hover {
+    background: $primary-dark;
+  }
+
+  &:disabled {
+    background: $primary-muted;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.status {
+  border-radius: $radius-sm;
+  padding: $spacing-sm $spacing-md;
+  font-size: 0.95rem;
+  border: 1px solid transparent;
+}
+
+.success {
+  background: $success-bg;
+  color: $success-color;
+  border-color: $success-border;
+}
+
+.error {
+  background: $error-bg;
+  color: $error-color;
+  border-color: $error-border;
 }

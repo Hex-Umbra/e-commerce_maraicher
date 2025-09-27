@@ -239,6 +239,20 @@ class EmailService {
       throw error;
     }
   }
+  // Send support contact email
+  async sendSupportContact(subject, title, message) {
+    try {
+      const supportEmail = process.env.SUPPORT_EMAIL || this.fromEmail;
+      const templateData = { subject, title, message };
+      const htmlContent = await this.loadTemplate('supportContact', templateData);
+      const emailSubject = `[Contact] ${subject} - ${title}`;
+      await this.sendEmail(supportEmail, emailSubject, htmlContent);
+      logger.info(`Support contact email sent to ${supportEmail}`);
+    } catch (error) {
+      logger.error(`Failed to send support contact email: ${error.message}`);
+      throw error;
+    }
+  }
 }
 
 export default new EmailService();

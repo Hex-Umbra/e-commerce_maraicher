@@ -216,4 +216,24 @@ export const ordersAPI = {
   },
 };
 
+export const supportAPI = {
+  // Send contact message to support
+  sendContact: async ({ subject, title, message }) => {
+    try {
+      const response = await apiClient.post('/support/contact', {
+        subject,
+        title,
+        message,
+      });
+      // Backend returns: { status, message }
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de l'envoi du message au support"
+      );
+    }
+  },
+};
+
 export default apiClient;

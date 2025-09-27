@@ -1,9 +1,109 @@
+import { useState } from "react";
+import { supportAPI } from "../../services/api";
 import styles from "./Contact.module.scss";
 
 const Contact = () => {
+  const [subject, setSubject] = useState("");
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSuccessMsg("");
+    setErrorMsg("");
+
+    if (!subject.trim() || !title.trim() || !message.trim()) {
+      setErrorMsg("Veuillez remplir tous les champs.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await supportAPI.sendContact({
+        subject: subject.trim(),
+        title: title.trim(),
+        message: message.trim(),
+      });
+      setSuccessMsg("Votre message a été envoyé au support.");
+      setSubject("");
+      setTitle("");
+      setMessage("");
+    } catch (err) {
+      setErrorMsg(err.message || "Une erreur est survenue lors de l'envoi.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.contact}>
-      <h1 className={styles.title}>Contact</h1>
+      <div>
+        <h1 className={styles.title}>Contact</h1>
+
+        <form className={styles.form} onSubmit={handleSubmit} noValidate>
+          <div className={styles.group}>
+            <label htmlFor="subject" className={styles.label}>
+              Objet
+            </label>
+            <input
+              id="subject"
+              type="text"
+              className={styles.input}
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              placeholder="Sujet de votre demande"
+              required
+            />
+          </div>
+
+          <div className={styles.group}>
+            <label htmlFor="title" className={styles.label}>
+              Titre
+            </label>
+            <input
+              id="title"
+              type="text"
+              className={styles.input}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Titre du message"
+              required
+            />
+          </div>
+
+          <div className={styles.group}>
+            <label htmlFor="message" className={styles.label}>
+              Message
+            </label>
+            <textarea
+              id="message"
+              className={styles.textarea}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Décrivez votre demande..."
+              required
+            />
+          </div>
+
+          {successMsg && (
+            <div className={`${styles.status} ${styles.success}`}>
+              {successMsg}
+            </div>
+          )}
+          {errorMsg && (
+            <div className={`${styles.status} ${styles.error}`}>{errorMsg}</div>
+          )}
+
+          <div className={styles.actions}>
+            <button type="submit" className={styles.button} disabled={loading}>
+              {loading ? "Envoi..." : "Envoyer"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
