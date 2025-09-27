@@ -170,9 +170,9 @@
   align-items: center;
   justify-content: center;
 
-  // Normalize horizontal padding on mobile to match .container (1rem)
+  // On mobile, remove horizontal padding; inner .container supplies 1rem
   @include mobile {
-    padding: 2rem 1rem;
+    padding: 2rem 0;
   }
 }
 
