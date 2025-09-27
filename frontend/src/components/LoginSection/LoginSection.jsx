@@ -160,9 +160,9 @@ const LoginSection = () => {
         </form>
         <div className={styles.welcomeText}>
           <h2>
-            <em>Bon retour !</em>
+            <em>Bon retour parmi nous!</em>
           </h2>
-          <p>Connectez-vous pour accéder à votre compte !</p>
+          <p>Connectez-vous pour accéder à votre compte et comandez dès maintenant chez vos producteurs locaux !</p>
         </div>
       </div>
     </section>

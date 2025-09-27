@@ -2,7 +2,7 @@
 @use '../../styles/mixins' as *;
 
 .loginSection {
-  @include section-background;
+  @include page-container;
 }
 
 .contentWrapper {

@@ -4,7 +4,7 @@
 body {
   margin: 0;
   font-family: $font-primary;
-  background-color: $gray-light;
+  background: linear-gradient(180deg, $primary 0%, $accent 100%);
   color: $text;
 }
 

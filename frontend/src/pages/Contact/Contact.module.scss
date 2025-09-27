@@ -118,7 +118,7 @@
 
 /* Section styled like login/register */
 .contactSection {
-  @include section-background;
+  @include page-container;
 }
 
 .contentWrapper {
