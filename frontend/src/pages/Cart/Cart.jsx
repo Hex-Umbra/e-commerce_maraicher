@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { cartAPI, ordersAPI } from '../../services/api';
 import { ROUTES } from '../../utils/routes';
+import styles from './Cart.module.scss';
 
 const Cart = () => {
   const { isAuthenticated, showNotification, loading: authLoading } = useAuth();
@@ -152,16 +153,18 @@ const Cart = () => {
 
   return (
     authLoading ? (
-      <section className="container" style={{ padding: '1.5rem 0' }}>
-        <p>Vérification de la session...</p>
+      <section className={`container ${styles.cart}`}>
+        <div className={styles.loading}>
+          <p>Vérification de la session...</p>
+        </div>
       </section>
     ) : !isAuthenticated ? (
       <Navigate to={ROUTES.login} replace />
     ) : (
-      <section className="container" style={{ padding: '1.5rem 0' }}>
-        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+      <section className={`container ${styles.cart}`}>
+        <header className={styles.header}>
           <h2>Votre panier</h2>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <div className={styles.actions}>
             <Link to={ROUTES.produits} className="btn btn-secondary">Continuer vos achats</Link>
             {items.length > 0 && (
               <>
@@ -180,15 +183,17 @@ const Cart = () => {
         </header>
 
         {loading ? (
-          <p>Chargement du panier...</p>
+          <div className={styles.loading}>
+            <p>Chargement du panier...</p>
+          </div>
         ) : items.length === 0 ? (
-          <div>
+          <div className={styles.emptyState}>
             <p>Votre panier est vide.</p>
             <Link to={ROUTES.produits} className="btn btn-primary">Voir les produits</Link>
           </div>
         ) : (
           <div>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <ul className={styles.cartItems}>
               {items.map((item) => {
                 const product = item.product || {};
                 const name = product.name || 'Produit';
@@ -196,24 +201,15 @@ const Cart = () => {
                 const lineTotal = unitPrice * Number(item.quantity || 0);
 
                 return (
-                  <li
-                    key={item._id}
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '2fr 1fr 1fr 1fr auto',
-                      alignItems: 'center',
-                      gap: '0.75rem',
-                      padding: '0.75rem 0',
-                      borderBottom: '1px solid rgba(0,0,0,0.1)',
-                    }}
-                  >
-                    <div style={{ fontWeight: 500 }}>
+                  <li key={item._id} className={styles.cartItem}>
+                    <div className={styles.productName}>
                       {name}
                     </div>
-                    <div>
-                      Prix: {unitPrice.toFixed(2)} €
+                    <div className={styles.mobileRow}>
+                      <span>Prix:</span>
+                      <span>{unitPrice.toFixed(2)} €</span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div className={styles.quantityControls}>
                       <input
                         type="number"
                         min={1}
@@ -221,14 +217,14 @@ const Cart = () => {
                         onChange={(e) =>
                           setQuantities((prev) => ({ ...prev, [item._id]: e.target.value }))
                         }
-                        style={{ width: '70px' }}
                       />
                       <button className="btn btn-secondary" onClick={() => handleUpdateQuantity(item._id)}>
                         Mettre à jour
                       </button>
                     </div>
-                    <div>
-                      Total: {lineTotal.toFixed(2)} €
+                    <div className={styles.mobileRow}>
+                      <span>Total:</span>
+                      <span>{lineTotal.toFixed(2)} €</span>
                     </div>
                     <div>
                       <button className="btn btn-danger" onClick={() => handleRemove(item._id)}>
@@ -240,36 +236,42 @@ const Cart = () => {
               })}
             </ul>
 
-            <footer style={{ marginTop: '1rem', textAlign: 'right', fontWeight: 700 }}>
+            <footer className={styles.cartFooter}>
               Total Panier: {total.toFixed(2)} €
             </footer>
           </div>
         )}
-        <hr style={{ margin: '2rem 0' }} />
-        <div>
+        
+        <hr className={styles.divider} />
+        
+        <div className={styles.ordersSection}>
           <h3>Vos commandes</h3>
           {ordersLoading ? (
-            <p>Chargement des commandes...</p>
+            <div className={styles.loading}>
+              <p>Chargement des commandes...</p>
+            </div>
           ) : orders.length === 0 ? (
-            <p>Aucune commande.</p>
+            <div className={styles.emptyState}>
+              <p>Aucune commande.</p>
+            </div>
           ) : (
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <ul className={styles.ordersList}>
               {orders.map((order) => {
                 const created = order.createdAt ? new Date(order.createdAt).toLocaleString('fr-FR') : '';
                 const itemsCount = Array.isArray(order.products) ? order.products.reduce((sum, p) => sum + (Number(p.quantity || 0)), 0) : 0;
                 const totalAmount = Number(order.totalAmount || 0).toFixed(2);
                 return (
-                  <li key={order._id} style={{ padding: '0.75rem 0', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
-                      <div>
+                  <li key={order._id} className={styles.orderItem}>
+                    <div className={styles.orderHeader}>
+                      <div className={styles.orderInfo}>
                         <strong>Commande</strong> #{String(order._id).slice(-6).toUpperCase()} • {created}
                       </div>
-                      <div>
+                      <div className={styles.orderDetails}>
                         Statut: <strong>{order.status}</strong> • Total: <strong>{totalAmount} €</strong> • Articles: <strong>{itemsCount}</strong>
                       </div>
                     </div>
                     {order.status !== "Annulée" && (
-                      <div style={{ marginTop: '0.5rem' }}>
+                      <div className={styles.orderActions}>
                         <button
                           className="btn btn-danger"
                           onClick={() => handleCancelOrder(order._id)}
@@ -281,7 +283,7 @@ const Cart = () => {
                       </div>
                     )}
                     {Array.isArray(order.products) && order.products.length > 0 && (
-                      <ul style={{ marginTop: '0.5rem', paddingLeft: '1rem' }}>
+                      <ul className={styles.productsList}>
                         {order.products.map((line) => {
                           const prod = line.productId || {};
                           const name = prod.name || 'Produit';
@@ -289,8 +291,11 @@ const Cart = () => {
                           const unitPrice = Number(line.price || 0);
                           const lineTotal = (qty * unitPrice).toFixed(2);
                           return (
-                            <li key={prod._id || name} style={{ marginBottom: '0.25rem' }}>
-                              {name} — {qty} × {unitPrice.toFixed(2)} € = {lineTotal} €
+                            <li key={prod._id || name} className={styles.productItem}>
+                              <span className={styles.productName}>{name}</span>
+                              <span className={styles.productPrice}>
+                                {qty} × {unitPrice.toFixed(2)} € = {lineTotal} €
+                              </span>
                             </li>
                           );
                         })}
