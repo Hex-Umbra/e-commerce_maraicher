@@ -1,8 +1,10 @@
 @use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
 
 .contact {
   padding: $page-padding;
   min-height: calc(100vh - $header-h);
+  width: 1200px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -112,4 +114,45 @@
   background: $error-bg;
   color: $error-color;
   border-color: $error-border;
+}
+
+/* Section styled like login/register */
+.contactSection {
+  @include section-background;
+}
+
+.contentWrapper {
+  @include content-wrapper;
+}
+
+/* Make the form take one column like in login */
+.form {
+  flex: 1;
+}
+
+/* Right-side info panel similar to LoginSection.welcomeText */
+.infoText {
+  background-color: $primary;
+  border-radius: $radius-lg;
+  padding: 2rem;
+  flex: 2;
+  color: $black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.infoText h2 {
+  margin: 0 0 1rem 0;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 3rem;
+  color: $white;
+}
+
+.infoText p {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: $primary-dark;
 }

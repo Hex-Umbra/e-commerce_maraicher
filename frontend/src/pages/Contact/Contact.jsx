@@ -39,10 +39,8 @@ const Contact = () => {
   };
 
   return (
-    <div className={styles.contact}>
-      <div>
-        <h1 className={styles.title}>Contact</h1>
-
+    <section className={styles.contactSection}>
+      <div className={`container ${styles.contentWrapper}`}>
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
           <div className={styles.group}>
             <label htmlFor="subject" className={styles.label}>
@@ -103,8 +101,19 @@ const Contact = () => {
             </button>
           </div>
         </form>
+
+        <div className={styles.infoText}>
+          <h2>
+            <em>Nous contacter</em>
+          </h2>
+          <p>
+            Une question, un problème ou un retour à nous transmettre ? Utilisez
+            ce formulaire pour joindre notre support. Nous vous répondrons dans
+            les plus brefs délais.
+          </p>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
