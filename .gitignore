@@ -2,6 +2,5 @@
 **/.env
 .DS_Store
 dist/
-TODO.md
-TODO-NodeMailer-Implementation.md
-DEPLOYMENT-TODO.md
+# Ignore all TODO markdown files across repo
+**/TODO*.md

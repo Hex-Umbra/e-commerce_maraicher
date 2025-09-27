@@ -34,16 +34,18 @@ const signToken = (_id, role, name) => {
   );
 };
 
-// ----------------------------------------------------------------------------------------------------- //
 
 // Helper to set secure cookie
 const createSendToken = (user, statusCode, res, message) => {
   const token = signToken(user._id, user.role, user.name);
 
+  const isProduction = process.env.NODE_ENV === "production";
+  const isSecure = process.env.COOKIE_SECURE === "true" || isProduction;
+
   const cookieOptions = {
     httpOnly: true,
-    secure: process.env.COOKIE_SECURE === "true" || process.env.NODE_ENV === "production",
-    sameSite: process.env.COOKIE_SAMESITE || "None",
+    secure: isSecure,
+    sameSite: process.env.COOKIE_SAMESITE || (isSecure ? "None" : "Lax"),
     maxAge:
       parseInt(process.env.JWT_COOKIE_EXPIRES_IN) || 7 * 24 * 60 * 60 * 1000, // 7 days
   };
@@ -359,12 +361,15 @@ export const logout = (req, res) => {
     `Le \x1b[1m${req.user.role}\x1b[0m \x1b[31m${req.user.name}\x1b[0m s'est \x1b[47m\x1b[1m déconnecté \x1b[0m`
   );
 
+  const isProduction = process.env.NODE_ENV === "production";
+  const isSecure = process.env.COOKIE_SECURE === "true" || isProduction;
+
   res
     .cookie("jwt", "", {
       httpOnly: true,
       expires: new Date(0),
-      sameSite: process.env.COOKIE_SAMESITE || "None",
-      secure: process.env.COOKIE_SECURE === "true" || process.env.NODE_ENV === "production",
+      sameSite: process.env.COOKIE_SAMESITE || (isSecure ? "None" : "Lax"),
+      secure: isSecure,
     })
     .status(200)
     .json({

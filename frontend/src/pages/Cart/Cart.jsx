@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useCart } from '../../context/CartContext';
+import { useCart } from '../../context/useCart';
 import { cartAPI, ordersAPI } from '../../services/api';
 import { ROUTES } from '../../utils/routes';
 import styles from './Cart.module.scss';

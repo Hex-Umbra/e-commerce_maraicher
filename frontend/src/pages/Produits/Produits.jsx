@@ -6,7 +6,7 @@ import cardStyles from "../../components/ProducerShowcase/ProducerShowcase.modul
 import { BsCart3, BsFilter } from "react-icons/bs";
 import { productAPI } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../context/useCart";
 import { ROUTES } from "../../utils/routes";
 import { transformProductData, getCategoryBadgeClass, getCategoryBadge } from "../../utils/defaults";
 

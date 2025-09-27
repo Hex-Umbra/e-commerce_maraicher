@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../context/useCart";
 import Notification from "../Notification/Notification";
 import styles from "./Navbar.module.scss";
 import { NAV_LINKS, ROUTES } from "../../utils/routes";
