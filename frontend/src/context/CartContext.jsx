@@ -1,17 +1,9 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { cartAPI } from '../services/api';
 import { useAuth } from './AuthContext';
 
 const CartContext = createContext(null);
-
-export const useCart = () => {
-  const ctx = useContext(CartContext);
-  if (!ctx) {
-    throw new Error('useCart must be used within a CartProvider');
-  }
-  return ctx;
-};
 
 export const CartProvider = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -106,3 +98,5 @@ export const CartProvider = ({ children }) => {
 CartProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
+
+export default CartContext;
