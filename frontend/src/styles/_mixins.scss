@@ -61,6 +61,21 @@
   }
 }
 
+/* ===== SUBMIT BUTTON UTILITIES ===== */
+@mixin submit-btn($margin-top: 0.5rem) {
+  margin-top: $margin-top;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+}
+
+@mixin submit-btn-loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
 // Interactive hover effect for links/buttons
 @mixin interactive-hover($scale: 1.05) {
   transition: all 0.3s ease;

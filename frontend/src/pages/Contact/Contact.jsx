@@ -42,14 +42,13 @@ const Contact = () => {
     <section className={styles.contactSection}>
       <div className={`container ${styles.contentWrapper}`}>
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
-          <div className={styles.group}>
-            <label htmlFor="subject" className={styles.label}>
+          <div className={styles.formGroup}>
+            <label htmlFor="subject">
               Objet
             </label>
             <input
               id="subject"
               type="text"
-              className={styles.input}
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="Sujet de votre demande"
@@ -57,14 +56,13 @@ const Contact = () => {
             />
           </div>
 
-          <div className={styles.group}>
-            <label htmlFor="title" className={styles.label}>
+          <div className={styles.formGroup}>
+            <label htmlFor="title">
               Titre
             </label>
             <input
               id="title"
               type="text"
-              className={styles.input}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Titre du message"
@@ -72,13 +70,12 @@ const Contact = () => {
             />
           </div>
 
-          <div className={styles.group}>
-            <label htmlFor="message" className={styles.label}>
+          <div className={styles.formGroup}>
+            <label htmlFor="message">
               Message
             </label>
             <textarea
               id="message"
-              className={styles.textarea}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Décrivez votre demande..."
@@ -87,16 +84,20 @@ const Contact = () => {
           </div>
 
           {successMsg && (
-            <div className={`${styles.status} ${styles.success}`}>
+            <div className={styles.successMessage}>
               {successMsg}
             </div>
           )}
           {errorMsg && (
-            <div className={`${styles.status} ${styles.error}`}>{errorMsg}</div>
+            <div className={styles.errorMessage}>{errorMsg}</div>
           )}
 
           <div className={styles.actions}>
-            <button type="submit" className={styles.submitBtn} disabled={loading}>
+            <button
+              type="submit"
+              className={`${styles.submitBtn} ${loading ? styles.submitBtnLoading : ""}`}
+              disabled={loading}
+            >
               {loading ? "Envoi..." : "Envoyer"}
             </button>
           </div>

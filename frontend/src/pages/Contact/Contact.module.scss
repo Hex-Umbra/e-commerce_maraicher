@@ -23,42 +23,39 @@
   @include form-container;
   background-color: $secondary;
   flex: 1;
+
+  label {
+    @include form-label;
+  }
+
+  input,
+  textarea {
+    @include input-base;
+  }
 }
 
-.group {
+.formGroup {
   @include form-group;
 }
 
-.label {
-  @include form-label;
-}
 
-.input,
-.textarea {
-  @include input-base;
-  width: 100%;
-}
 
-.textarea {
-  min-height: 140px;
-  height: auto;
-  padding: $spacing-sm;
-  resize: vertical;
-}
 
 .actions {
   display: flex;
+  width: 100%;
   justify-content: flex-end;
   margin-top: $spacing-md;
 }
 
-.button {
+.submitBtn {
   @include button-base;
+  @include submit-btn;
   background-color: $primary;
+  width: 100%;
 
   &:hover:not(:disabled) {
     background-color: $primary-dark;
-    transform: translateY(-1px);
   }
 
   &:active:not(:disabled) {
@@ -66,15 +63,19 @@
   }
 }
 
+.submitBtnLoading {
+  @include submit-btn-loading;
+}
+
 .status {
   // Base container for status messages (variant classes apply full styles)
 }
 
-.success {
+.successMessage {
   @include message-success;
 }
 
-.error {
+.errorMessage {
   @include message-error;
 }
 
