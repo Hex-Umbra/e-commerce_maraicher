@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mise à jour de commande - Marché Frais Fermier</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 3px solid #4CAF50;
+      padding-bottom: 20px;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #666;
+      font-size: 16px;
+    }
+    .content {
+      margin: 30px 0;
+    }
+    .greeting {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    .order-info {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    .order-id {
+      font-size: 18px;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+    .order-date {
+      color: #666;
+      font-size: 14px;
+    }
+    .order-status {
+      background-color: #4CAF50;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .update-highlight {
+      background-color: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .update-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #856404;
+      margin-bottom: 10px;
+    }
+    .products-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    .products-table th,
+    .products-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .products-table th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+      color: #495057;
+    }
+    .products-table tr:hover {
+      background-color: #f8f9fa;
+    }
+    .status-change {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .status-old {
+      background-color: #6c757d;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      text-decoration: line-through;
+    }
+    .status-new {
+      background-color: #28a745;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .status-arrow {
+      color: #28a745;
+      font-weight: bold;
+    }
+    .producer-info {
+      background-color: #e8f5e8;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 12px;
+      color: #155724;
+    }
+    .total-section {
+      background-color: #e8f5e8;
+      border: 2px solid #4CAF50;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .total-amount {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+    .info-box {
+      background-color: #e3f2fd;
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    .action-button {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 30px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px 0;
+      box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+    }
+    .action-button:hover {
+      background-color: #45a049;
+    }
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+    .contact-info {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .container {
+        padding: 20px;
+      }
+      .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .order-header > * {
+        margin-bottom: 10px;
+      }
+      .products-table {
+        font-size: 14px;
+      }
+      .products-table th,
+      .products-table td {
+        padding: 8px;
+      }
+      .status-change {
+        flex-direction: column;
+        gap: 5px;
+      }
+      .action-button {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🌱 Marché Frais Fermier</div>
+      <div class="subtitle">Votre marché local de produits frais</div>
+    </div>
+
+    <div class="content">
+      <div class="greeting">
+        Bonjour {{userName}},
+      </div>
+
+      <div class="update-highlight">
+        <div class="update-title">📦 Mise à jour de votre commande</div>
+        <p>Bonne nouvelle ! Le statut de certains produits de votre commande a été mis à jour.</p>
+      </div>
+
+      <div class="order-info">
+        <div class="order-header">
+          <div>
+            <div class="order-id">Commande #{{orderId}}</div>
+            <div class="order-date">Passée le {{orderDate}}</div>
+          </div>
+          <div class="order-status">{{orderStatus}}</div>
+        </div>
+
+        <table class="products-table">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Quantité</th>
+              <th>Prix</th>
+              <th>Producteur</th>
+              <th>Changement de statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each updatedProducts}}
+            <tr>
+              <td><strong>{{this.name}}</strong></td>
+              <td>{{this.quantity}}</td>
+              <td>{{this.price}}€</td>
+              <td>
+                <div class="producer-info">
+                  👨‍🌾 {{this.producerName}}
+                </div>
+              </td>
+              <td>
+                <div class="status-change">
+                  <span class="status-old">{{this.oldStatus}}</span>
+                  <span class="status-arrow">→</span>
+                  <span class="status-new">{{this.newStatus}}</span>
+                </div>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="total-section">
+        <div>Total de votre commande</div>
+        <div class="total-amount">{{totalAmount}}€</div>
+      </div>
+
+      <div class="info-box">
+        <strong>📋 Statuts des produits :</strong>
+        <ul>
+          <li><strong>En cours</strong> : Le producteur prépare votre produit</li>
+          <li><strong>Prêt</strong> : Votre produit est prêt pour la livraison/retrait</li>
+          <li><strong>Livré</strong> : Votre produit a été livré</li>
+        </ul>
+      </div>
+
+      <div style="text-align: center;">
+        <a href="{{frontendUrl}}/orders" class="action-button">
+          📋 Voir ma commande complète
+        </a>
+      </div>
+
+      <div class="contact-info">
+        <strong>💬 Questions sur votre commande ?</strong><br>
+        • Consultez le détail complet en ligne<br>
+        • Contactez directement le producteur concerné<br>
+        • Utilisez notre formulaire de contact pour toute assistance
+      </div>
+
+      <p>Merci de votre patience et de votre confiance en nos producteurs locaux !</p>
+
+      <p>Cordialement,<br>
+      L'équipe Marché Frais Fermier</p>
+    </div>
+
+    <div class="footer">
+      <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
+      <p>© 2024 Marché Frais Fermier - Tous droits réservés</p>
+      <p>Pour nous contacter : <a href="{{frontendUrl}}/contact" style="color: #4CAF50;">{{frontendUrl}}/contact</a></p>
+    </div>
+  </div>
+</body>
+</html>

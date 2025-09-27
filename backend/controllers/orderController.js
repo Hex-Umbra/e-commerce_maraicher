@@ -4,6 +4,7 @@ import { logger } from "../services/logger.js";
 import User from "../models/userModel.js";
 import Product from "../models/productsModel.js";
 import orderModel from "../models/orderModel.js";
+import emailService from "../services/emailService.js";
 
 // @desc Create a new order
 // @route POST /api/orders
@@ -102,6 +103,21 @@ export const createOrder = catchAsync(async (req, res, next) => {
     logger.info(
       `Order created successfully for user: ${userId} - ${user.name}`
     );
+
+    // Send order confirmation email
+    try {
+      // Populate the order with product details for email
+      const populatedOrder = await orderModel
+        .findById(order[0]._id)
+        .populate("products.productId", "name price");
+      
+      await emailService.sendOrderConfirmation(user, populatedOrder);
+      logger.info(`Order confirmation email sent to ${user.email}`);
+    } catch (emailError) {
+      logger.error(`Failed to send order confirmation email: ${emailError.message}`);
+      // Don't fail the order creation if email fails
+    }
+
     res.status(201).json({
       status: "success",
       data: {
@@ -383,6 +399,43 @@ export const updateProductStatuses = catchAsync(async (req, res, next) => {
       `Order ${orderId} successfully updated by producteur ${producteurId}`
     );
 
+    // Send order status update email
+    try {
+      // Get user information and prepare updated products data
+      const user = await User.findById(order.clientId);
+      if (user) {
+        // Populate order with full product details for email
+        const populatedOrder = await orderModel
+          .findById(orderId)
+          .populate({
+            path: "products.productId",
+            select: "name price producteurId",
+            populate: {
+              path: "producteurId",
+              select: "name"
+            }
+          });
+
+        // Prepare updated products with old status information
+        const updatedProductsForEmail = updates.map(update => {
+          const productEntry = populatedOrder.products.find(
+            p => p.productId._id.toString() === update.productId
+          );
+          return {
+            ...productEntry.toObject(),
+            oldStatus: "En cours", // We could track this better in the future
+            status: update.status
+          };
+        });
+
+        await emailService.sendOrderStatusUpdate(user, populatedOrder, updatedProductsForEmail);
+        logger.info(`Order status update email sent to ${user.email}`);
+      }
+    } catch (emailError) {
+      logger.error(`Failed to send order status update email: ${emailError.message}`);
+      // Don't fail the status update if email fails
+    }
+
     res.status(200).json({
       status: "success",
       message: "Product statuses updated successfully",
@@ -471,6 +524,20 @@ export const cancelOrder = catchAsync(async (req, res, next) => {
 
     await session.commitTransaction();
     session.endSession();
+
+    // Send order cancellation email
+    try {
+      // Populate the order with product details for email
+      const populatedOrder = await orderModel
+        .findById(orderId)
+        .populate("products.productId", "name price");
+      
+      await emailService.sendOrderCancellation(user, populatedOrder);
+      logger.info(`Order cancellation email sent to ${user.email}`);
+    } catch (emailError) {
+      logger.error(`Failed to send order cancellation email: ${emailError.message}`);
+      // Don't fail the cancellation if email fails
+    }
 
     res.status(200).json({
       status: "success",

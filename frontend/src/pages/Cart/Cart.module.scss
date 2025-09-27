@@ -1,0 +1,238 @@
+.cart {
+  padding: 1.5rem 0;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 1rem;
+
+    h2 {
+      margin: 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+
+      .actions {
+        justify-content: center;
+      }
+    }
+  }
+
+  .cartItems {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    .cartItem {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr auto;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+      .productName {
+        font-weight: 500;
+      }
+
+      .quantityControls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        input {
+          width: 70px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        padding: 1rem 0;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+
+        .productName {
+          font-size: 1.1rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .quantityControls {
+          justify-content: space-between;
+          
+          input {
+            width: 60px;
+          }
+        }
+
+        .mobileRow {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin: 0.25rem 0;
+        }
+      }
+    }
+  }
+
+  .cartFooter {
+    margin-top: 1rem;
+    text-align: right;
+    font-weight: 700;
+    font-size: 1.2rem;
+
+    @media (max-width: 768px) {
+      text-align: center;
+      padding: 1rem;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+    }
+  }
+
+  .divider {
+    margin: 2rem 0;
+    border: none;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .ordersSection {
+    h3 {
+      margin-bottom: 1rem;
+    }
+
+    .ordersList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      .orderItem {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+        .orderHeader {
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+          flex-wrap: wrap;
+          margin-bottom: 0.5rem;
+
+          .orderInfo {
+            strong {
+              color: #4CAF50;
+            }
+          }
+
+          .orderDetails {
+            text-align: right;
+
+            strong {
+              color: #333;
+            }
+          }
+
+          @media (max-width: 768px) {
+            flex-direction: column;
+            gap: 0.5rem;
+
+            .orderDetails {
+              text-align: left;
+            }
+          }
+        }
+
+        .orderActions {
+          margin-top: 0.5rem;
+        }
+
+        .productsList {
+          margin-top: 0.5rem;
+          padding-left: 1rem;
+          list-style: none;
+
+          .productItem {
+            margin-bottom: 0.25rem;
+            padding: 0.25rem 0;
+            font-size: 0.9rem;
+            color: #666;
+
+            @media (max-width: 768px) {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 0.5rem 0;
+              border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+              .productName {
+                font-weight: 500;
+                color: #333;
+              }
+
+              .productPrice {
+                font-weight: 500;
+                color: #4CAF50;
+              }
+            }
+          }
+
+          @media (max-width: 768px) {
+            padding-left: 0;
+            margin-top: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 0.5rem;
+          }
+        }
+
+        @media (max-width: 768px) {
+          padding: 1rem 0;
+          border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+      }
+    }
+  }
+
+  .emptyState {
+    text-align: center;
+    padding: 2rem;
+
+    p {
+      margin-bottom: 1rem;
+      color: #666;
+    }
+  }
+
+  .loading {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+  }
+}
+
+// Mobile-specific utilities
+@media (max-width: 768px) {
+  .mobileStack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .mobileRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .mobileCenter {
+    text-align: center;
+  }
+}
