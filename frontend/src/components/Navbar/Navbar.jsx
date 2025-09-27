@@ -70,18 +70,40 @@ const Navbar = () => {
             isMenuOpen ? styles.navLinksOpen : ""
           }`}
         >
-          {NAV_LINKS.map(({ to, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.active : ""}`
-              }
-              onClick={closeMenu}
-            >
-              {label}
-            </NavLink>
-          ))}
+          <div className={styles.authSection}>
+            {!isAuthenticated && (
+              <>
+                <NavLink
+                  to={ROUTES.login}
+                  className={({ isActive }) => `${styles.authLink} ${isActive ? styles.active : ""}`}
+                  onClick={closeMenu}
+                >
+                  Connexion
+                </NavLink>
+                <NavLink
+                  to={ROUTES.register}
+                  className={({ isActive }) => `${styles.authLink} ${styles.signupLink} ${isActive ? styles.active : ""}`}
+                  onClick={closeMenu}
+                >
+                  S'inscrire
+                </NavLink>
+              </>
+            )}
+          </div>
+          <div className={styles.navSection}>
+            {NAV_LINKS.map(({ to, label }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  `${styles.navLink} ${isActive ? styles.active : ""}`
+                }
+                onClick={closeMenu}
+              >
+                {label}
+              </NavLink>
+            ))}
+          </div>
         </nav>
 
         {/* User Section */}

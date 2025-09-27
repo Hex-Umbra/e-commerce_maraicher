@@ -38,7 +38,7 @@ $primary-muted: color.adjust($primary, $saturation: -30%);
 
 /* Secondary variations */
 $secondary-light: color.adjust($secondary, $lightness: 20%);
-$secondary-dark: color.adjust($secondary, $lightness: -20%);
+$secondary-dark: color.adjust($secondary, $lightness: -10%);
 $secondary-muted: color.adjust($secondary, $saturation: -30%);
 
 /* Accent variations */
