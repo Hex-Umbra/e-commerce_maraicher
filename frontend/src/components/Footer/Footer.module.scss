@@ -88,7 +88,7 @@ align-items: start;
 // Mobile responsive adjustments
 @include mobile {
   .footer {
-    font-size: 0.8rem;
+    font-size: 1rem;
     padding: $spacing-xl 0;
   }
 
@@ -99,26 +99,32 @@ align-items: start;
     gap: $spacing-md;
     padding: 0 1rem;
     padding-top: $spacing-lg;
+    text-align: center;
+    place-items: center;
   }
-
 
   .support {
     border-right: none;
     padding-left: 0;
   }
 
-  .about h3,
+  .about h3 {
+    font-size: 1.35rem;
+  }
+
+  .quickLinks h3,
   .support h3 {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .about p {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
+    margin: 0 auto;
   }
 
   .copyright {
-    text-align: left;
-    justify-content: flex-start;
+    text-align: center;
+    justify-content: center;
     align-items: center;
     font-size: 0.8rem;
   }
