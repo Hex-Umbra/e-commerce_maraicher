@@ -1,0 +1,90 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.politiqueConfidentialite {
+  padding: $spacing-xxl 0;
+  min-height: 70vh;
+
+  h1 {
+    color: $primary-dark;
+    margin-bottom: $spacing-xl;
+    text-align: center;
+    font-size: 2.5rem;
+  }
+
+  .section {
+    margin-bottom: $spacing-xl;
+    
+    h2 {
+      color: $primary-dark;
+      margin-bottom: $spacing-md;
+      font-size: 1.5rem;
+      border-bottom: 2px solid $primary;
+      padding-bottom: $spacing-sm;
+    }
+
+    p {
+      line-height: 1.6;
+      color: $text;
+      margin-bottom: $spacing-md;
+    }
+
+    ul {
+      margin-left: $spacing-lg;
+      margin-bottom: $spacing-md;
+
+      li {
+        margin-bottom: $spacing-sm;
+        line-height: 1.6;
+        color: $text;
+      }
+    }
+  }
+}
+
+// Tablet responsive adjustments
+@include tablet {
+  .politiqueConfidentialite {
+    padding: $spacing-xl 0;
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .section h2 {
+      font-size: 1.3rem;
+    }
+  }
+}
+
+// Mobile responsive adjustments
+@include mobile {
+  .politiqueConfidentialite {
+    padding: $spacing-lg 0;
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: $spacing-lg;
+    }
+
+    .section {
+      margin-bottom: $spacing-lg;
+
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+      }
+
+      ul {
+        margin-left: $spacing-md;
+
+        li {
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+}

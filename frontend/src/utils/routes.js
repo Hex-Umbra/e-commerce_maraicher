@@ -10,6 +10,9 @@ export const ROUTES = {
   register: "/register",
   cart: "/cart",
   notFound: "/404",
+  mentionsLegales: "/mentions-legales",
+  politiqueConfidentialite: "/politique-confidentialite",
+  conditionsUtilisation: "/conditions-utilisation",
 };
 
 export const NAV_LINKS = [
