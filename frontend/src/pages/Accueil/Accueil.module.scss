@@ -19,6 +19,11 @@
   border-radius: $radius-lg;
   border: 1px solid $border;
   margin: 1rem 0 2rem;
+
+  @include mobile {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .heroInner {
@@ -130,5 +135,17 @@
     font-size: 1.1rem;
     color: $text-secondary;
     margin: 0;
+  }
+}
+
+/* Ensure hero and subsequent sections fully align to container width on mobile */
+@include mobile {
+  .sectionHeading,
+  .producers,
+  .loading,
+  .error,
+  .noProducers {
+    width: 100%;
+    max-width: 100%;
   }
 }

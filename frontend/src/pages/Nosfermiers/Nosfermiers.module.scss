@@ -151,3 +151,14 @@
     margin: 0;
   }
 }
+
+@include mobile {
+  .sectionHeading,
+  .grid,
+  .loading,
+  .error,
+  .noProducers {
+    width: 100%;
+    max-width: 100%;
+  }
+}

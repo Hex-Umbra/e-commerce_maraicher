@@ -1,11 +1,18 @@
 @use './variables' as *;
 @use './mixins' as *;
 
+/* Global box-sizing reset to prevent overflow from padding/borders */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: $font-primary;
   background: linear-gradient(135deg, $primary 0%, $accent 100%);
   color: $text;
+  /* Prevent horizontal scroll on small devices due to edge cases */
+  overflow-x: hidden;
 }
 
 .container {

@@ -186,3 +186,14 @@
     margin: 0;
   }
 }
+
+@include mobile {
+  .sectionHeading,
+  .grid,
+  .loading,
+  .error,
+  .noProducts {
+    width: 100%;
+    max-width: 100%;
+  }
+}

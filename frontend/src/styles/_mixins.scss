@@ -169,6 +169,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  // Normalize horizontal padding on mobile to match .container (1rem)
+  @include mobile {
+    padding: 2rem 1rem;
+  }
 }
 
 // Page title styling

@@ -260,3 +260,17 @@
   @include button-secondary;
   padding: 0.5rem 0.85rem;
 }
+
+/* Ensure post-hero sections fully align to container width on mobile */
+@include mobile {
+  .sectionHeading,
+  .grid4,
+  .commentsSection,
+  .loading,
+  .error,
+  .noComments,
+  .backRow {
+    width: 100%;
+    max-width: 100%;
+  }
+}
