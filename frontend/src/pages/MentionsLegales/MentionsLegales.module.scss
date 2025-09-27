@@ -30,7 +30,15 @@
     }
   }
 }
+.main {
+  background: $primary-light;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+}
 
+.main h1 {
+  color: $white;
+}
 // Tablet responsive adjustments
 @include tablet {
   .mentionsLegales {

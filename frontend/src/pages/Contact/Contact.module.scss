@@ -20,46 +20,23 @@
 
 /* Form styles */
 .form {
-  width: min(640px, 100%);
-  background: $bg;
-  border: 1px solid $border;
-  border-radius: $radius-md;
-  padding: $form-padding;
-  box-shadow: $shadow;
-  display: flex;
-  flex-direction: column;
-  gap: $form-gap;
+  @include form-container;
+  background-color: $secondary;
+  flex: 1;
 }
 
 .group {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
+  @include form-group;
 }
 
 .label {
-  font-size: $label-font-size;
-  font-weight: 600;
-  color: $text;
+  @include form-label;
 }
 
 .input,
 .textarea {
+  @include input-base;
   width: 100%;
-  border: 1px solid $border;
-  border-radius: $radius-sm;
-  padding: $input-padding;
-  height: $input-height;
-  font-size: $input-font-size;
-  transition: border-color $transition-fast, box-shadow $transition-fast;
-  outline: none;
-  color: $text;
-  background: $white;
-
-  &:focus {
-    border-color: $primary;
-    box-shadow: 0 0 0 3px rgba($primary, 0.15);
-  }
 }
 
 .textarea {
@@ -76,44 +53,29 @@
 }
 
 .button {
-  background: $primary;
-  color: $white;
-  border: none;
-  border-radius: $radius-sm;
-  padding: $button-padding;
-  font-size: $button-font-size;
-  font-weight: $button-font-weight;
-  cursor: pointer;
-  transition: background-color $transition-fast, transform $transition-fast;
+  @include button-base;
+  background-color: $primary;
 
-  &:hover {
-    background: $primary-dark;
+  &:hover:not(:disabled) {
+    background-color: $primary-dark;
+    transform: translateY(-1px);
   }
 
-  &:disabled {
-    background: $primary-muted;
-    cursor: not-allowed;
-    transform: none;
+  &:active:not(:disabled) {
+    transform: scale(0.98);
   }
 }
 
 .status {
-  border-radius: $radius-sm;
-  padding: $spacing-sm $spacing-md;
-  font-size: 0.95rem;
-  border: 1px solid transparent;
+  // Base container for status messages (variant classes apply full styles)
 }
 
 .success {
-  background: $success-bg;
-  color: $success-color;
-  border-color: $success-border;
+  @include message-success;
 }
 
 .error {
-  background: $error-bg;
-  color: $error-color;
-  border-color: $error-border;
+  @include message-error;
 }
 
 /* Section styled like login/register */
@@ -123,11 +85,6 @@
 
 .contentWrapper {
   @include content-wrapper;
-}
-
-/* Make the form take one column like in login */
-.form {
-  flex: 1;
 }
 
 /* Right-side info panel similar to LoginSection.welcomeText */

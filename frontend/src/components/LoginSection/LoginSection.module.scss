@@ -11,6 +11,7 @@
 
 .loginForm {
   @include form-container;
+  background-color: $secondary;
   flex: 1;
 
   label {
@@ -22,7 +23,17 @@
   }
 
   button {
-    @include button-primary;
+    @include button-base;
+    background-color: $primary;
+
+    &:hover:not(:disabled) {
+      background-color: $primary-dark;
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
   }
 }
 

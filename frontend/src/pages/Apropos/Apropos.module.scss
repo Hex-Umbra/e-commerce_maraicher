@@ -1,16 +1,101 @@
 @use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
 
 .apropos {
-  padding: 2rem;
-  min-height: calc(100vh - $header-h);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include page-container;
+  align-items: flex-start; // commencer en haut de page
 }
 
 .title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: $black;
+  @include page-title;
+  margin-bottom: $spacing-lg;
+}
+
+.wrapper {
+  max-width: $container;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.section {
+  margin-bottom: $spacing-xl;
+
+  h2 {
+    color: $primary-dark;
+    margin-bottom: $spacing-md;
+    font-size: 1.5rem;
+    border-bottom: 2px solid $primary;
+    padding-bottom: $spacing-sm;
+  }
+
+  p {
+    line-height: 1.6;
+    color: $text;
+    margin-bottom: $spacing-md;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: $text;
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.featuresGrid {
+  @include grid-cols(3, 1rem, 3, 2, 2, 1);
+}
+
+.card {
+  @include card-base($white, 1rem, $radius-md, $shadow);
+  border: 1px solid $border;
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    color: $accent;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.ctaSection {
   text-align: center;
+}
+
+.ctaGroup {
+  display: inline-flex;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cta {
+  @include link-reset;
+}
+
+.main {
+  background: $primary-light;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+}
+
+.main h1 {
+  color: $white;
+}
+
+@include mobile {
+  .section {
+    padding: 1.25rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
 }

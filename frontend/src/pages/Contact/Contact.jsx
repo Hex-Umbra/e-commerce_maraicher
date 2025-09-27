@@ -96,7 +96,7 @@ const Contact = () => {
           )}
 
           <div className={styles.actions}>
-            <button type="submit" className={styles.button} disabled={loading}>
+            <button type="submit" className={styles.submitBtn} disabled={loading}>
               {loading ? "Envoi..." : "Envoyer"}
             </button>
           </div>
