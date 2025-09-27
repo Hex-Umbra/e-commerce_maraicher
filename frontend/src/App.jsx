@@ -16,6 +16,9 @@ import Contact from './pages/Contact/Contact';
 import Fermier from './pages/Fermier/Fermier';
 import NotFound from './pages/NotFound/NotFound';
 import Cart from './pages/Cart/Cart';
+import MentionsLegales from './pages/MentionsLegales/MentionsLegales';
+import PolitiqueConfidentialite from './pages/PolitiqueConfidentialite/PolitiqueConfidentialite';
+import ConditionsUtilisation from './pages/ConditionsUtilisation/ConditionsUtilisation';
 
 import './styles/main.scss';
 
@@ -37,6 +40,9 @@ const App = () => {
               <Route path="/register" element={<WelcomeSection />} />
               <Route path="/login" element={<LoginSection />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/mentions-legales" element={<MentionsLegales />} />
+              <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
+              <Route path="/conditions-utilisation" element={<ConditionsUtilisation />} />
               <Route path="/404" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

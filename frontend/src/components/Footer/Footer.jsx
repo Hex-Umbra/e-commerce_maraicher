@@ -25,6 +25,9 @@ const Footer = () => {
           <h3>Support</h3>
           <ul>
             <li><Link to={ROUTES.contact}>Contact</Link></li>
+            <li><Link to={ROUTES.mentionsLegales}>Mentions légales</Link></li>
+            <li><Link to={ROUTES.politiqueConfidentialite}>Politique de confidentialité</Link></li>
+            <li><Link to={ROUTES.conditionsUtilisation}>Conditions d'utilisation</Link></li>
           </ul>
         </nav>
 
