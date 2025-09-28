@@ -41,7 +41,7 @@ const Contact = () => {
   return (
     <section className={styles.contactSection}>
       <div className={`container ${styles.contentWrapper}`}>
-        <form className={styles.form} onSubmit={handleSubmit} noValidate>
+        <form className={styles.formContainer} onSubmit={handleSubmit} noValidate>
           <div className={styles.formGroup}>
             <label htmlFor="subject">
               Objet
@@ -80,6 +80,7 @@ const Contact = () => {
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Décrivez votre demande..."
               required
+              rows={5}
             />
           </div>
 

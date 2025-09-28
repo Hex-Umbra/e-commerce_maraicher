@@ -112,7 +112,7 @@ const LoginSection = () => {
   return (
     <section className={styles.loginSection}>
       <div className={`container ${styles.contentWrapper}`}>
-        <form className={styles.loginForm} onSubmit={handleSubmit}>
+        <form className={styles.formContainer} onSubmit={handleSubmit}>
           {/* General Error Message */}
           {error && <div className={styles.errorMessage}>{error}</div>}
 
@@ -122,6 +122,7 @@ const LoginSection = () => {
               id="email"
               name="email"
               type="email"
+              placeholder="Votre email"
               value={formData.email}
               onChange={handleInputChange}
               className={formErrors.email ? styles.inputError : ""}
@@ -138,6 +139,7 @@ const LoginSection = () => {
               id="password"
               name="password"
               type="password"
+              placeholder="Votre mot de passe"
               value={formData.password}
               onChange={handleInputChange}
               className={formErrors.password ? styles.inputError : ""}

@@ -36,11 +36,8 @@
   }
 }
 
-.signupForm {
+.formContainer {
   @include form-container;
-  background-color: $secondary;
-  flex: 1;
-  order: 0;
 
   label {
     @include form-label;
@@ -48,6 +45,7 @@
 
   input {
     @include input-base;
+    @include input-placeholder;
   }
 
   button {
@@ -105,7 +103,7 @@
     max-width: 100%;
   }
 
-  .signupForm {
+  .formContainer {
     flex: none;
     width: 100%;
   }

@@ -121,7 +121,7 @@ const WelcomeSection = () => {
           </h2>
           <p>Rejoignez notre site et faite partie de la communauté !</p>
         </div>
-        <form className={styles.signupForm} onSubmit={handleSubmit}>
+        <form className={styles.formContainer} onSubmit={handleSubmit}>
           {/* General Error Message */}
           {error && <div className={styles.errorMessage}>{error}</div>}
 
@@ -131,6 +131,7 @@ const WelcomeSection = () => {
               id="name"
               name="name"
               type="text"
+              placeholder="Nom et prénom"
               value={formData.name}
               onChange={handleInputChange}
               className={formErrors.name ? styles.inputError : ""}
@@ -147,6 +148,7 @@ const WelcomeSection = () => {
               id="email"
               name="email"
               type="email"
+              placeholder="Votre email"
               value={formData.email}
               onChange={handleInputChange}
               className={formErrors.email ? styles.inputError : ""}
@@ -163,6 +165,7 @@ const WelcomeSection = () => {
               id="address"
               name="address"
               type="text"
+              placeholder="Votre adresse"
               value={formData.address}
               onChange={handleInputChange}
               className={formErrors.address ? styles.inputError : ""}
@@ -179,6 +182,7 @@ const WelcomeSection = () => {
               id="password"
               name="password"
               type="password"
+              placeholder="Votre mot de passe"
               value={formData.password}
               onChange={handleInputChange}
               className={formErrors.password ? styles.inputError : ""}
@@ -195,6 +199,7 @@ const WelcomeSection = () => {
               id="confirmPassword"
               name="confirmPassword"
               type="password"
+              placeholder="Confirmez votre mot de passe"
               value={formData.confirmPassword}
               onChange={handleInputChange}
               className={formErrors.confirmPassword ? styles.inputError : ""}
