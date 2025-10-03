@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { BsCart3 } from "react-icons/bs";
+import ImageWithFallback from "../common/ImageWithFallback/ImageWithFallback";
 import { getCategoryBadgeClass } from "../../utils/defaults";
 import styles from "./ProducerShowcase.module.scss";
 import { Link } from "react-router-dom";
@@ -68,19 +69,11 @@ const ProducerShowcase = ({ producer, onViewAllHref = "/produits", onAddToCart }
     <section className={styles.section} aria-labelledby="producer-title">
       <div className={styles.card}>
         <header className={styles.header}>
-          <img 
-            className={styles.avatar} 
-            src={avatar && String(avatar).trim() !== "" ? avatar : "https://i.pravatar.cc/100?img=12"} 
+          <ImageWithFallback
+            src={avatar}
+            fallback="https://i.pravatar.cc/100?img=12"
             alt={`Photo de ${name}`}
-            loading="lazy"
-            onError={(e) => {
-              const fallback = "https://i.pravatar.cc/100?img=12";
-              if (!e.currentTarget.src.includes("i.pravatar.cc/100?img=12")) {
-                e.currentTarget.src = fallback;
-              }
-            }}
-            decoding="async"
-            referrerPolicy="no-referrer"
+            className={styles.avatar}
           />
           <div className={styles.meta}>
             <div className={styles.nameRow}>
@@ -121,18 +114,10 @@ const ProducerShowcase = ({ producer, onViewAllHref = "/produits", onAddToCart }
                 }}
               >
                 <div className={styles.thumbWrap}>
-                  <img 
-                    src={product.image && String(product.image).trim() !== "" ? product.image : "/placeholder-product.jpg"} 
+                  <ImageWithFallback
+                    src={product.image}
+                    fallback="/placeholder-product.jpg"
                     alt={`Image de ${product.name}`}
-                    loading="lazy"
-                    onError={(e) => {
-                      const fallback = "/placeholder-product.jpg";
-                      if (!e.currentTarget.src.endsWith(fallback)) {
-                        e.currentTarget.src = fallback;
-                      }
-                    }}
-                    decoding="async"
-                    referrerPolicy="no-referrer"
                   />
                 </div>
                 <div className={styles.productBody}>
