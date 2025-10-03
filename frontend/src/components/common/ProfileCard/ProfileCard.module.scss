@@ -1,0 +1,163 @@
+@use "../../../styles/_variables.scss" as *;
+@use "sass:color";
+
+.profileCard {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  background: $primary;
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  color: $black;
+  box-shadow: $shadow;
+}
+
+.headerRow {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: $spacing-lg;
+  align-items: center;
+
+  @media (max-width: $container-mobile) {
+    grid-template-columns: 96px 1fr;
+    gap: $spacing-md;
+  }
+}
+
+.avatarWrap {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid rgba(0,0,0,0.15);
+  background: #ddd;
+
+  @media (max-width: $container-mobile) {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 $spacing-sm 0;
+  color: $black;
+}
+
+.field {
+  display: flex;
+  gap: 0.5rem;
+  line-height: 1.4;
+
+  .fieldLabel {
+    color: color.adjust($black, $lightness: -10%);
+    opacity: 0.9;
+    font-weight: 600;
+  }
+
+  .fieldValue {
+    color: $black;
+    font-weight: 500;
+  }
+}
+
+.role {
+  margin-top: $spacing-sm;
+  color: rgba(255,255,255,0.9);
+  font-weight: 700;
+}
+
+.actions {
+  margin-top: $spacing-xl;
+  display: grid;
+  grid-template-columns: repeat(2, 220px);
+  gap: $spacing-xl;
+
+  @media (max-width: $container-tablet) {
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-lg;
+  }
+
+  @media (max-width: $container-mobile) {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+}
+
+.actionBtn {
+  appearance: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  height: 48px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: $white;
+  background: $secondary;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  transition: transform $transition-fast, box-shadow $transition-fast, background $transition-fast;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+    background: color.adjust($secondary, $lightness: -5%);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  }
+}
+
+.ordersBtn {
+  // can be customized later for role
+}
+
+.cartBtn {
+  // secondary action styling kept same palette for consistency
+}
+
+.editFab {
+  position: absolute;
+  left: 50%;
+  bottom: -22px;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 3px solid $black;
+  background: #ffeb3b; // vivid yellow like in the mock
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  transition: transform $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 12px 26px rgba(0,0,0,0.3);
+  }
+
+  &:active {
+    transform: translateX(-50%);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  }
+}

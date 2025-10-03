@@ -9,6 +9,8 @@ export const ROUTES = {
   login: "/login",
   register: "/register",
   cart: "/cart",
+  profile: "/profil",
+  orders: "/commandes",
   notFound: "/404",
   mentionsLegales: "/mentions-legales",
   politiqueConfidentialite: "/politique-confidentialite",
