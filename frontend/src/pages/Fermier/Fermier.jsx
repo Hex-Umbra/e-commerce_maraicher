@@ -29,14 +29,6 @@ const Fermier = () => {
 
   const navigate = useNavigate();
 
-  // Helpers
-  const handleAddToCart = (product) => {
-    // Integrate with cart when available
-    console.log("Ajout au panier:", product.name);
-  };
-
-
-
   // Fetch producer, products, comments
   useEffect(() => {
     let isMounted = true;
@@ -172,7 +164,6 @@ const Fermier = () => {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  onAddToCart={handleAddToCart}
                   showProducer={false}
                   showStock={false}
                 />

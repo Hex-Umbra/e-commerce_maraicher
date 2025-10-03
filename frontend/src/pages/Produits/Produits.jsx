@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import HeroSection from "../../components/common/HeroSection";
 import LoadingState from "../../components/common/LoadingState/LoadingState";
 import ErrorState from "../../components/common/ErrorState/ErrorState";
@@ -8,8 +7,6 @@ import ProductCard from "../../components/common/ProductCard";
 import FilterChips from "../../components/common/FilterChips";
 import styles from "./Produits.module.scss";
 import { productAPI } from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
-import { useCart } from "../../context/useCart";
 import { ROUTES } from "../../utils/routes";
 import { transformProductData, getCategoryBadge } from "../../utils/defaults";
 
@@ -22,9 +19,6 @@ const Produits = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
-  const { isAuthenticated, showNotification } = useAuth();
-  const { addToCart } = useCart();
 
   // Fetch all products from backend
   useEffect(() => {
@@ -77,22 +71,6 @@ const Produits = () => {
 
     fetchProducts();
   }, []);
-
-  const handleAddToCart = async (product) => {
-
-    if (!isAuthenticated) {
-      showNotification("Veuillez vous connecter pour ajouter des produits au panier.", "warning");
-      navigate(ROUTES.login);
-      return;
-    }
-
-    try {
-      const data = await addToCart(product.id, 1);
-      showNotification(data?.message || "Produit ajouté au panier", "success");
-    } catch (err) {
-      showNotification(err.message || "Erreur lors de l'ajout au panier", "error");
-    }
-  };
 
   // Filtered products by selected category
   const visibleProducts = products.filter((p) => {
@@ -167,7 +145,6 @@ const Produits = () => {
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onAddToCart={handleAddToCart}
                     showProducer={true}
                     showStock={true}
                   />

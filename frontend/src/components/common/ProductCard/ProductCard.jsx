@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { BsCart3 } from 'react-icons/bs';
 import ImageWithFallback from '../ImageWithFallback/ImageWithFallback';
 import { getCategoryBadgeClass } from '../../../utils/defaults';
+import { useCart } from '../../../context/useCart';
+import { useAuth } from '../../../context/AuthContext';
 import styles from './ProductCard.module.scss';
 
 /**
@@ -49,6 +51,10 @@ const ProductCard = ({
     producerName,
   } = product;
 
+  const { addToCart } = useCart();
+  const { isAuthenticated, showNotification } = useAuth();
+  const [isAdding, setIsAdding] = useState(false);
+
   const formatPrice = (price) => {
     if (typeof price === 'number') return price.toFixed(2);
     return String(price);
@@ -82,11 +88,39 @@ const ProductCard = ({
     });
   };
 
-  const handleAddToCart = (e) => {
+  const handleAddToCart = async (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    // If custom handler is provided, use it
     if (onAddToCart) {
       onAddToCart(product);
+      return;
+    }
+
+    // Otherwise, use built-in cart functionality
+    if (!isAuthenticated) {
+      showNotification('Veuillez vous connecter pour ajouter des produits au panier', 'error');
+      return;
+    }
+
+    if (isOutOfStock) {
+      showNotification('Ce produit est en rupture de stock', 'error');
+      return;
+    }
+
+    try {
+      setIsAdding(true);
+      await addToCart(id, 1);
+      showNotification(`${name} ajouté au panier`, 'success');
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout au panier:', error);
+      showNotification(
+        error.message || 'Erreur lors de l\'ajout au panier',
+        'error'
+      );
+    } finally {
+      setIsAdding(false);
     }
   };
 
@@ -154,16 +188,19 @@ const ProductCard = ({
               Rupture de stock
             </span>
           ) : (
-            onAddToCart && (
-              <button
-                className={styles.cartBtn}
-                onClick={handleAddToCart}
-                aria-label={`Ajouter ${name} au panier`}
-                title="Ajouter au panier"
-              >
+            <button
+              className={`${styles.cartBtn} ${isAdding ? styles.adding : ''}`}
+              onClick={handleAddToCart}
+              disabled={isAdding}
+              aria-label={`Ajouter ${name} au panier`}
+              title="Ajouter au panier"
+            >
+              {isAdding ? (
+                <span className={styles.spinner} aria-hidden="true">⏳</span>
+              ) : (
                 <BsCart3 aria-hidden="true" />
-              </button>
-            )
+              )}
+            </button>
           )}
 
           {showStock && (
