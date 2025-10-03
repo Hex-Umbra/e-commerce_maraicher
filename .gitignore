@@ -7,3 +7,4 @@ dist/
 PHASE1_COMPLETE.md
 PHASE2_PLAN.md
 frontend/src/components/common/HeroSection/index.js
+frontend/src/components/common/ProductCard/index.js

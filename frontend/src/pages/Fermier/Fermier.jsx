@@ -4,12 +4,11 @@ import LoadingState from "../../components/common/LoadingState/LoadingState";
 import ErrorState from "../../components/common/ErrorState/ErrorState";
 import EmptyState from "../../components/common/EmptyState/EmptyState";
 import ImageWithFallback from "../../components/common/ImageWithFallback/ImageWithFallback";
+import ProductCard from "../../components/common/ProductCard";
 import { producerAPI, commentsAPI } from "../../services/api";
-import { transformProductData, transformProducerData, getCategoryBadgeClass } from "../../utils/defaults";
+import { transformProductData, transformProducerData } from "../../utils/defaults";
 import accueilStyles from "../Accueil/Accueil.module.scss";
-import cardStyles from "../../components/ProducerShowcase/ProducerShowcase.module.scss";
 import styles from "./Fermier.module.scss";
-import { BsCart3 } from "react-icons/bs";
 
 const Fermier = () => {
   const { id } = useParams();
@@ -30,43 +29,9 @@ const Fermier = () => {
   const navigate = useNavigate();
 
   // Helpers
-  const renderProductTags = (product) => {
-    if (!product.tags || product.tags.length === 0) return null;
-    return product.tags.map((tag, index) => {
-      const tagLower = String(tag).toLowerCase();
-      let tagClass = cardStyles.tagDefault;
-
-      if (tagLower === "nouveau") {
-        tagClass = cardStyles.tagNew;
-      } else if (tagLower === "promo") {
-        tagClass = cardStyles.tagPromo;
-      } else {
-        const categoryClass = getCategoryBadgeClass(product.category || tag);
-        tagClass = cardStyles[categoryClass] || cardStyles.tagDefault;
-      }
-
-      return (
-        <span
-          key={`${product.id}-${tag}-${index}`}
-          className={`${cardStyles.tag} ${tagClass}`}
-          aria-label={`Catégorie: ${tag}`}
-        >
-          {tag}
-        </span>
-      );
-    });
-  };
-
-  const handleAddToCart = (product, event) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const handleAddToCart = (product) => {
     // Integrate with cart when available
     console.log("Ajout au panier:", product.name);
-  };
-
-  const formatPrice = (price) => {
-    if (typeof price === "number") return price.toFixed(2);
-    return String(price);
   };
 
   const formatDate = (iso) => {
@@ -215,58 +180,13 @@ const Fermier = () => {
           ) : (
             <div className={styles.grid4} role="grid" aria-label="Grille des produits du producteur">
               {products.map((product) => (
-                <article
+                <ProductCard
                   key={product.id}
-                  className={cardStyles.productCard}
-                  role="gridcell"
-                  tabIndex="0"
-                  aria-labelledby={`product-name-${product.id}`}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                    }
-                  }}
-                >
-                  <div className={cardStyles.thumbWrap}>
-                    <ImageWithFallback
-                      src={product.image}
-                      fallback="/placeholder-product.jpg"
-                      alt={`Image de ${product.name}`}
-                    />
-                  </div>
-                  <div className={cardStyles.productBody}>
-                    <div className={cardStyles.productHeader}>
-                      <h5
-                        id={`product-name-${product.id}`}
-                        className={cardStyles.productName}
-                        title={product.name}
-                      >
-                        {product.name}
-                      </h5>
-                      <div className={cardStyles.tags} role="list" aria-label="Catégories du produit">
-                        {renderProductTags(product)}
-                      </div>
-                    </div>
-                    {product.description && (
-                      <p className={cardStyles.productDescription} title={product.description}>
-                        {product.description}
-                      </p>
-                    )}
-                    <div className={cardStyles.priceRow}>
-                      <span className={cardStyles.price} aria-label={`Prix: ${formatPrice(product.price)} euros`}>
-                        {formatPrice(product.price)}€
-                      </span>
-                      <button
-                        className={cardStyles.cartBtn}
-                        onClick={(e) => handleAddToCart(product, e)}
-                        aria-label={`Ajouter ${product.name} au panier`}
-                        title="Ajouter au panier"
-                      >
-                        <BsCart3 aria-hidden="true" />
-                      </button>
-                    </div>
-                  </div>
-                </article>
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                  showProducer={false}
+                  showStock={false}
+                />
               ))}
             </div>
           )}

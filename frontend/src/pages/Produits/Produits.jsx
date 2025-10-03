@@ -4,15 +4,14 @@ import HeroSection from "../../components/common/HeroSection";
 import LoadingState from "../../components/common/LoadingState/LoadingState";
 import ErrorState from "../../components/common/ErrorState/ErrorState";
 import EmptyState from "../../components/common/EmptyState/EmptyState";
-import ImageWithFallback from "../../components/common/ImageWithFallback/ImageWithFallback";
+import ProductCard from "../../components/common/ProductCard";
 import styles from "./Produits.module.scss";
-import cardStyles from "../../components/ProducerShowcase/ProducerShowcase.module.scss";
-import { BsCart3, BsFilter } from "react-icons/bs";
+import { BsFilter } from "react-icons/bs";
 import { productAPI } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/useCart";
 import { ROUTES } from "../../utils/routes";
-import { transformProductData, getCategoryBadgeClass, getCategoryBadge } from "../../utils/defaults";
+import { transformProductData, getCategoryBadge } from "../../utils/defaults";
 
 const Produits = () => {
   const [products, setProducts] = useState([]);
@@ -81,38 +80,7 @@ const Produits = () => {
     fetchProducts();
   }, []);
 
-  // Tag rendering (duplicate of ProducerShowcase logic for reuse)
-  const renderProductTags = (product) => {
-    if (!product.tags || product.tags.length === 0) return null;
-
-    return product.tags.map((tag, index) => {
-      const tagLower = String(tag).toLowerCase();
-      let tagClass = cardStyles.tagDefault;
-
-      if (tagLower === "nouveau") {
-        tagClass = cardStyles.tagNew;
-      } else if (tagLower === "promo") {
-        tagClass = cardStyles.tagPromo;
-      } else {
-        const categoryClass = getCategoryBadgeClass(product.category || tag);
-        tagClass = cardStyles[categoryClass] || cardStyles.tagDefault;
-      }
-
-      return (
-        <span
-          key={`${product.id}-${tag}-${index}`}
-          className={`${cardStyles.tag} ${tagClass}`}
-          aria-label={`Catégorie: ${tag}`}
-        >
-          {tag}
-        </span>
-      );
-    });
-  };
-
-  const handleAddToCart = async (product, event) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const handleAddToCart = async (product) => {
 
     if (!isAuthenticated) {
       showNotification("Veuillez vous connecter pour ajouter des produits au panier.", "warning");
@@ -126,11 +94,6 @@ const Produits = () => {
     } catch (err) {
       showNotification(err.message || "Erreur lors de l'ajout au panier", "error");
     }
-  };
-
-  const formatPrice = (price) => {
-    if (typeof price === "number") return price.toFixed(2);
-    return String(price);
   };
 
   // Filtered products by selected category
@@ -320,90 +283,16 @@ const Produits = () => {
               />
             ) : (
               <div className={styles.grid} role="grid" aria-label="Grille des produits">
-              {visibleProducts.map((product) => (
-                <article
-                  key={product.id}
-                  className={cardStyles.productCard}
-                  role="gridcell"
-                  tabIndex="0"
-                  aria-labelledby={`product-name-${product.id}`}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      // Could trigger product detail view
-                    }
-                  }}
-                >
-                  <div className={cardStyles.thumbWrap}>
-                    <ImageWithFallback
-                      src={product.image}
-                      fallback="/placeholder-product.jpg"
-                      alt={`Image de ${product.name}`}
-                    />
-                  </div>
-                  <div className={cardStyles.productBody}>
-                    <div className={cardStyles.productHeader}>
-                      <h5
-                        id={`product-name-${product.id}`}
-                        className={cardStyles.productName}
-                        title={product.name}
-                      >
-                        {product.name}
-                      </h5>
-                      <div className={cardStyles.tags} role="list" aria-label="Catégories du produit">
-                        {renderProductTags(product)}
-                      </div>
-                    </div>
-
-                    {/* Producer name under product name */}
-                    <p className={cardStyles.producerName}>
-                      par {product.producerName || "—"}
-                    </p>
-
-                    {product.description && (
-                      <p className={cardStyles.productDescription} title={product.description}>
-                        {product.description}
-                      </p>
-                    )}
-
-                    <div className={cardStyles.priceRow}>
-                      <span
-                        className={cardStyles.price}
-                        aria-label={`Prix: ${formatPrice(product.price)} euros`}
-                      >
-                        {formatPrice(product.price)}€
-                      </span>
-                      {Number(product.quantity || 0) <= 0 ? (
-                        <span
-                          style={{ color: 'crimson', fontWeight: 600 }}
-                          role="status"
-                          aria-label="Rupture de stock"
-                          title="Rupture de stock"
-                        >
-                          Rupture de stock
-                        </span>
-                      ) : (
-                        <button
-                          className={cardStyles.cartBtn}
-                          onClick={(e) => handleAddToCart(product, e)}
-                          aria-label={`Ajouter ${product.name} au panier`}
-                          title="Ajouter au panier"
-                        >
-                          <BsCart3 aria-hidden="true" />
-                        </button>
-                      )}
-                      <span
-                        style={{ marginLeft: '0.5rem', fontSize: '0.9rem', color: '#555' }}
-                        aria-label={`Stock disponible: ${Number(product.quantity || 0)}`}
-                        title={`Stock: ${Number(product.quantity || 0)}`}
-                      >
-                        Stock: {Number(product.quantity || 0)}
-                      </span>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
+                {visibleProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                    showProducer={true}
+                    showStock={true}
+                  />
+                ))}
+              </div>
             )}
           </>
         )}
