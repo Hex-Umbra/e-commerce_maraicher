@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import LoadingState from "../../components/common/LoadingState/LoadingState";
+import ErrorState from "../../components/common/ErrorState/ErrorState";
+import EmptyState from "../../components/common/EmptyState/EmptyState";
+import ImageWithFallback from "../../components/common/ImageWithFallback/ImageWithFallback";
 import { producerAPI, commentsAPI } from "../../services/api";
 import { transformProductData, transformProducerData, getCategoryBadgeClass } from "../../utils/defaults";
 import accueilStyles from "../Accueil/Accueil.module.scss";
@@ -182,19 +186,11 @@ const Fermier = () => {
               </>
             ) : (
               <div className={styles.heroRow}>
-                <img
-                  className={styles.heroAvatar}
-                  src={producer?.avatar && String(producer.avatar).trim() !== "" ? producer.avatar : "https://i.pravatar.cc/100?img=12"}
+                <ImageWithFallback
+                  src={producer?.avatar}
+                  fallback="https://i.pravatar.cc/100?img=12"
                   alt={`Photo de ${title}`}
-                  loading="lazy"
-                  onError={(e) => {
-                    const fallback = "https://i.pravatar.cc/100?img=12";
-                    if (!e.currentTarget.src.includes("i.pravatar.cc/100?img=12")) {
-                      e.currentTarget.src = fallback;
-                    }
-                  }}
-                  decoding="async"
-                  referrerPolicy="no-referrer"
+                  className={styles.heroAvatar}
                 />
                 <div className={styles.heroText}>
                   <h2 className={accueilStyles.headline}>{title}</h2>
@@ -211,11 +207,11 @@ const Fermier = () => {
           <h3 id="produits-title" className={styles.sectionHeading}>Produits</h3>
 
           {prodLoading ? (
-            <div className={styles.loading}><p>Chargement des produits...</p></div>
+            <LoadingState message="Chargement des produits..." size="small" />
           ) : prodError ? (
-            <div className={styles.error}><p>Erreur: {prodError}</p></div>
+            <ErrorState message={prodError} />
           ) : products.length === 0 ? (
-            <div className={cardStyles.emptyState}><p>Aucun produit disponible pour le moment</p></div>
+            <EmptyState message="Aucun produit disponible pour le moment" icon="📦" />
           ) : (
             <div className={styles.grid4} role="grid" aria-label="Grille des produits du producteur">
               {products.map((product) => (
@@ -232,18 +228,10 @@ const Fermier = () => {
                   }}
                 >
                   <div className={cardStyles.thumbWrap}>
-                    <img
-                      src={product.image && String(product.image).trim() !== "" ? product.image : "/placeholder-product.jpg"}
+                    <ImageWithFallback
+                      src={product.image}
+                      fallback="/placeholder-product.jpg"
                       alt={`Image de ${product.name}`}
-                      loading="lazy"
-                      onError={(e) => {
-                        const fallback = "/placeholder-product.jpg";
-                        if (!e.currentTarget.src.endsWith(fallback)) {
-                          e.currentTarget.src = fallback;
-                        }
-                      }}
-                      decoding="async"
-                      referrerPolicy="no-referrer"
                     />
                   </div>
                   <div className={cardStyles.productBody}>
@@ -289,13 +277,14 @@ const Fermier = () => {
           <h3 id="comments-title" className={styles.commentsTitle}>Commentaire</h3>
 
           {commentsLoading ? (
-            <div className={styles.loading}><p>Chargement des commentaires...</p></div>
+            <LoadingState message="Chargement des commentaires..." size="small" />
           ) : commentsError ? (
-            <div className={styles.error}><p>Erreur: {commentsError}</p></div>
+            <ErrorState message={commentsError} />
           ) : comments.length === 0 ? (
-            <div className={styles.noComments}>
-              <p>Pas de commentaire ni d'évaluations pour ce producteurs voulez-vous laissez le premier commentaire ?</p>
-            </div>
+            <EmptyState 
+              message="Pas de commentaire ni d'évaluations pour ce producteur. Voulez-vous laisser le premier commentaire ?"
+              icon="💬"
+            />
           ) : (
             <div className={styles.commentList}>
               {comments.map((c, idx) => {
@@ -304,7 +293,12 @@ const Fermier = () => {
                 return (
                   <div key={c._id || idx} className={styles.commentRow}>
                     <div className={styles.clientInfo}>
-                      <img className={styles.clientAvatar} src={avatar} alt={`Avatar de ${username}`} />
+                      <ImageWithFallback
+                        src={avatar}
+                        fallback={avatar}
+                        alt={`Avatar de ${username}`}
+                        className={styles.clientAvatar}
+                      />
                       <div className={styles.clientName}>{username}</div>
                     </div>
 

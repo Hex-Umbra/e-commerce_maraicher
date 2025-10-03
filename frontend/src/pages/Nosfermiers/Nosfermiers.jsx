@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import LoadingState from "../../components/common/LoadingState/LoadingState";
+import ErrorState from "../../components/common/ErrorState/ErrorState";
+import EmptyState from "../../components/common/EmptyState/EmptyState";
+import ImageWithFallback from "../../components/common/ImageWithFallback/ImageWithFallback";
 import styles from "./Nosfermiers.module.scss";
 import accueilStyles from "../Accueil/Accueil.module.scss";
 import { producerAPI } from "../../services/api";
@@ -79,20 +83,17 @@ const Nosfermiers = () => {
 
         {/* Content states */}
         {loading ? (
-          <div className={styles.loading}>
-            <p>Chargement des fermiers...</p>
-          </div>
+          <LoadingState message="Chargement des fermiers..." />
         ) : error ? (
-          <div className={styles.error}>
-            <p>Erreur: {error}</p>
-            <button onClick={fetchProducers} className={styles.retryBtn}>
-              Réessayer
-            </button>
-          </div>
+          <ErrorState 
+            message={error}
+            onRetry={fetchProducers}
+          />
         ) : producers.length === 0 ? (
-          <div className={styles.noProducers}>
-            <p>Aucun producteur disponible pour le moment.</p>
-          </div>
+          <EmptyState 
+            message="Aucun producteur disponible pour le moment."
+            icon="👨‍🌾"
+          />
         ) : (
           <>
             <h3 className={styles.sectionHeading}>Nos fermiers</h3>
@@ -113,19 +114,11 @@ const Nosfermiers = () => {
                   }}
                 >
                   <header className={styles.header}>
-                    <img
-                      className={styles.avatar}
-                      src={p.avatar && String(p.avatar).trim() !== "" ? p.avatar : "https://i.pravatar.cc/100?img=12"}
+                    <ImageWithFallback
+                      src={p.avatar}
+                      fallback="https://i.pravatar.cc/100?img=12"
                       alt={`Photo de ${p.name}`}
-                      loading="lazy"
-                      onError={(e) => {
-                        const fallback = "https://i.pravatar.cc/100?img=12";
-                        if (!e.currentTarget.src.includes("i.pravatar.cc/100?img=12")) {
-                          e.currentTarget.src = fallback;
-                        }
-                      }}
-                      decoding="async"
-                      referrerPolicy="no-referrer"
+                      className={styles.avatar}
                     />
                     <div className={styles.meta}>
                       <h4 id={`producer-name-${p.id}`} className={styles.name} title={p.name}>

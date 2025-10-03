@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ProducerShowcase from "../../components/ProducerShowcase/ProducerShowcase";
+import LoadingState from "../../components/common/LoadingState/LoadingState";
+import ErrorState from "../../components/common/ErrorState/ErrorState";
+import EmptyState from "../../components/common/EmptyState/EmptyState";
 import { producerAPI } from "../../services/api";
 import { transformProducerData, transformProductData } from "../../utils/defaults";
 import { ROUTES } from "../../utils/routes";
@@ -70,9 +73,7 @@ const Accueil = () => {
     return (
       <div className={styles.accueil}>
         <div className="container">
-          <div className={styles.loading}>
-            <p>Chargement des producteurs...</p>
-          </div>
+          <LoadingState message="Chargement des producteurs..." />
         </div>
       </div>
     );
@@ -82,12 +83,10 @@ const Accueil = () => {
     return (
       <div className={styles.accueil}>
         <div className="container">
-          <div className={styles.error}>
-            <p>Erreur: {error}</p>
-            <button onClick={fetchProducersWithProducts} className={styles.retryBtn}>
-              Réessayer
-            </button>
-          </div>
+          <ErrorState 
+            message={error}
+            onRetry={fetchProducersWithProducts}
+          />
         </div>
       </div>
     );
@@ -129,9 +128,10 @@ const Accueil = () => {
             ))}
           </div>
         ) : (
-          <div className={styles.noProducers}>
-            <p>Aucun producteur disponible pour le moment.</p>
-          </div>
+          <EmptyState 
+            message="Aucun producteur disponible pour le moment."
+            icon="👨‍🌾"
+          />
         )}
       </div>
     </div>

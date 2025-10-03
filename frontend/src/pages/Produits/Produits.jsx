@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import LoadingState from "../../components/common/LoadingState/LoadingState";
+import ErrorState from "../../components/common/ErrorState/ErrorState";
+import EmptyState from "../../components/common/EmptyState/EmptyState";
+import ImageWithFallback from "../../components/common/ImageWithFallback/ImageWithFallback";
 import styles from "./Produits.module.scss";
 import accueilStyles from "../Accueil/Accueil.module.scss";
 import cardStyles from "../../components/ProducerShowcase/ProducerShowcase.module.scss";
@@ -309,26 +313,23 @@ const Produits = () => {
 
         {/* Content states */}
         {loading ? (
-          <div className={styles.loading}>
-            <p>Chargement des produits...</p>
-          </div>
+          <LoadingState message="Chargement des produits..." />
         ) : error ? (
-          <div className={styles.error}>
-            <p>Erreur: {error}</p>
-            {/* You can implement a retry by reloading the page or extracting fetch into a function */}
-          </div>
+          <ErrorState message={error} />
         ) : products.length === 0 ? (
-          <div className={styles.noProducts}>
-            <p>Aucun produit disponible pour le moment.</p>
-          </div>
+          <EmptyState 
+            message="Aucun produit disponible pour le moment."
+            icon="🛒"
+          />
         ) : (
           <>
             <h3 className={styles.sectionHeading}>Tous les produits</h3>
 
             {visibleProducts.length === 0 ? (
-              <div className={styles.noProducts}>
-                <p>Aucun produit pour cette catégorie.</p>
-              </div>
+              <EmptyState 
+                message="Aucun produit pour cette catégorie."
+                icon="🔍"
+              />
             ) : (
               <div className={styles.grid} role="grid" aria-label="Grille des produits">
               {visibleProducts.map((product) => (
@@ -346,17 +347,10 @@ const Produits = () => {
                   }}
                 >
                   <div className={cardStyles.thumbWrap}>
-                    <img
-                      src={product.image && product.image.trim() !== "" ? product.image : "/placeholder-product.jpg"}
+                    <ImageWithFallback
+                      src={product.image}
+                      fallback="/placeholder-product.jpg"
                       alt={`Image de ${product.name}`}
-                      loading="lazy"
-                      onError={(e) => {
-                        if (!e.currentTarget.src.endsWith("/placeholder-product.jpg")) {
-                          e.currentTarget.src = "/placeholder-product.jpg";
-                        }
-                      }}
-                      decoding="async"
-                      referrerPolicy="no-referrer"
                     />
                   </div>
                   <div className={cardStyles.productBody}>
