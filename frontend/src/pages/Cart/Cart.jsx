@@ -14,10 +14,7 @@ const Cart = () => {
   const [items, setItems] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [loading, setLoading] = useState(true);
-  const [orders, setOrders] = useState([]);
-  const [ordersLoading, setOrdersLoading] = useState(true);
   const [placingOrder, setPlacingOrder] = useState(false);
-  const [cancellingOrderId, setCancellingOrderId] = useState(null);
 
   // Authentication redirect handled in render to avoid conditional hooks
 
@@ -40,22 +37,10 @@ const Cart = () => {
     }
   };
 
-  const fetchOrders = async () => {
-    try {
-      setOrdersLoading(true);
-      const ordersList = await ordersAPI.getUserOrders();
-      setOrders(Array.isArray(ordersList) ? ordersList : []);
-    } catch (err) {
-      showNotification(err.message || 'Erreur lors du chargement des commandes', 'error');
-    } finally {
-      setOrdersLoading(false);
-    }
-  };
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchCart();
-      fetchOrders();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
@@ -131,7 +116,6 @@ const Cart = () => {
       showNotification("Commande créée avec succès.", "success");
       // Cart is cleared server-side; refresh both cart and orders
       await fetchCart();
-      await fetchOrders();
       await refreshCart();
     } catch (err) {
       showNotification(err.message || "Erreur lors de la création de la commande", "error");
@@ -140,18 +124,6 @@ const Cart = () => {
     }
   };
 
-  const handleCancelOrder = async (orderId) => {
-    try {
-      setCancellingOrderId(orderId);
-      await ordersAPI.cancelOrder(orderId);
-      showNotification('Commande annulée avec succès.', 'success');
-      await fetchOrders();
-    } catch (err) {
-      showNotification(err.message || "Erreur lors de l'annulation de la commande", 'error');
-    } finally {
-      setCancellingOrderId(null);
-    }
-  };
 
   return (
     authLoading ? (
@@ -242,70 +214,6 @@ const Cart = () => {
           </div>
         )}
         
-        <hr className={styles.divider} />
-        
-        <div className={styles.ordersSection}>
-          <h3>Vos commandes</h3>
-          {ordersLoading ? (
-            <LoadingState message="Chargement des commandes..." size="small" />
-          ) : orders.length === 0 ? (
-            <EmptyState 
-              message="Aucune commande."
-              icon="📦"
-            />
-          ) : (
-            <ul className={styles.ordersList}>
-              {orders.map((order) => {
-                const created = order.createdAt ? new Date(order.createdAt).toLocaleString('fr-FR') : '';
-                const itemsCount = Array.isArray(order.products) ? order.products.reduce((sum, p) => sum + (Number(p.quantity || 0)), 0) : 0;
-                const totalAmount = Number(order.totalAmount || 0).toFixed(2);
-                return (
-                  <li key={order._id} className={styles.orderItem}>
-                    <div className={styles.orderHeader}>
-                      <div className={styles.orderInfo}>
-                        <strong>Commande</strong> #{String(order._id).slice(-6).toUpperCase()} • {created}
-                      </div>
-                      <div className={styles.orderDetails}>
-                        Statut: <strong>{order.status}</strong> • Total: <strong>{totalAmount} €</strong> • Articles: <strong>{itemsCount}</strong>
-                      </div>
-                    </div>
-                    {order.status !== "Annulée" && (
-                      <div className={styles.orderActions}>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => handleCancelOrder(order._id)}
-                          disabled={cancellingOrderId === order._id}
-                          title="Annuler la commande"
-                        >
-                          {cancellingOrderId === order._id ? 'Annulation...' : 'Annuler la commande'}
-                        </button>
-                      </div>
-                    )}
-                    {Array.isArray(order.products) && order.products.length > 0 && (
-                      <ul className={styles.productsList}>
-                        {order.products.map((line) => {
-                          const prod = line.productId || {};
-                          const name = prod.name || 'Produit';
-                          const qty = Number(line.quantity || 0);
-                          const unitPrice = Number(line.price || 0);
-                          const lineTotal = (qty * unitPrice).toFixed(2);
-                          return (
-                            <li key={prod._id || name} className={styles.productItem}>
-                              <span className={styles.productName}>{name}</span>
-                              <span className={styles.productPrice}>
-                                {qty} × {unitPrice.toFixed(2)} € = {lineTotal} €
-                              </span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
       </section>
     )
   );
