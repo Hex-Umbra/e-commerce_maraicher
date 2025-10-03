@@ -1,4 +1,5 @@
 import { useState } from "react";
+import FormField from "../../components/common/FormField";
 import { supportAPI } from "../../services/api";
 import styles from "./Contact.module.scss";
 
@@ -42,47 +43,39 @@ const Contact = () => {
     <section className={styles.contactSection}>
       <div className={`container ${styles.contentWrapper}`}>
         <form className={styles.formContainer} onSubmit={handleSubmit} noValidate>
-          <div className={styles.formGroup}>
-            <label htmlFor="subject">
-              Objet
-            </label>
-            <input
-              id="subject"
-              type="text"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              placeholder="Sujet de votre demande"
-              required
-            />
-          </div>
+          <FormField
+            id="subject"
+            label="Objet"
+            type="text"
+            value={subject}
+            onChange={setSubject}
+            placeholder="Sujet de votre demande"
+            required
+            disabled={loading}
+          />
 
-          <div className={styles.formGroup}>
-            <label htmlFor="title">
-              Titre
-            </label>
-            <input
-              id="title"
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Titre du message"
-              required
-            />
-          </div>
+          <FormField
+            id="title"
+            label="Titre"
+            type="text"
+            value={title}
+            onChange={setTitle}
+            placeholder="Titre du message"
+            required
+            disabled={loading}
+          />
 
-          <div className={styles.formGroup}>
-            <label htmlFor="message">
-              Message
-            </label>
-            <textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Décrivez votre demande..."
-              required
-              rows={5}
-            />
-          </div>
+          <FormField
+            id="message"
+            label="Message"
+            type="textarea"
+            value={message}
+            onChange={setMessage}
+            placeholder="Décrivez votre demande..."
+            required
+            rows={5}
+            disabled={loading}
+          />
 
           {successMsg && (
             <div className={styles.successMessage}>

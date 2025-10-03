@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import FormField from "../common/FormField";
 import styles from "./WelcomeSection.module.scss";
 
 const WelcomeSection = () => {
@@ -18,18 +19,17 @@ const WelcomeSection = () => {
   const [formErrors, setFormErrors] = useState({});
 
   // Handle input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleFieldChange = (fieldName) => (value) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [fieldName]: value,
     }));
 
     // Clear specific field error
-    if (formErrors[name]) {
+    if (formErrors[fieldName]) {
       setFormErrors((prev) => ({
         ...prev,
-        [name]: "",
+        [fieldName]: "",
       }));
     }
 
@@ -125,92 +125,65 @@ const WelcomeSection = () => {
           {/* General Error Message */}
           {error && <div className={styles.errorMessage}>{error}</div>}
 
-          <div className={styles.formGroup}>
-            <label htmlFor="name">Nom et prénom</label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              placeholder="Nom et prénom"
-              value={formData.name}
-              onChange={handleInputChange}
-              className={formErrors.name ? styles.inputError : ""}
-              disabled={loading}
-            />
-            {formErrors.name && (
-              <span className={styles.fieldError}>{formErrors.name}</span>
-            )}
-          </div>
+          <FormField
+            id="name"
+            label="Nom et prénom"
+            type="text"
+            value={formData.name}
+            onChange={handleFieldChange('name')}
+            placeholder="Nom et prénom"
+            error={formErrors.name}
+            required
+            disabled={loading}
+          />
 
-          <div className={styles.formGroup}>
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Votre email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className={formErrors.email ? styles.inputError : ""}
-              disabled={loading}
-            />
-            {formErrors.email && (
-              <span className={styles.fieldError}>{formErrors.email}</span>
-            )}
-          </div>
+          <FormField
+            id="email"
+            label="Email"
+            type="email"
+            value={formData.email}
+            onChange={handleFieldChange('email')}
+            placeholder="Votre email"
+            error={formErrors.email}
+            required
+            disabled={loading}
+          />
 
-          <div className={styles.formGroup}>
-            <label htmlFor="address">Adresse</label>
-            <input
-              id="address"
-              name="address"
-              type="text"
-              placeholder="Votre adresse"
-              value={formData.address}
-              onChange={handleInputChange}
-              className={formErrors.address ? styles.inputError : ""}
-              disabled={loading}
-            />
-            {formErrors.address && (
-              <span className={styles.fieldError}>{formErrors.address}</span>
-            )}
-          </div>
+          <FormField
+            id="address"
+            label="Adresse"
+            type="text"
+            value={formData.address}
+            onChange={handleFieldChange('address')}
+            placeholder="Votre adresse"
+            error={formErrors.address}
+            required
+            disabled={loading}
+          />
 
-          <div className={styles.formGroup}>
-            <label htmlFor="password">Mot de Passe</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Votre mot de passe"
-              value={formData.password}
-              onChange={handleInputChange}
-              className={formErrors.password ? styles.inputError : ""}
-              disabled={loading}
-            />
-            {formErrors.password && (
-              <span className={styles.fieldError}>{formErrors.password}</span>
-            )}
-          </div>
+          <FormField
+            id="password"
+            label="Mot de Passe"
+            type="password"
+            value={formData.password}
+            onChange={handleFieldChange('password')}
+            placeholder="Votre mot de passe"
+            error={formErrors.password}
+            required
+            disabled={loading}
+          />
 
-          <div className={styles.formGroup}>
-            <label htmlFor="confirmPassword">Confirmer le mot de passe</label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              placeholder="Confirmez votre mot de passe"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              className={formErrors.confirmPassword ? styles.inputError : ""}
-              disabled={loading}
-            />
-            {formErrors.confirmPassword && (
-              <span className={styles.fieldError}>
-                {formErrors.confirmPassword}
-              </span>
-            )}
-          </div>
+          <FormField
+            id="confirmPassword"
+            label="Confirmer le mot de passe"
+            type="password"
+            value={formData.confirmPassword}
+            onChange={handleFieldChange('confirmPassword')}
+            placeholder="Confirmez votre mot de passe"
+            error={formErrors.confirmPassword}
+            required
+            disabled={loading}
+          />
 
           <button
             type="submit"

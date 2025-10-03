@@ -1,5 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Navigate, Link } from 'react-router-dom';
+import LoadingState from '../../components/common/LoadingState/LoadingState';
+import EmptyState from '../../components/common/EmptyState/EmptyState';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/useCart';
 import { cartAPI, ordersAPI } from '../../services/api';
@@ -154,9 +156,7 @@ const Cart = () => {
   return (
     authLoading ? (
       <section className={`container ${styles.cart}`}>
-        <div className={styles.loading}>
-          <p>Vérification de la session...</p>
-        </div>
+        <LoadingState message="Vérification de la session..." />
       </section>
     ) : !isAuthenticated ? (
       <Navigate to={ROUTES.login} replace />
@@ -183,14 +183,14 @@ const Cart = () => {
         </header>
 
         {loading ? (
-          <div className={styles.loading}>
-            <p>Chargement du panier...</p>
-          </div>
+          <LoadingState message="Chargement du panier..." />
         ) : items.length === 0 ? (
-          <div className={styles.emptyState}>
-            <p>Votre panier est vide.</p>
-            <Link to={ROUTES.produits} className="btn btn-primary">Voir les produits</Link>
-          </div>
+          <EmptyState 
+            message="Votre panier est vide."
+            icon="🛒"
+            ctaText="Voir les produits"
+            ctaLink={ROUTES.produits}
+          />
         ) : (
           <div>
             <ul className={styles.cartItems}>
@@ -247,13 +247,12 @@ const Cart = () => {
         <div className={styles.ordersSection}>
           <h3>Vos commandes</h3>
           {ordersLoading ? (
-            <div className={styles.loading}>
-              <p>Chargement des commandes...</p>
-            </div>
+            <LoadingState message="Chargement des commandes..." size="small" />
           ) : orders.length === 0 ? (
-            <div className={styles.emptyState}>
-              <p>Aucune commande.</p>
-            </div>
+            <EmptyState 
+              message="Aucune commande."
+              icon="📦"
+            />
           ) : (
             <ul className={styles.ordersList}>
               {orders.map((order) => {
