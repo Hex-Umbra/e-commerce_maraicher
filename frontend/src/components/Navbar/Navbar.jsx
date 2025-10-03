@@ -110,10 +110,16 @@ const Navbar = () => {
         <div className={styles.userSection}>
           {isAuthenticated ? (
             <div className={styles.userInfo}>
-              <div className={styles.userIcon}>
+              <Link
+                to={ROUTES.profile}
+                className={styles.userIcon}
+                onClick={closeMenu}
+                aria-label="Aller à mon profil"
+                title="Mon profil"
+              >
                 <span className={styles.userName}>{user?.name}</span>
                 <div className={styles.profileIcon}>👤</div>
-              </div>
+              </Link>
               <Link
                 to={ROUTES.cart}
                 className={styles.cartButton}

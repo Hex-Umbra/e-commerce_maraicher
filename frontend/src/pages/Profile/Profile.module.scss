@@ -1,0 +1,30 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.profile {
+  padding: 2rem 0 3rem;
+  min-height: calc(100vh - $header-h);
+}
+
+.title {
+  @include section-heading();
+  text-align: left;
+  margin-bottom: 1.25rem;
+  color: $black;
+}
+
+.cardWrap {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem 0;
+
+  p {
+    font-size: 1.1rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
