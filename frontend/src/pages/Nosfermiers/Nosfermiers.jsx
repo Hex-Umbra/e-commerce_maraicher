@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import HeroSection from "../../components/common/HeroSection";
 import LoadingState from "../../components/common/LoadingState/LoadingState";
 import ErrorState from "../../components/common/ErrorState/ErrorState";
 import EmptyState from "../../components/common/EmptyState/EmptyState";
 import ImageWithFallback from "../../components/common/ImageWithFallback/ImageWithFallback";
 import styles from "./Nosfermiers.module.scss";
-import accueilStyles from "../Accueil/Accueil.module.scss";
 import { producerAPI } from "../../services/api";
 import { transformProducerData } from "../../utils/defaults";
+import { ROUTES } from "../../utils/routes";
 
 const Nosfermiers = () => {
   const [producers, setProducers] = useState([]);
@@ -58,28 +59,13 @@ const Nosfermiers = () => {
   return (
     <div className={styles.nosfermiers}>
       <div className="container">
-        {/* Hero section aligned with Accueil/Produits */}
-        <section className={accueilStyles.hero}>
-          <div className={accueilStyles.heroInner}>
-            <h2 className={accueilStyles.headline}>Découvrez nos partenaires</h2>
-            <p className={accueilStyles.subtitle}>
-              Rencontrez les producteurs passionnés derrière nos produits frais et artisanaux.
-              Parcourez leurs spécialités et soutenez l&apos;agriculture locale.
-            </p>
-            <Link
-              to="/produits"
-              className={accueilStyles.cta}
-              onKeyDown={(e) => {
-                if (e.key === " " || e.key === "Spacebar" || e.code === "Space") {
-                  e.preventDefault();
-                  e.currentTarget.click();
-                }
-              }}
-            >
-              Explorer les produits
-            </Link>
-          </div>
-        </section>
+        {/* Hero section */}
+        <HeroSection
+          title="Découvrez nos partenaires"
+          subtitle="Rencontrez les producteurs passionnés derrière nos produits frais et artisanaux. Parcourez leurs spécialités et soutenez l'agriculture locale."
+          ctaText="Explorer les produits"
+          ctaLink={ROUTES.produits}
+        />
 
         {/* Content states */}
         {loading ? (

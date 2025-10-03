@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import ProducerShowcase from "../../components/ProducerShowcase/ProducerShowcase";
 import LoadingState from "../../components/common/LoadingState/LoadingState";
 import ErrorState from "../../components/common/ErrorState/ErrorState";
 import EmptyState from "../../components/common/EmptyState/EmptyState";
+import HeroSection from "../../components/common/HeroSection";
 import { producerAPI } from "../../services/api";
 import { transformProducerData, transformProductData } from "../../utils/defaults";
 import { ROUTES } from "../../utils/routes";
@@ -95,29 +95,13 @@ const Accueil = () => {
   return (
     <div className={styles.accueil}>
       <div className="container">
-        {/* Hero section inside the page */}
-        <section className={styles.hero}>
-          <div className={styles.heroInner}>
-            <h2 className={styles.headline}>Frais de la ferme à votre table</h2>
-            <p className={styles.subtitle}>
-              Découvrez les meilleurs produits locaux, laitages artisanaux et
-              fruits de saison directement de notre réseau de confiance de
-              fermiers familiaux.
-            </p>
-            <Link
-              to={ROUTES.nosFermiers}
-              className={styles.cta}
-              onKeyDown={(e) => {
-                if (e.key === " " || e.key === "Spacebar" || e.code === "Space") {
-                  e.preventDefault();
-                  e.currentTarget.click();
-                }
-              }}
-            >
-              Découvrir nos fermiers !
-            </Link>
-          </div>
-        </section>
+        {/* Hero section */}
+        <HeroSection
+          title="Frais de la ferme à votre table"
+          subtitle="Découvrez les meilleurs produits locaux, laitages artisanaux et fruits de saison directement de notre réseau de confiance de fermiers familiaux."
+          ctaText="Découvrir nos fermiers !"
+          ctaLink={ROUTES.nosFermiers}
+        />
 
         {/* Producers showcase */}
         <h3 className={styles.sectionHeading}>Nos Agriculteurs partenaires</h3>

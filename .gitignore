@@ -5,3 +5,5 @@ dist/
 # Ignore all TODO markdown files across repo
 **/TODO*.md
 PHASE1_COMPLETE.md
+PHASE2_PLAN.md
+frontend/src/components/common/HeroSection/index.js

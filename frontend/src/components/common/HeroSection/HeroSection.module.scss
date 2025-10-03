@@ -1,0 +1,145 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+.hero {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(139, 195, 74, 0.1) 100%);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  margin-bottom: 3rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+
+  @include respond-to('tablet') {
+    padding: 4rem 3rem;
+  }
+
+  &.centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+  }
+}
+
+.heroInner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.headline {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $color-primary;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+
+  @include respond-to('tablet') {
+    font-size: 2.5rem;
+  }
+
+  @include respond-to('desktop') {
+    font-size: 3rem;
+  }
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: $color-text-secondary;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+
+  @include respond-to('tablet') {
+    font-size: 1.25rem;
+  }
+}
+
+.cta {
+  display: inline-block;
+  background-color: $color-primary;
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
+
+  &:hover {
+    background-color: darken($color-primary, 10%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+  }
+
+  &:focus {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+
+  @include respond-to('tablet') {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+}
+
+.linkBtn,
+.linkBtnSecondary {
+  display: inline-block;
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  min-width: 200px;
+  text-align: center;
+
+  @include respond-to('tablet') {
+    min-width: auto;
+  }
+}
+
+.linkBtn {
+  background-color: $color-primary;
+  color: white;
+  box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
+
+  &:hover {
+    background-color: darken($color-primary, 10%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+  }
+
+  &:focus {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+.linkBtnSecondary {
+  background-color: transparent;
+  color: $color-primary;
+  border: 2px solid $color-primary;
+
+  &:hover {
+    background-color: rgba(76, 175, 80, 0.1);
+    transform: translateY(-2px);
+  }
+
+  &:focus {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
