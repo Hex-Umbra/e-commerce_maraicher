@@ -1,5 +1,5 @@
-@import '../../../styles/variables';
-@import '../../../styles/mixins';
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
 
 .hero {
   background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(139, 195, 74, 0.1) 100%);
@@ -9,7 +9,7 @@
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 
-  @include respond-to('tablet') {
+  @include tablet {
     padding: 4rem 3rem;
   }
 
@@ -29,33 +29,33 @@
 .headline {
   font-size: 2rem;
   font-weight: 700;
-  color: $color-primary;
+  color: $primary;
   margin-bottom: 1rem;
   line-height: 1.2;
 
-  @include respond-to('tablet') {
+  @include tablet {
     font-size: 2.5rem;
   }
 
-  @include respond-to('desktop') {
+  @include desktop {
     font-size: 3rem;
   }
 }
 
 .subtitle {
   font-size: 1.1rem;
-  color: $color-text-secondary;
+  color: $text-secondary;
   margin-bottom: 2rem;
   line-height: 1.6;
 
-  @include respond-to('tablet') {
+  @include tablet {
     font-size: 1.25rem;
   }
 }
 
 .cta {
   display: inline-block;
-  background-color: $color-primary;
+  background-color: $primary;
   color: white;
   padding: 1rem 2.5rem;
   border-radius: 8px;
@@ -66,13 +66,13 @@
   box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
 
   &:hover {
-    background-color: darken($color-primary, 10%);
+    background-color: $primary-dark;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
   }
 
   &:focus {
-    outline: 2px solid $color-primary;
+    outline: 2px solid $primary;
     outline-offset: 2px;
   }
 
@@ -87,7 +87,7 @@
   gap: 1rem;
   align-items: center;
 
-  @include respond-to('tablet') {
+  @include tablet {
     flex-direction: row;
     justify-content: center;
     gap: 1.5rem;
@@ -106,32 +106,32 @@
   min-width: 200px;
   text-align: center;
 
-  @include respond-to('tablet') {
+  @include tablet {
     min-width: auto;
   }
 }
 
 .linkBtn {
-  background-color: $color-primary;
+  background-color: $primary;
   color: white;
   box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
 
   &:hover {
-    background-color: darken($color-primary, 10%);
+    background-color: $primary-dark;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
   }
 
   &:focus {
-    outline: 2px solid $color-primary;
+    outline: 2px solid $primary;
     outline-offset: 2px;
   }
 }
 
 .linkBtnSecondary {
   background-color: transparent;
-  color: $color-primary;
-  border: 2px solid $color-primary;
+  color: $primary;
+  border: 2px solid $primary;
 
   &:hover {
     background-color: rgba(76, 175, 80, 0.1);
@@ -139,7 +139,7 @@
   }
 
   &:focus {
-    outline: 2px solid $color-primary;
+    outline: 2px solid $primary;
     outline-offset: 2px;
   }
 }

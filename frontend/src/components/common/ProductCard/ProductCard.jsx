@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { BsCart3 } from 'react-icons/bs';
-import ImageWithFallback from '../ImageWithFallback';
+import ImageWithFallback from '../ImageWithFallback/ImageWithFallback';
 import { getCategoryBadgeClass } from '../../../utils/defaults';
 import styles from './ProductCard.module.scss';
 

@@ -1,5 +1,5 @@
-@import '../../../styles/variables';
-@import '../../../styles/mixins';
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
 
 .productCard {
   background: white;
@@ -17,7 +17,7 @@
   }
 
   &:focus {
-    outline: 2px solid $color-primary;
+    outline: 2px solid $primary;
     outline-offset: 2px;
   }
 
@@ -36,7 +36,7 @@
   width: 100%;
   padding-top: 75%; // 4:3 aspect ratio
   overflow: hidden;
-  background-color: $color-background;
+  background-color: $gray-light;
 
   img {
     position: absolute;
@@ -65,7 +65,7 @@
 .productName {
   font-size: 1.1rem;
   font-weight: 600;
-  color: $color-text-primary;
+  color: $text;
   margin: 0;
   line-height: 1.3;
   display: -webkit-box;
@@ -132,14 +132,14 @@
 
 .producerName {
   font-size: 0.9rem;
-  color: $color-text-secondary;
+  color: $text-secondary;
   font-style: italic;
   margin: 0;
 }
 
 .productDescription {
   font-size: 0.9rem;
-  color: $color-text-secondary;
+  color: $text-secondary;
   line-height: 1.5;
   margin: 0;
   flex: 1;
@@ -156,17 +156,17 @@
   gap: 0.5rem;
   margin-top: auto;
   padding-top: 0.5rem;
-  border-top: 1px solid $color-border;
+  border-top: 1px solid $border;
 }
 
 .price {
   font-size: 1.25rem;
   font-weight: 700;
-  color: $color-primary;
+  color: $primary;
 }
 
 .cartBtn {
-  background-color: $color-primary;
+  background-color: $primary;
   color: white;
   border: none;
   border-radius: 50%;
@@ -180,12 +180,12 @@
   font-size: 1.2rem;
 
   &:hover {
-    background-color: darken($color-primary, 10%);
+    background-color: $primary-dark;
     transform: scale(1.1);
   }
 
   &:focus {
-    outline: 2px solid $color-primary;
+    outline: 2px solid $primary;
     outline-offset: 2px;
   }
 
@@ -203,5 +203,5 @@
 .stockInfo {
   margin-left: 0.5rem;
   font-size: 0.9rem;
-  color: $color-text-secondary;
+  color: $text-secondary;
 }
