@@ -6,7 +6,5 @@ dist/
 **/TODO*.md
 PHASE1_COMPLETE.md
 PHASE2_PLAN.md
-frontend/src/components/common/HeroSection/index.js
-frontend/src/components/common/ProductCard/index.js
 REFACTORING_PROGRESS.md
 PHASE_3_PLAN.md

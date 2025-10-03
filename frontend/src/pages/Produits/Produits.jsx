@@ -5,8 +5,8 @@ import LoadingState from "../../components/common/LoadingState/LoadingState";
 import ErrorState from "../../components/common/ErrorState/ErrorState";
 import EmptyState from "../../components/common/EmptyState/EmptyState";
 import ProductCard from "../../components/common/ProductCard";
+import FilterChips from "../../components/common/FilterChips";
 import styles from "./Produits.module.scss";
-import { BsFilter } from "react-icons/bs";
 import { productAPI } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/useCart";
@@ -17,10 +17,8 @@ const Produits = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [showAllCats, setShowAllCats] = useState(false);
   const [producers, setProducers] = useState([]);
   const [selectedProducer, setSelectedProducer] = useState("all");
-  const [showAllProducers, setShowAllProducers] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -124,142 +122,24 @@ const Produits = () => {
         />
 
         {/* Filters section */}
-        <div className={styles.filtersSection}>
+        <div className={styles.filtersSection} aria-label="Filtres">
+          <FilterChips
+            label="Catégories"
+            items={categories}
+            selectedValue={selectedCategory}
+            onSelect={setSelectedCategory}
+            maxVisible={5}
+            showIcon={true}
+          />
 
-          <div className={styles.filtersWrap} aria-label="Filtres de catégorie">
-              <div className={styles.chipRow} role="listbox" aria-label="Catégories">
-                <span className={styles.filterLabel}>Catégories</span>
-                <span className={styles.filterIcon} aria-hidden="true">
-                  <BsFilter />
-                </span>
-                <button
-                  type="button"
-                  className={`${styles.chip} ${selectedCategory === "all" ? styles.chipActive : ""}`}
-                  aria-pressed={selectedCategory === "all"}
-                  onClick={() => setSelectedCategory("all")}
-                >
-                  Tous
-                </button>
-                {categories.slice(0, 5).map((c) => (
-                  <button
-                    type="button"
-                    key={c.value}
-                    className={`${styles.chip} ${selectedCategory === c.value ? styles.chipActive : ""}`}
-                    aria-pressed={selectedCategory === c.value}
-                    onClick={() => setSelectedCategory(c.value)}
-                  >
-                    {c.label}
-                  </button>
-                ))}
-                {categories.length > 5 && (
-                  <button
-                    type="button"
-                    className={styles.chip}
-                    aria-haspopup="menu"
-                    aria-expanded={showAllCats}
-                    aria-controls="all-categories-menu"
-                    onClick={() => setShowAllCats((v) => !v)}
-                    title="Voir toutes les catégories"
-                  >
-                    ...
-                    <span className={styles.srOnly}>Voir toutes les catégories</span>
-                  </button>
-                )}
-              </div>
-
-              {showAllCats && categories.length > 5 && (
-                <div
-                  id="all-categories-menu"
-                  className={styles.menuPanel}
-                  role="menu"
-                  aria-label="Autres catégories"
-                >
-                  {categories.slice(5).map((c) => (
-                    <button
-                      type="button"
-                      key={c.value}
-                      role="menuitem"
-                      className={`${styles.chip} ${selectedCategory === c.value ? styles.chipActive : ""}`}
-                      aria-pressed={selectedCategory === c.value}
-                      onClick={() => {
-                        setSelectedCategory(c.value);
-                        setShowAllCats(false);
-                      }}
-                    >
-                      {c.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-          {/* Producer filters */}
-          <div className={styles.filterRow}>
-              <div className={styles.chipRow} role="listbox" aria-label="Producteurs">
-                <span className={styles.filterLabel}>Producteurs</span>
-                <span className={styles.filterIcon} aria-hidden="true">
-                  <BsFilter />
-                </span>
-                <button
-                  type="button"
-                  className={`${styles.chip} ${selectedProducer === "all" ? styles.chipActive : ""}`}
-                  aria-pressed={selectedProducer === "all"}
-                  onClick={() => setSelectedProducer("all")}
-                >
-                  Tous
-                </button>
-                {producers.slice(0, 5).map((pr) => (
-                  <button
-                    type="button"
-                    key={pr.value}
-                    className={`${styles.chip} ${selectedProducer === pr.value ? styles.chipActive : ""}`}
-                    aria-pressed={selectedProducer === pr.value}
-                    onClick={() => setSelectedProducer(pr.value)}
-                  >
-                    {pr.label}
-                  </button>
-                ))}
-                {producers.length > 5 && (
-                  <button
-                    type="button"
-                    className={styles.chip}
-                    aria-haspopup="menu"
-                    aria-expanded={showAllProducers}
-                    aria-controls="all-producers-menu"
-                    onClick={() => setShowAllProducers((v) => !v)}
-                    title="Voir tous les producteurs"
-                  >
-                    ...
-                    <span className={styles.srOnly}>Voir tous les producteurs</span>
-                  </button>
-                )}
-              </div>
-
-              {showAllProducers && producers.length > 5 && (
-                <div
-                  id="all-producers-menu"
-                  className={styles.menuPanel}
-                  role="menu"
-                  aria-label="Autres producteurs"
-                >
-                  {producers.slice(5).map((pr) => (
-                    <button
-                      type="button"
-                      key={pr.value}
-                      role="menuitem"
-                      className={`${styles.chip} ${selectedProducer === pr.value ? styles.chipActive : ""}`}
-                      aria-pressed={selectedProducer === pr.value}
-                      onClick={() => {
-                        setSelectedProducer(pr.value);
-                        setShowAllProducers(false);
-                      }}
-                    >
-                      {pr.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-          </div>
+          <FilterChips
+            label="Producteurs"
+            items={producers}
+            selectedValue={selectedProducer}
+            onSelect={setSelectedProducer}
+            maxVisible={5}
+            showIcon={true}
+          />
         </div>
 
         {/* Content states */}
