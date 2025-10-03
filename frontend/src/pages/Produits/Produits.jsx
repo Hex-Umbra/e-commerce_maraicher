@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import HeroSection from "../../components/common/HeroSection";
 import LoadingState from "../../components/common/LoadingState/LoadingState";
 import ErrorState from "../../components/common/ErrorState/ErrorState";
 import EmptyState from "../../components/common/EmptyState/EmptyState";
 import ImageWithFallback from "../../components/common/ImageWithFallback/ImageWithFallback";
 import styles from "./Produits.module.scss";
-import accueilStyles from "../Accueil/Accueil.module.scss";
 import cardStyles from "../../components/ProducerShowcase/ProducerShowcase.module.scss";
 import { BsCart3, BsFilter } from "react-icons/bs";
 import { productAPI } from "../../services/api";
@@ -152,29 +152,18 @@ const Produits = () => {
   return (
     <div className={styles.produits}>
       <div className="container">
-        {/* Hero section with same dimensions as Accueil */}
-        <section className={accueilStyles.hero}>
-          <div className={accueilStyles.heroInner}>
-            <h2 className={accueilStyles.headline}>Tous nos produits locaux</h2>
-            <p className={accueilStyles.subtitle}>
-              Parcourez notre sélection complète de produits frais, artisanaux et de
-              saison, directement des producteurs partenaires.
-            </p>
+        {/* Hero section */}
+        <HeroSection
+          title="Tous nos produits locaux"
+          subtitle="Parcourez notre sélection complète de produits frais, artisanaux et de saison, directement des producteurs partenaires."
+          ctaText="Découvrir nos fermiers !"
+          ctaLink={ROUTES.nosFermiers}
+        />
 
-            <Link
-              to="/nosfermiers"
-              className={accueilStyles.cta}
-              onKeyDown={(e) => {
-                if (e.key === " " || e.key === "Spacebar" || e.code === "Space") {
-                  e.preventDefault();
-                  e.currentTarget.click();
-                }
-              }}
-            >
-              Découvrir nos fermiers !
-            </Link>
+        {/* Filters section */}
+        <div className={styles.filtersSection}>
 
-            <div className={styles.filtersWrap} aria-label="Filtres de catégorie">
+          <div className={styles.filtersWrap} aria-label="Filtres de catégorie">
               <div className={styles.chipRow} role="listbox" aria-label="Catégories">
                 <span className={styles.filterLabel}>Catégories</span>
                 <span className={styles.filterIcon} aria-hidden="true">
@@ -241,8 +230,8 @@ const Produits = () => {
               )}
             </div>
 
-            {/* Producer filters */}
-            <div className={styles.filterRow}>
+          {/* Producer filters */}
+          <div className={styles.filterRow}>
               <div className={styles.chipRow} role="listbox" aria-label="Producteurs">
                 <span className={styles.filterLabel}>Producteurs</span>
                 <span className={styles.filterIcon} aria-hidden="true">
@@ -307,9 +296,8 @@ const Produits = () => {
                   ))}
                 </div>
               )}
-            </div>
           </div>
-        </section>
+        </div>
 
         {/* Content states */}
         {loading ? (
