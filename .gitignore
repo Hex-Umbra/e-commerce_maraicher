@@ -2,9 +2,3 @@
 **/.env
 .DS_Store
 dist/
-# Ignore all TODO markdown files across repo
-**/TODO*.md
-PHASE1_COMPLETE.md
-PHASE2_PLAN.md
-REFACTORING_PROGRESS.md
-PHASE_3_PLAN.md
