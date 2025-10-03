@@ -5,6 +5,7 @@ import ErrorState from "../../components/common/ErrorState/ErrorState";
 import EmptyState from "../../components/common/EmptyState/EmptyState";
 import ImageWithFallback from "../../components/common/ImageWithFallback/ImageWithFallback";
 import ProductCard from "../../components/common/ProductCard";
+import CommentCard from "../../components/common/CommentCard";
 import { producerAPI, commentsAPI } from "../../services/api";
 import { transformProductData, transformProducerData } from "../../utils/defaults";
 import accueilStyles from "../Accueil/Accueil.module.scss";
@@ -34,19 +35,7 @@ const Fermier = () => {
     console.log("Ajout au panier:", product.name);
   };
 
-  const formatDate = (iso) => {
-    try {
-      const d = new Date(iso);
-      return d.toLocaleDateString();
-    } catch {
-      return "";
-    }
-  };
 
-  const getUserAvatar = (username = "", index = 0) => {
-    const avatarIndex = (Math.abs(username.split("").reduce((a, c) => a + c.charCodeAt(0), 0)) + index) % 70;
-    return `https://i.pravatar.cc/100?img=${avatarIndex || 1}`;
-  };
 
   // Fetch producer, products, comments
   useEffect(() => {
@@ -207,37 +196,16 @@ const Fermier = () => {
             />
           ) : (
             <div className={styles.commentList}>
-              {comments.map((c, idx) => {
-                const username = c?.userId?.username || "Nom Client";
-                const avatar = getUserAvatar(username, idx);
-                return (
-                  <div key={c._id || idx} className={styles.commentRow}>
-                    <div className={styles.clientInfo}>
-                      <ImageWithFallback
-                        src={avatar}
-                        fallback={avatar}
-                        alt={`Avatar de ${username}`}
-                        className={styles.clientAvatar}
-                      />
-                      <div className={styles.clientName}>{username}</div>
-                    </div>
-
-                    <div className={styles.vRule} aria-hidden="true" />
-
-                    <div className={styles.commentBody}>
-                      <div className={styles.commentText}>{c.comment}</div>
-                      <div className={styles.rating}>Rating : <strong>{c.rating}</strong>/5</div>
-                      {c.createdAt && (
-                        <div className={styles.date} aria-label="Date du commentaire">
-                          {formatDate(c.createdAt)}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className={styles.rowDivider} aria-hidden="true" />
-                  </div>
-                );
-              })}
+              {comments.map((c, idx) => (
+                <CommentCard
+                  key={c._id || idx}
+                  comment={c.comment}
+                  username={c?.userId?.username}
+                  rating={c.rating}
+                  createdAt={c.createdAt}
+                  index={idx}
+                />
+              ))}
             </div>
           )}
         </section>
