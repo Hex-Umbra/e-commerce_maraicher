@@ -1,0 +1,80 @@
+@use "../../styles/_variables.scss" as *;
+
+.profileEdit {
+  padding: $section-padding;
+
+  .title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: $spacing-lg;
+    color: $text;
+  }
+
+  .form {
+    background: $primary-light;
+    border-radius: $radius-lg;
+    box-shadow: $shadow;
+    padding: $spacing-xl;
+    display: flex;
+    flex-direction: column;
+    gap: $form-gap;
+    border: 1px solid $border;
+  }
+
+  .actions {
+    margin-top: $spacing-lg;
+    display: flex;
+    gap: $spacing-md;
+    justify-content: flex-end;
+
+    .btn-primary {
+      background: $secondary;
+      color: $white;
+      border: 0;
+      border-radius: $radius-md;
+      padding: 0.75rem 1.25rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background $transition-fast;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      &:not(:disabled):hover {
+        background: $secondary-dark;
+      }
+    }
+
+    .btn-secondary {
+      background: $accent;
+      color: $white;
+      border: 0;
+      border-radius: $radius-md;
+      padding: 0.75rem 1.25rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background $transition-fast;
+
+      &:hover {
+        background: $accent-dark;
+      }
+    }
+  }
+
+  .loading {
+    background: $primary-light;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    padding: $spacing-lg;
+    text-align: center;
+    color: $text;
+  }
+
+  .note {
+    margin-top: $spacing-md;
+    color: $muted;
+    font-size: 0.95rem;
+  }
+}

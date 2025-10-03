@@ -41,8 +41,8 @@ const ProfileCard = ({ user: userProp, onEdit }) => {
     if (typeof onEdit === "function") {
       onEdit(user);
     } else {
-      // Fallback: navigate to same profile page with an edit query param
-      navigate(`${ROUTES.profile}?edit=1`, { replace: false });
+      // Navigate to dedicated profile edit page
+      navigate(ROUTES.profileEdit, { replace: false });
     }
   };
 

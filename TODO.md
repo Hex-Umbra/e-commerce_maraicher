@@ -53,11 +53,40 @@ Tasks
 - [x] Wrap user name/icon with Link to ROUTES.profile
 
 Next Steps
-- [ ] Implement a dedicated profile edit page and route, wire the FAB to it
+- [x] Implement a dedicated profile edit page and route, wire the FAB to it
+  - Implemented pages/ProfileEdit with route /profil/editer
+  - ProfileCard FAB navigates to ROUTES.profileEdit
+  - Persists locally via AuthContext.updateUser until backend endpoint exists
 - [ ] Add avatar upload/change (with backend endpoint)
 - [ ] Add role-specific actions (e.g., Producteur: “Voir mes ventes”)
 - [ ] Accessibility refinements and unit tests
 
 Run
 - Start the frontend dev server (from frontend/): npm run dev
-- Navigate to /profil to view the Profile page, and /commandes to view Orders.
+- Navigate to /profil to view the Profile page, /profil/editer to edit, and /commandes to view Orders.
+
+Testing Checklist
+- Profile page (/profil):
+  - Auth guard redirects unauthenticated users to /login
+  - Renders ProfileCard with name, email, address, and role (“Client”, “Producteur”, or “Admin”)
+  - Actions navigate correctly: “Voir mes Commandes” → /commandes, “Voir mon Panier” → /cart
+- Profile edit page (/profil/editer):
+  - Prefills fields with current user data
+  - Validation errors for invalid inputs
+  - “Enregistrer” updates user locally and returns to /profil with success notification
+  - “Annuler” returns to /profil without changes
+- Navbar:
+  - When authenticated, user name/icon links to /profil
+  - “Mes commandes” link visible and navigates to /commandes
+- Orders page (/commandes):
+  - Loads orders via ordersAPI.getUserOrders
+  - Shows list with statuses and items or EmptyState for no orders
+  - Handles errors with retry
+- Cart page (/cart):
+  - No embedded orders section displayed
+  - Creating an order via ordersAPI.createOrder still works and updates UI
+  - Quantity update, removal, clear cart, and totals work
+- Auth flow:
+  - Check that AuthContext.me endpoint works in your environment; if auth is failing, investigate backend connectivity or corrupted context code
+
+Note: Avatar upload and server-side profile persistence will be added when backend endpoints are available.

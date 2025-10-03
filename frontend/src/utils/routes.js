@@ -10,6 +10,7 @@ export const ROUTES = {
   register: "/register",
   cart: "/cart",
   profile: "/profil",
+  profileEdit: "/profil/editer",
   orders: "/commandes",
   notFound: "/404",
   mentionsLegales: "/mentions-legales",
