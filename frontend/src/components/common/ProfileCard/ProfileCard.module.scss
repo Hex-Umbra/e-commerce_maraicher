@@ -7,34 +7,34 @@
   box-sizing: border-box;
   background: $primary;
   border-radius: $radius-lg;
-  padding: $spacing-xl;
+  padding: $spacing-xxl;
   color: $black;
   box-shadow: $shadow;
 }
 
 .headerRow {
   display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: $spacing-lg;
+  grid-template-columns: 160px 1fr;
+  gap: $spacing-xl;
   align-items: center;
 
   @media (max-width: $container-mobile) {
-    grid-template-columns: 96px 1fr;
+    grid-template-columns: 120px 1fr;
     gap: $spacing-md;
   }
 }
 
 .avatarWrap {
-  width: 120px;
-  height: 120px;
+  width: 160px;
+  height: 160px;
   border-radius: 50%;
   overflow: hidden;
   border: 4px solid rgba(0,0,0,0.15);
   background: #ddd;
 
   @media (max-width: $container-mobile) {
-    width: 96px;
-    height: 96px;
+    width: 120px;
+    height: 120px;
   }
 }
 
@@ -52,10 +52,10 @@
 }
 
 .name {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 800;
-  margin: 0 0 $spacing-sm 0;
-  color: $black;
+  margin: 0 0 $spacing-md 0;
+  color: $secondary;
 }
 
 .field {
@@ -75,6 +75,16 @@
   }
 }
 
+.address {
+  .fieldLabel {
+    color: color.adjust($accent, $lightness: -10%);
+  }
+  .fieldValue {
+    color: $accent;
+    font-weight: 700;
+  }
+}
+
 .role {
   margin-top: $spacing-sm;
   color: rgba(255,255,255,0.9);
@@ -82,19 +92,20 @@
 }
 
 .actions {
-  margin-top: $spacing-xl;
-  display: grid;
-  grid-template-columns: repeat(2, 220px);
-  gap: $spacing-xl;
+  margin-top: $spacing-xxl;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   @media (max-width: $container-tablet) {
-    grid-template-columns: 1fr 1fr;
     gap: $spacing-lg;
+    justify-content: center;
   }
 
   @media (max-width: $container-mobile) {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: $spacing-md;
+    align-items: stretch;
   }
 }
 
@@ -103,14 +114,16 @@
   border: none;
   outline: none;
   cursor: pointer;
-  height: 48px;
+  height: 56px;
+  min-width: 260px;
   border-radius: 999px;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: $white;
   background: $secondary;
   box-shadow: 0 3px 10px rgba(0,0,0,0.15);
   transition: transform $transition-fast, box-shadow $transition-fast, background $transition-fast;
+  flex: 0 0 280px;
 
   &:hover {
     transform: translateY(-1px);
@@ -122,14 +135,16 @@
     transform: translateY(0);
     box-shadow: 0 3px 10px rgba(0,0,0,0.15);
   }
-}
 
-.ordersBtn {
-  // can be customized later for role
-}
+  @media (max-width: $container-tablet) {
+    flex: 0 1 48%;
+    min-width: 0;
+  }
 
-.cartBtn {
-  // secondary action styling kept same palette for consistency
+  @media (max-width: $container-mobile) {
+    width: 100%;
+    flex: 1 1 auto;
+  }
 }
 
 .editFab {
@@ -141,7 +156,7 @@
   height: 56px;
   border-radius: 50%;
   border: 3px solid $black;
-  background: #ffeb3b; // vivid yellow like in the mock
+  background: $accent; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,6 +169,7 @@
   &:hover {
     transform: translateX(-50%) translateY(-2px);
     box-shadow: 0 12px 26px rgba(0,0,0,0.3);
+    background: $accent-light;
   }
 
   &:active {

@@ -331,6 +331,8 @@
   border-radius: $radius-md;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-size: 1rem;
+  font-weight: bold;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.1);

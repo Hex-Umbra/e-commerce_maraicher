@@ -5,6 +5,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { ROUTES } from "../../../utils/routes";
 import { getDefaultAvatar } from "../../../utils/defaults";
 import styles from "./ProfileCard.module.scss";
+import { FiEdit2 } from "react-icons/fi";
 
 /**
  * ProfileCard
@@ -66,7 +67,7 @@ const ProfileCard = ({ user: userProp, onEdit }) => {
             <span className={styles.fieldValue}>{email || "—"}</span>
           </div>
 
-          <div className={styles.field}>
+          <div className={`${styles.field} ${styles.address}`}>
             <span className={styles.fieldLabel}>Adresse</span>
             <span className={styles.fieldValue}>{address || "—"}</span>
           </div>
@@ -104,7 +105,7 @@ const ProfileCard = ({ user: userProp, onEdit }) => {
         aria-label="Modifier mon profil"
         title="Modifier mon profil"
       >
-        ✏️
+        <FiEdit2 aria-hidden="true" color="white"/>
       </button>
     </section>
   );

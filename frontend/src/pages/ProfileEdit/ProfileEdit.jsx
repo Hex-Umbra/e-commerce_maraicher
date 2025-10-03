@@ -98,16 +98,6 @@ const ProfileEdit = () => {
           />
 
           <FormField
-            id="email"
-            label="Email"
-            type="email"
-            value={form.email}
-            onChange={(v) => setForm((s) => ({ ...s, email: v }))}
-            error={errors.email || ""}
-            required
-          />
-
-          <FormField
             id="address"
             label="Adresse"
             value={form.address}
