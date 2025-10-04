@@ -28,3 +28,102 @@
     margin: 0;
   }
 }
+
+.manageSection {
+  margin-top: 2rem;
+}
+
+.manageHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: $black;
+  }
+
+  .count {
+    color: $muted;
+    font-weight: 600;
+  }
+}
+
+.grid {
+  @include grid-cols(3, 1rem, 3, 2, 2, 1);
+}
+
+.manageCard {
+  @include card-base($primary-light, 1rem, $radius-md);
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.thumb {
+  width: 84px;
+  height: 84px;
+  border-radius: $radius-md;
+  object-fit: cover;
+  border: 1px solid $border;
+  background: #eee;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+
+  h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: $black;
+  }
+
+  .price {
+    font-weight: 800;
+    color: $secondary;
+  }
+}
+
+.meta {
+  margin-top: 0.35rem;
+  color: $black;
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn {
+  height: 40px;
+  padding: 0 0.9rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+}
+
+.edit {
+  @include button-secondary;
+}
+
+.delete {
+  @include button-primary;
+  background: $accent;
+
+  &:hover:not(:disabled) {
+    background: $accent-dark;
+  }
+}

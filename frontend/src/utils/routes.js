@@ -11,6 +11,7 @@ export const ROUTES = {
   cart: "/cart",
   profile: "/profil",
   profileEdit: "/profil/editer",
+  productEdit: (id = ":id") => `/produits/${id}/editer`,
   orders: "/commandes",
   notFound: "/404",
   mentionsLegales: "/mentions-legales",

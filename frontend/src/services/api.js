@@ -92,6 +92,41 @@ export const productAPI = {
       throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des produits');
     }
   },
+
+  // Get products by producer (returns [] on 404)
+  getByProducer: async (producerId) => {
+    try {
+      const response = await apiClient.get(`/producteurs/${producerId}/products`);
+      // Expected shape: { success, message, producteur, products }
+      return response.data?.products || [];
+    } catch (error) {
+      if (error.response?.status === 404) {
+        // No products for this producer
+        return [];
+      }
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des produits du producteur');
+    }
+  },
+
+  // Update a product (Producteur only)
+  updateProduct: async (productId, payload) => {
+    try {
+      const response = await apiClient.put(`/products/${productId}`, payload);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la mise à jour du produit');
+    }
+  },
+
+  // Delete a product (Producteur only)
+  deleteProduct: async (productId) => {
+    try {
+      const response = await apiClient.delete(`/products/${productId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la suppression du produit');
+    }
+  },
 };
 
 // Comments API functions
