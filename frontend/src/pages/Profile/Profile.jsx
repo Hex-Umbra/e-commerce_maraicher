@@ -118,24 +118,24 @@ const Profile = () => {
                           <span>{prod.category}</span>
                           <span>Stock: {Number(prod.quantity)}</span>
                         </div>
-                      </div>
-                      <div className={styles.cardActions}>
-                        <button
-                          className={`${styles.btn} ${styles.edit}`}
-                          onClick={() => handleEditProduct(pid)}
-                          aria-label="Modifier le produit"
-                          type="button"
-                        >
-                          <FiEdit2 aria-hidden="true" /> Modifier
-                        </button>
-                        <button
-                          className={`${styles.btn} ${styles.delete}`}
-                          onClick={() => handleDeleteProduct(pid)}
-                          aria-label="Supprimer le produit"
-                          type="button"
-                        >
-                          <FiTrash2 aria-hidden="true" /> Supprimer
-                        </button>
+                        <div className={styles.cardActions}>
+                          <button
+                            className={`${styles.btn} ${styles.edit}`}
+                            onClick={() => handleEditProduct(pid)}
+                            aria-label="Modifier le produit"
+                            type="button"
+                          >
+                            <FiEdit2 aria-hidden="true" /> Modifier
+                          </button>
+                          <button
+                            className={`${styles.btn} ${styles.delete}`}
+                            onClick={() => handleDeleteProduct(pid)}
+                            aria-label="Supprimer le produit"
+                            type="button"
+                          >
+                            <FiTrash2 aria-hidden="true" /> Supprimer
+                          </button>
+                        </div>
                       </div>
                     </article>
                   );
