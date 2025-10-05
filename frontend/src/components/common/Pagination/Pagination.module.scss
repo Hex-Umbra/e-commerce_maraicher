@@ -1,0 +1,82 @@
+@use "../../../styles/variables" as *;
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: $spacing-lg 0;
+}
+
+.list {
+  display: inline-flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: $spacing-sm;
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  padding: $spacing-xs $spacing-sm;
+  box-shadow: $shadow;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &.active .button {
+    background: $primary;
+    border-color: $primary;
+    color: $white;
+  }
+}
+
+.button {
+  appearance: none;
+  border: 1px solid $border;
+  background: $white;
+  color: $text;
+  padding: 0.4rem 0.7rem;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  font-family: $font-primary, $font-fallback;
+  font-size: 0.95rem;
+  transition: background $transition-fast, color $transition-fast, border-color $transition-fast, transform $transition-fast;
+
+  &:hover {
+    background: $primary-light;
+    color: $white;
+    border-color: $primary;
+    transform: translateY(-1px);
+  }
+
+  &:focus {
+    outline: 2px solid $secondary;
+    outline-offset: 2px;
+  }
+}
+
+.dots {
+  .ellipsis {
+    display: inline-block;
+    padding: 0 0.5rem;
+    color: $muted;
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: $container-mobile) {
+  .list {
+    gap: $spacing-xs;
+  }
+  .button {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.9rem;
+  }
+}

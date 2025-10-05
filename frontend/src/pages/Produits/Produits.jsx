@@ -5,6 +5,7 @@ import ErrorState from "../../components/common/ErrorState/ErrorState";
 import EmptyState from "../../components/common/EmptyState/EmptyState";
 import ProductCard from "../../components/common/ProductCard";
 import FilterChips from "../../components/common/FilterChips";
+import Pagination from "../../components/common/Pagination";
 import styles from "./Produits.module.scss";
 import { productAPI } from "../../services/api";
 import { ROUTES } from "../../utils/routes";
@@ -18,7 +19,8 @@ const Produits = () => {
   const [selectedProducer, setSelectedProducer] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 12;
 
   // Fetch all products from backend
   useEffect(() => {
@@ -88,6 +90,20 @@ const Produits = () => {
     return matchesCategory && matchesProducer;
   });
 
+  const handleSelectCategory = (val) => {
+    setSelectedCategory(val);
+    setCurrentPage(1);
+  };
+
+  const handleSelectProducer = (val) => {
+    setSelectedProducer(val);
+    setCurrentPage(1);
+  };
+
+  const totalCount = visibleProducts.length;
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedProducts = visibleProducts.slice(startIndex, startIndex + pageSize);
+
   return (
     <div className={styles.produits}>
       <div className="container">
@@ -101,23 +117,23 @@ const Produits = () => {
 
         {/* Filters section */}
         <div className={styles.filtersSection} aria-label="Filtres">
-          <FilterChips
-            label="Catégories"
-            items={categories}
-            selectedValue={selectedCategory}
-            onSelect={setSelectedCategory}
-            maxVisible={5}
-            showIcon={true}
-          />
+            <FilterChips
+              label="Catégories"
+              items={categories}
+              selectedValue={selectedCategory}
+              onSelect={handleSelectCategory}
+              maxVisible={5}
+              showIcon={true}
+            />
 
-          <FilterChips
-            label="Producteurs"
-            items={producers}
-            selectedValue={selectedProducer}
-            onSelect={setSelectedProducer}
-            maxVisible={5}
-            showIcon={true}
-          />
+            <FilterChips
+              label="Producteurs"
+              items={producers}
+              selectedValue={selectedProducer}
+              onSelect={handleSelectProducer}
+              maxVisible={5}
+              showIcon={true}
+            />
         </div>
 
         {/* Content states */}
@@ -140,16 +156,26 @@ const Produits = () => {
                 icon="🔍"
               />
             ) : (
-              <div className={styles.grid} role="grid" aria-label="Grille des produits">
-                {visibleProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    showProducer={true}
-                    showStock={true}
+              <>
+                <div className={styles.grid} role="grid" aria-label="Grille des produits">
+                  {paginatedProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      showProducer={true}
+                      showStock={true}
+                    />
+                  ))}
+                </div>
+                {totalCount > pageSize && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalCount={totalCount}
+                    pageSize={pageSize}
+                    onPageChange={setCurrentPage}
                   />
-                ))}
-              </div>
+                )}
+              </>
             )}
           </>
         )}

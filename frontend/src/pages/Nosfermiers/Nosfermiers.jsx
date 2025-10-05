@@ -4,6 +4,7 @@ import LoadingState from "../../components/common/LoadingState/LoadingState";
 import ErrorState from "../../components/common/ErrorState/ErrorState";
 import EmptyState from "../../components/common/EmptyState/EmptyState";
 import ProducerCard from "../../components/common/ProducerCard";
+import Pagination from "../../components/common/Pagination";
 import styles from "./Nosfermiers.module.scss";
 import { producerAPI } from "../../services/api";
 import { transformProducerData } from "../../utils/defaults";
@@ -13,6 +14,8 @@ const Nosfermiers = () => {
   const [producers, setProducers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 12;
 
   useEffect(() => {
     fetchProducers();
@@ -53,6 +56,10 @@ const Nosfermiers = () => {
     }
   };
 
+  const totalCount = producers.length;
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedProducers = producers.slice(startIndex, startIndex + pageSize);
+  
   return (
     <div className={styles.nosfermiers}>
       <div className="container">
@@ -81,13 +88,21 @@ const Nosfermiers = () => {
           <>
             <h3 className={styles.sectionHeading}>Nos fermiers</h3>
             <div className={styles.grid} role="grid" aria-label="Grille des producteurs">
-              {producers.map((producer) => (
+              {paginatedProducers.map((producer) => (
                 <ProducerCard
                   key={producer.id}
                   producer={producer}
                 />
               ))}
             </div>
+            {totalCount > pageSize && (
+              <Pagination
+                currentPage={currentPage}
+                totalCount={totalCount}
+                pageSize={pageSize}
+                onPageChange={setCurrentPage}
+              />
+            )}
           </>
         )}
       </div>
