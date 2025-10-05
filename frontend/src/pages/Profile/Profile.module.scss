@@ -21,9 +21,87 @@
 .loading {
   text-align: center;
   padding: 3rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 
   p {
     font-size: 1.1rem;
+    color: $text-secondary;
+    margin: 0;
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid $border;
+  border-top-color: $secondary;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorState {
+  text-align: center;
+  padding: 3rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+
+  .errorMessage {
+    font-size: 1.1rem;
+    color: $accent;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .retryButton {
+    padding: 0.7rem 1.5rem;
+    background: $secondary;
+    color: $white;
+    border: none;
+    border-radius: $radius-md;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $secondary-dark;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: $primary-light;
+  border-radius: $radius-lg;
+  border: 2px dashed $border;
+
+  .emptyMessage {
+    font-size: 1.2rem;
+    color: $text;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+  }
+
+  .emptyHint {
+    font-size: 1rem;
     color: $text-secondary;
     margin: 0;
   }
@@ -35,19 +113,219 @@
 
 .manageHeader {
   display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 
-  h3 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: $black;
+  .headerLeft {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+
+    h3 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: $black;
+    }
+
+    .count {
+      color: $white;
+      background: $secondary;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      min-width: 24px;
+      text-align: center;
+    }
   }
 
-  .count {
-    color: $muted;
+  .addButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: $secondary;
+    color: $white;
+    border: none;
+    border-radius: $radius-md;
     font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    svg {
+      font-size: 1.1rem;
+    }
+
+    &:hover {
+      background: $secondary-dark;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.addForm {
+  background: $primary-light;
+  border: 2px solid $secondary;
+  border-radius: $radius-lg;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  .formTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $black;
+    margin: 0 0 1rem 0;
+  }
+
+  .formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .fieldWrapper {
+    position: relative;
+  }
+
+  .formActions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+
+    button {
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: $radius-md;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .cancelButton {
+      background: $accent;
+      color: $white;
+
+      &:hover:not(:disabled) {
+        background: $accent-dark;
+      }
+    }
+
+    .submitButton {
+      background: $secondary;
+      color: $white;
+
+      &:hover:not(:disabled) {
+        background: $secondary-dark;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+.editFormCard {
+  grid-column: 1 / -1;
+  background: $primary-light;
+  border: 2px solid $secondary;
+  border-radius: $radius-lg;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  form {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .formTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $black;
+    margin: 0 0 1rem 0;
+  }
+
+  .formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .fieldWrapper {
+    position: relative;
+  }
+
+  .formActions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+
+    button {
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: $radius-md;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .cancelButton {
+      background: $accent;
+      color: $white;
+
+      &:hover:not(:disabled) {
+        background: $accent-dark;
+      }
+    }
+
+    .submitButton {
+      background: $secondary;
+      color: $white;
+
+      &:hover:not(:disabled) {
+        background: $secondary-dark;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+    }
   }
 }
 

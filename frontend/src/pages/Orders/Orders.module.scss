@@ -63,6 +63,12 @@
   &[data-status="Annulée"] {
     background: rgba(244, 67, 54, 0.15);
   }
+  &[data-status="En cours"] {
+    background: rgba(255, 193, 7, 0.15);
+  }
+  &[data-status="Partiellement complète"] {
+    background: rgba(33, 150, 243, 0.15);
+  }
 }
 
 .meta {
@@ -71,6 +77,25 @@
   gap: 1rem;
   color: $text-secondary;
   margin-bottom: .5rem;
+}
+
+.amount {
+  font-weight: 700;
+  color: $secondary;
+}
+
+.clientInfo {
+  padding: 0.75rem;
+  background: rgba(33, 150, 243, 0.08);
+  border-radius: $radius-sm;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  color: $text-secondary;
+
+  strong {
+    color: $black;
+    font-weight: 700;
+  }
 }
 
 .lines {
@@ -90,7 +115,7 @@
     grid-template-columns: 1fr auto;
     gap: .5rem;
 
-    .qty, .linePrice, .lineStatus {
+    .qty, .linePrice, .lineStatus, .statusControl {
       justify-self: end;
     }
   }
@@ -104,4 +129,57 @@
 .qty, .linePrice, .lineStatus {
   color: $text-secondary;
   font-weight: 600;
+}
+
+.statusControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statusSelect {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  background: $white;
+  color: $black;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    border-color: $secondary;
+    background: rgba($secondary, 0.05);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $secondary;
+    box-shadow: 0 0 0 2px rgba($secondary, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #f5f5f5;
+  }
+
+  option {
+    padding: 0.5rem;
+  }
+}
+
+.spinner {
+  font-size: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

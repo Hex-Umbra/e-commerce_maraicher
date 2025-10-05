@@ -409,3 +409,79 @@ export const getMe = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+// ----------------------------------------------------------------------------------------------------- //
+
+// Update user profile
+export const updateProfile = catchAsync(async (req, res, next) => {
+  const { name, email, address } = req.body;
+
+  // Validate input
+  if (!name && !email && !address) {
+    return next(new AppError("Veuillez fournir au moins un champ à mettre à jour", 400));
+  }
+
+  // Build update object
+  const updateData = {};
+
+  // Validate and add fields to update
+  if (name) {
+    if (name.trim().length < 2) {
+      return next(new AppError("Le nom doit contenir au moins 2 caractères", 400));
+    }
+    updateData.name = name.trim();
+  }
+
+  if (email) {
+    if (!validator.isEmail(email)) {
+      return next(new AppError("L'email est invalide", 400));
+    }
+    
+    // Check if email is already taken by another user
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (existingUser && existingUser._id.toString() !== req.user._id.toString()) {
+      return next(new AppError("Cet email est déjà utilisé", 409));
+    }
+    
+    updateData.email = email.trim().toLowerCase();
+  }
+
+  if (address) {
+    if (address.trim().length < 4) {
+      return next(new AppError("L'adresse doit contenir au moins 4 caractères", 400));
+    }
+    updateData.address = validator.escape(address.trim());
+  }
+
+  // Update user using findByIdAndUpdate to avoid triggering password hash pre-save hook
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user._id,
+    updateData,
+    { 
+      new: true, // Return updated document
+      runValidators: true, // Run schema validators
+      select: '-password' // Exclude password from response
+    }
+  );
+
+  if (!updatedUser) {
+    return next(new AppError("Utilisateur non trouvé", 404));
+  }
+
+  logger.info(
+    `Profil mis à jour pour \x1b[1m${updatedUser.role}\x1b[0m \x1b[31m${updatedUser.name}\x1b[0m \x1b[32m(${updatedUser.email})\x1b[0m`
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Profil mis à jour avec succès",
+    user: {
+      id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      address: updatedUser.address,
+      createdAt: updatedUser.createdAt,
+    },
+  });
+});

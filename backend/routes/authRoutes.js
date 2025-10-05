@@ -6,7 +6,8 @@ import {
   getMe, 
   limiter,
   verifyEmail,
-  resendEmailVerification 
+  resendEmailVerification,
+  updateProfile
 } from "../controllers/authController.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 
@@ -26,6 +27,9 @@ authRouter.post("/resend-verification", limiter, resendEmailVerification);
 
 // Get current user (me) - Check authentication status
 authRouter.get("/me", verifyToken, getMe);
+
+// Update user profile
+authRouter.patch("/profile", verifyToken, updateProfile);
 
 // User logout
 authRouter.post("/logout", verifyToken, logout);

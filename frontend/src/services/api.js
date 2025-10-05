@@ -108,6 +108,26 @@ export const productAPI = {
     }
   },
 
+  // Get product by ID
+  getProductById: async (productId) => {
+    try {
+      const response = await apiClient.get(`/products/${productId}`);
+      return response.data?.product;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération du produit');
+    }
+  },
+
+  // Create a new product (Producteur only)
+  createProduct: async (payload) => {
+    try {
+      const response = await apiClient.post('/products', payload);
+      return response.data?.product;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la création du produit');
+    }
+  },
+
   // Update a product (Producteur only)
   updateProduct: async (productId, payload) => {
     try {
@@ -249,6 +269,31 @@ export const ordersAPI = {
       }
     }
   },
+
+  // Get orders for producteur (orders containing their products)
+  getProducteurOrders: async () => {
+    try {
+      const response = await apiClient.get('/orders/producteur');
+      // Backend returns: { status, message, data: { orders } }
+      return response.data?.data?.orders || [];
+    } catch (error) {
+      if (error.response?.status === 404) {
+        // No orders found for this producteur
+        return [];
+      }
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des commandes');
+    }
+  },
+
+  // Update product statuses in an order (Producteur only)
+  updateProductStatus: async (orderId, updates) => {
+    try {
+      const response = await apiClient.patch(`/orders/${orderId}/status`, { updates });
+      return response.data?.data?.order;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la mise à jour du statut');
+    }
+  },
 };
 
 export const supportAPI = {
@@ -266,6 +311,27 @@ export const supportAPI = {
       throw new Error(
         error.response?.data?.message ||
           "Erreur lors de l'envoi du message au support"
+      );
+    }
+  },
+};
+
+// User/Auth API functions
+export const userAPI = {
+  // Update user profile
+  updateProfile: async ({ name, email, address }) => {
+    try {
+      const response = await apiClient.patch('/auth/profile', {
+        name,
+        email,
+        address,
+      });
+      // Backend returns: { success, message, user }
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la mise à jour du profil"
       );
     }
   },

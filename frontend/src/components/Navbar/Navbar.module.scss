@@ -161,7 +161,8 @@
   @include flex-center;
 }
 
-.cartButton {
+.cartButton,
+.ordersButton {
   position: relative;
   @include flex-center;
   font-size: 1.4rem;

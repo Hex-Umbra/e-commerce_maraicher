@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import FormField from "../../components/common/FormField/FormField";
 import styles from "./ProfileEdit.module.scss";
 import { ROUTES } from "../../utils/routes";
+import { userAPI } from "../../services/api";
 
 const ProfileEdit = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const ProfileEdit = () => {
 
   const [form, setForm] = useState(initial);
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setForm(initial);
@@ -46,20 +48,26 @@ const ProfileEdit = () => {
     e.preventDefault();
     if (!validate()) return;
 
+    setIsSubmitting(true);
     try {
-      const updated = {
-        ...user,
+      // Call backend API to update profile
+      const response = await userAPI.updateProfile({
         name: form.name.trim(),
         email: form.email.trim(),
         address: form.address.trim(),
-      };
-      // Persist locally via context (backend endpoint not yet available)
-      updateUser(updated);
-      showNotification("Profil mis à jour.", "success");
-      navigate(ROUTES.profile);
+      });
+
+      // Update local context with the response from backend
+      if (response.success && response.user) {
+        updateUser(response.user);
+        showNotification("Profil mis à jour avec succès.", "success");
+        navigate(ROUTES.profile);
+      }
     } catch (err) {
-      console.error(err);
-      showNotification("Échec de la mise à jour du profil.", "error");
+      console.error("Error updating profile:", err);
+      showNotification(err.message || "Échec de la mise à jour du profil.", "error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -112,24 +120,21 @@ const ProfileEdit = () => {
               className="btn btn-secondary"
               onClick={handleCancel}
               aria-label="Annuler et revenir au profil"
+              disabled={isSubmitting}
             >
               Annuler
             </button>
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={!hasChanges()}
+              disabled={!hasChanges() || isSubmitting}
               aria-label="Enregistrer les modifications"
               title={!hasChanges() ? "Aucune modification à enregistrer" : "Enregistrer"}
             >
-              Enregistrer
+              {isSubmitting ? "Enregistrement..." : "Enregistrer"}
             </button>
           </div>
         </form>
-
-        <p className={styles.note}>
-          Les modifications sont mises à jour localement. La persistance serveur sera ajoutée lorsque l'endpoint sera disponible.
-        </p>
       </div>
     </div>
   );
