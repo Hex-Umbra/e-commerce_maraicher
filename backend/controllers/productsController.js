@@ -10,23 +10,25 @@ export const createProduct = catchAsync(async (req, res) => {
   try {
     const body = { ...req.body, producteurId: req.user._id };
 
-    // If a file is provided, upload to Cloudinary and set image fields
+    // Enforce file upload for image
     const imageFile = req.files ? req.files.find(f => f.fieldname === 'image') : null;
-    if (imageFile) {
-      const folder = `products/${req.user._id}`;
-      try {
-        const result = await uploadBufferToCloudinary(imageFile.buffer, folder);
-        body.image = result.secure_url;
-        body.imagePublicId = result.public_id;
-      } catch (cloudErr) {
-        handleError(cloudErr, "Upload image (createProduct)", req);
-        return res.status(502).json({
-          message: "Erreur lors du téléversement de l'image.",
-          error: cloudErr.message,
-        });
-      }
+    if (!imageFile) {
+      return res.status(400).json({
+        message: "Le fichier image est requis. Veuillez téléverser une image.",
+      });
     }
-    // Else: legacy JSON path with body.image as URL (validation handled by Mongoose)
+    const folder = `products/${req.user._id}`;
+    try {
+      const result = await uploadBufferToCloudinary(imageFile.buffer, folder);
+      body.image = result.secure_url;
+      body.imagePublicId = result.public_id;
+    } catch (cloudErr) {
+      handleError(cloudErr, "Upload image (createProduct)", req);
+      return res.status(502).json({
+        message: "Erreur lors du téléversement de l'image.",
+        error: cloudErr.message,
+      });
+    }
 
     const newProduct = new Product(body);
     await newProduct.save();
@@ -161,13 +163,15 @@ export const updateProduct = catchAsync(async (req, res) => {
         });
       }
     } else {
-      // If no file and no new URL provided, don't modify image fields
-      if (typeof req.body.image === "undefined") {
-        delete updateData.image;
+      // Forbid changing image via URL or direct fields when no file is provided
+      if (typeof req.body.image !== "undefined" || typeof req.body.imagePublicId !== "undefined") {
+        return res.status(400).json({
+          message: "La modification de l'image doit se faire via un fichier téléversé.",
+        });
       }
-      if (typeof req.body.imagePublicId === "undefined") {
-        delete updateData.imagePublicId;
-      }
+      // No file provided -> do not touch image fields
+      delete updateData.image;
+      delete updateData.imagePublicId;
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(

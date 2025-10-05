@@ -201,6 +201,60 @@
     position: relative;
   }
 
+  .uploadField {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.75rem;
+
+    label {
+      display: inline-block;
+      font-weight: 600;
+      color: $black;
+      margin-bottom: 0.35rem;
+    }
+
+    input[type='file'] {
+      display: block;
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1.5px solid $border;
+      border-radius: $radius-md;
+      background: $white;
+      color: $text;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        border-color: $secondary;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $secondary;
+        box-shadow: 0 0 0 3px rgba($secondary, 0.12);
+      }
+    }
+
+    .hint {
+      margin-top: 0.25rem;
+      font-size: 0.85rem;
+      color: $text-secondary;
+    }
+
+    .preview {
+      margin-top: 0.5rem;
+
+      .previewImg {
+        max-width: 200px;
+        height: auto;
+        border-radius: $radius-md;
+        border: 1px solid $border;
+        background: #f8f8f8;
+        display: block;
+      }
+    }
+  }
+
   .formActions {
     display: flex;
     gap: 1rem;
@@ -280,6 +334,60 @@
 
   .fieldWrapper {
     position: relative;
+  }
+
+  .uploadField {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.75rem;
+
+    label {
+      display: inline-block;
+      font-weight: 600;
+      color: $black;
+      margin-bottom: 0.35rem;
+    }
+
+    input[type='file'] {
+      display: block;
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1.5px solid $border;
+      border-radius: $radius-md;
+      background: $white;
+      color: $text;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        border-color: $secondary;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $secondary;
+        box-shadow: 0 0 0 3px rgba($secondary, 0.12);
+      }
+    }
+
+    .hint {
+      margin-top: 0.25rem;
+      font-size: 0.85rem;
+      color: $text-secondary;
+    }
+
+    .preview {
+      margin-top: 0.5rem;
+
+      .previewImg {
+        max-width: 200px;
+        height: auto;
+        border-radius: $radius-md;
+        border: 1px solid $border;
+        background: #f8f8f8;
+        display: block;
+      }
+    }
   }
 
   .formActions {

@@ -21,7 +21,6 @@ const Profile = () => {
     name: "",
     description: "",
     price: "",
-    image: "",
     category: "",
     quantity: "",
   });
@@ -29,7 +28,6 @@ const Profile = () => {
     name: "",
     description: "",
     price: "",
-    image: "",
     category: "",
     quantity: "",
   });
@@ -37,6 +35,8 @@ const Profile = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newImageFile, setNewImageFile] = useState(null);
   const [newImagePreview, setNewImagePreview] = useState(null);
+  const [editImageFile, setEditImageFile] = useState(null);
+  const [editImagePreview, setEditImagePreview] = useState(null);
 
   const isProducer = user?.role === "producteur";
 
@@ -70,10 +70,11 @@ const Profile = () => {
       name: product.name || "",
       description: product.description || "",
       price: product.price?.toString() || "",
-      image: product.image || "",
       category: product.category || "",
       quantity: product.quantity?.toString() || "",
     });
+    setEditImageFile(null);
+    setEditImagePreview(null);
     setFormErrors({});
   };
 
@@ -83,10 +84,11 @@ const Profile = () => {
       name: "",
       description: "",
       price: "",
-      image: "",
       category: "",
       quantity: "",
     });
+    setEditImageFile(null);
+    setEditImagePreview(null);
     setFormErrors({});
   };
 
@@ -103,40 +105,34 @@ const Profile = () => {
 
   const validateProductForm = (product, options = {}) => {
     const errors = {};
-
+    const requireFile = !!options.requireFile;
+ 
     if (!product.name || product.name.trim().length < 2) {
       errors.name = "Le nom doit contenir au moins 2 caractères";
     }
-
+ 
     if (!product.description || product.description.trim().length < 10) {
       errors.description = "La description doit contenir au moins 10 caractères";
     }
-
+ 
     const priceNum = parseFloat(product.price);
     if (!product.price || isNaN(priceNum) || priceNum < 0) {
       errors.price = "Veuillez saisir un prix valide (≥ 0)";
     }
-
-    const allowFile = options.allowFile;
-    if (allowFile) {
-      if ((!product.image || product.image.trim().length < 5) && !newImageFile) {
-        errors.image = "Veuillez fournir une image (fichier) ou une URL valide";
-      }
-    } else {
-      if (!product.image || product.image.trim().length < 5) {
-        errors.image = "Veuillez saisir une URL d'image valide";
-      }
+ 
+    if (requireFile && !newImageFile) {
+      errors.image = "Veuillez téléverser une image";
     }
-
+ 
     if (!product.category || product.category.trim().length < 2) {
       errors.category = "La catégorie doit contenir au moins 2 caractères";
     }
-
+ 
     const quantityNum = parseInt(product.quantity, 10);
     if (!product.quantity || isNaN(quantityNum) || quantityNum < 0) {
       errors.quantity = "Veuillez saisir une quantité valide (≥ 0)";
     }
-
+ 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -158,37 +154,40 @@ const Profile = () => {
     }
   };
 
+  const handleEditFileChange = (e) => {
+    const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+    if (file) {
+      setEditImageFile(file);
+      try {
+        const previewUrl = URL.createObjectURL(file);
+        setEditImagePreview(previewUrl);
+      } catch (err) {
+        console.error("Preview URL error:", err);
+      }
+      setFormErrors((prev) => ({ ...prev, image: "" }));
+    } else {
+      setEditImageFile(null);
+      setEditImagePreview(null);
+    }
+  };
+
   const handleAddProduct = async (e) => {
     e.preventDefault();
-    if (!validateProductForm(newProduct, { allowFile: !!newImageFile })) return;
-
+    if (!validateProductForm(newProduct, { requireFile: true })) return;
+ 
     setIsSubmitting(true);
     try {
-      let createdProduct;
-
-      if (newImageFile) {
-        const formData = new FormData();
-        formData.append("name", newProduct.name.trim());
-        formData.append("description", newProduct.description.trim());
-        formData.append("price", String(parseFloat(newProduct.price)));
-        formData.append("category", newProduct.category.trim());
-        formData.append("quantity", String(parseInt(newProduct.quantity, 10)));
-        formData.append("image", newImageFile);
-
-        const resp = await productAPI.createProductMultipart(formData);
-        createdProduct = resp?.product || resp;
-      } else {
-        const payload = {
-          name: newProduct.name.trim(),
-          description: newProduct.description.trim(),
-          price: parseFloat(newProduct.price),
-          image: newProduct.image.trim(),
-          category: newProduct.category.trim(),
-          quantity: parseInt(newProduct.quantity, 10),
-        };
-        createdProduct = await productAPI.createProduct(payload);
-      }
-      
+      const formData = new FormData();
+      formData.append("name", newProduct.name.trim());
+      formData.append("description", newProduct.description.trim());
+      formData.append("price", String(parseFloat(newProduct.price)));
+      formData.append("category", newProduct.category.trim());
+      formData.append("quantity", String(parseInt(newProduct.quantity, 10)));
+      formData.append("image", newImageFile);
+ 
+      const resp = await productAPI.createProductMultipart(formData);
+      const createdProduct = resp?.product || resp;
+ 
       // Add to local state
       setMyProducts((prev) => [createdProduct, ...prev]);
       
@@ -197,7 +196,6 @@ const Profile = () => {
         name: "",
         description: "",
         price: "",
-        image: "",
         category: "",
         quantity: "",
       });
@@ -221,31 +219,74 @@ const Profile = () => {
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
-    if (!validateProductForm(editProduct)) return;
+    if (!validateProductForm(editProduct, { requireFile: false })) return;
 
     setIsSubmitting(true);
     try {
-      const payload = {
-        name: editProduct.name.trim(),
-        description: editProduct.description.trim(),
-        price: parseFloat(editProduct.price),
-        image: editProduct.image.trim(),
-        category: editProduct.category.trim(),
-        quantity: parseInt(editProduct.quantity, 10),
-      };
+      if (editImageFile) {
+        const formData = new FormData();
+        formData.append("name", editProduct.name.trim());
+        formData.append("description", editProduct.description.trim());
+        formData.append("price", String(parseFloat(editProduct.price)));
+        formData.append("category", editProduct.category.trim());
+        formData.append("quantity", String(parseInt(editProduct.quantity, 10)));
+        formData.append("image", editImageFile);
 
-      await productAPI.updateProduct(editingProductId, payload);
-      
-      // Update local state
-      setMyProducts((prev) =>
-        prev.map((p) => {
-          const pid = p._id || p.id;
-          if (pid === editingProductId) {
-            return { ...p, ...payload };
-          }
-          return p;
-        })
-      );
+        const resp = await productAPI.updateProductMultipart(editingProductId, formData);
+        const updated = resp?.updatedProduct || resp?.product || null;
+
+        // Update local state using server response if available (includes new image URL)
+        if (updated) {
+          setMyProducts((prev) =>
+            prev.map((p) => {
+              const pid = p._id || p.id;
+              if (pid === editingProductId) {
+                return { ...p, ...updated };
+              }
+              return p;
+            })
+          );
+        } else {
+          // Fallback: update non-image fields
+          const payload = {
+            name: editProduct.name.trim(),
+            description: editProduct.description.trim(),
+            price: parseFloat(editProduct.price),
+            category: editProduct.category.trim(),
+            quantity: parseInt(editProduct.quantity, 10),
+          };
+          setMyProducts((prev) =>
+            prev.map((p) => {
+              const pid = p._id || p.id;
+              if (pid === editingProductId) {
+                return { ...p, ...payload };
+              }
+              return p;
+            })
+          );
+        }
+      } else {
+        const payload = {
+          name: editProduct.name.trim(),
+          description: editProduct.description.trim(),
+          price: parseFloat(editProduct.price),
+          category: editProduct.category.trim(),
+          quantity: parseInt(editProduct.quantity, 10),
+        };
+
+        await productAPI.updateProduct(editingProductId, payload);
+        
+        // Update local state
+        setMyProducts((prev) =>
+          prev.map((p) => {
+            const pid = p._id || p.id;
+            if (pid === editingProductId) {
+              return { ...p, ...payload };
+            }
+            return p;
+          })
+        );
+      }
       
       // Reset edit state
       setEditingProductId(null);
@@ -253,10 +294,11 @@ const Profile = () => {
         name: "",
         description: "",
         price: "",
-        image: "",
         category: "",
         quantity: "",
       });
+      setEditImageFile(null);
+      setEditImagePreview(null);
       setFormErrors({});
       
       if (showNotification) {
@@ -278,7 +320,6 @@ const Profile = () => {
       name: "",
       description: "",
       price: "",
-      image: "",
       category: "",
       quantity: "",
     });
@@ -448,16 +489,8 @@ const Profile = () => {
                   placeholder="Ex: Légumes, Fruits, Produits laitiers..."
                 />
 
-                <FormField
-                  id="new-image"
-                  label="URL de l'image (optionnel)"
-                  value={newProduct.image}
-                  onChange={(v) => setNewProduct((s) => ({ ...s, image: v }))}
-                  error={formErrors.image || ""}
-                  placeholder="https://example.com/image.jpg"
-                />
 
-                <div className={styles.fieldWrapper}>
+                <div className={styles.uploadField}>
                   <label htmlFor="new-image-file">Téléverser une image</label>
                   <input
                     id="new-image-file"
@@ -466,11 +499,11 @@ const Profile = () => {
                     onChange={handleNewFileChange}
                   />
                   {newImagePreview && (
-                    <div style={{ marginTop: "8px" }}>
+                    <div className={styles.preview}>
                       <img
                         src={newImagePreview}
                         alt="Aperçu de l'image sélectionnée"
-                        style={{ maxWidth: "200px", height: "auto", borderRadius: "4px", border: "1px solid #ddd" }}
+                        className={styles.previewImg}
                       />
                     </div>
                   )}
@@ -600,14 +633,24 @@ const Profile = () => {
                             required
                           />
 
-                          <FormField
-                            id={`edit-image-${pid}`}
-                            label="URL de l'image"
-                            value={editProduct.image}
-                            onChange={(v) => setEditProduct((s) => ({ ...s, image: v }))}
-                            error={formErrors.image || ""}
-                            required
-                          />
+                          <div className={styles.uploadField}>
+                            <label htmlFor={`edit-image-file-${pid}`}>Téléverser une nouvelle image</label>
+                            <input
+                              id={`edit-image-file-${pid}`}
+                              type="file"
+                              accept="image/*"
+                              onChange={handleEditFileChange}
+                            />
+                            {editImagePreview && (
+                              <div className={styles.preview}>
+                                <img
+                                  src={editImagePreview}
+                                  alt="Aperçu de la nouvelle image"
+                                  className={styles.previewImg}
+                                />
+                              </div>
+                            )}
+                          </div>
 
                           <div className={styles.formActions}>
                             <button

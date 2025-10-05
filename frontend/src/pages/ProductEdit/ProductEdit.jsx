@@ -15,7 +15,6 @@ const ProductEdit = () => {
     name: "",
     description: "",
     price: "",
-    image: "",
     category: "",
     quantity: "",
   });
@@ -58,7 +57,6 @@ const ProductEdit = () => {
           name: product.name || "",
           description: product.description || "",
           price: product.price?.toString() || "",
-          image: product.image || "",
           category: product.category || "",
           quantity: product.quantity?.toString() || "",
         };
@@ -95,9 +93,6 @@ const ProductEdit = () => {
       e.price = "Veuillez saisir un prix valide (≥ 0)";
     }
 
-    if (!imageFile && (!form.image || form.image.trim().length < 5)) {
-      e.image = "Veuillez fournir une image (fichier) ou une URL valide";
-    }
 
     if (!form.category || form.category.trim().length < 2) {
       e.category = "La catégorie doit contenir au moins 2 caractères";
@@ -118,7 +113,6 @@ const ProductEdit = () => {
       form.name !== initialForm.name ||
       form.description !== initialForm.description ||
       form.price !== initialForm.price ||
-      form.image !== initialForm.image ||
       form.category !== initialForm.category ||
       form.quantity !== initialForm.quantity ||
       !!imageFile
@@ -162,7 +156,6 @@ const ProductEdit = () => {
           name: form.name.trim(),
           description: form.description.trim(),
           price: parseFloat(form.price),
-          image: form.image.trim(),
           category: form.category.trim(),
           quantity: parseInt(form.quantity, 10),
         };
@@ -284,14 +277,6 @@ const ProductEdit = () => {
             placeholder="Ex: Légumes, Fruits, Produits laitiers..."
           />
 
-          <FormField
-            id="image"
-            label="URL de l'image"
-            value={form.image}
-            onChange={(v) => setForm((s) => ({ ...s, image: v }))}
-            error={errors.image || ""}
-            placeholder="https://example.com/image.jpg"
-          />
 
           <div className={styles.fileUpload}>
             <label htmlFor="imageFile">Ou téléverser un fichier</label>
