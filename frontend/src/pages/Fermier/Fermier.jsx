@@ -10,6 +10,8 @@ import { producerAPI, commentsAPI } from "../../services/api";
 import { transformProductData, transformProducerData } from "../../utils/defaults";
 import accueilStyles from "../Accueil/Accueil.module.scss";
 import styles from "./Fermier.module.scss";
+import FormField from "../../components/common/FormField";
+import { useAuth } from "../../context/AuthContext";
 
 const Fermier = () => {
   const { id } = useParams();
@@ -27,7 +29,14 @@ const Fermier = () => {
   const [commentsError, setCommentsError] = useState(null);
   const [redirect404, setRedirect404] = useState(false);
 
+  // Inline comment form state
+  const [commentText, setCommentText] = useState("");
+  const [rating, setRating] = useState(5);
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+
   const navigate = useNavigate();
+  const { user, isAuthenticated, showNotification } = useAuth();
 
   // Fetch producer, products, comments
   useEffect(() => {
@@ -108,6 +117,59 @@ const Fermier = () => {
     }
   }, [redirect404, navigate]);
 
+  // Handle inline comment submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isAuthenticated || user?.role !== "client") {
+      showNotification && showNotification("Veuillez vous connecter en tant que client pour commenter.", "warning");
+      return;
+    }
+
+    const trimmed = commentText.trim();
+    if (trimmed.length < 5) {
+      setFormError("Le commentaire doit contenir au moins 5 caractères");
+      return;
+    }
+    if (rating < 1 || rating > 5) {
+      setFormError("La note doit être comprise entre 1 et 5");
+      return;
+    }
+
+    setSubmitting(true);
+    setFormError("");
+    try {
+      const res = await commentsAPI.createComment({
+        ProducteurId: id,
+        comment: trimmed,
+        rating,
+      });
+
+      // API returns { status, data } where data is created document (may not be populated)
+      const apiPayload = res?.data || res;
+      const created = apiPayload?.data || apiPayload;
+
+      const newComment = {
+        ...(created || {}),
+        comment: trimmed,
+        rating,
+        createdAt: created?.createdAt || new Date().toISOString(),
+        // Ensure UI has a username to display even if backend didn't populate
+        userId: { username: user?.name },
+      };
+
+      setComments((prev) => [newComment, ...prev]);
+      setCommentText("");
+      setRating(5);
+      showNotification && showNotification("Commentaire publié avec succès", "success");
+    } catch (err) {
+      const message = err?.message || "Erreur lors de l'envoi du commentaire";
+      setFormError(message);
+      showNotification && showNotification(message, "error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const title = producer?.name || "Nom du Producteur";
   const specialty = producer?.specialty || "Spécialité du producteur";
   const description = producer?.description || "Description du producteur";
@@ -175,6 +237,57 @@ const Fermier = () => {
         {/* Comments section */}
         <section className={styles.commentsSection} aria-labelledby="comments-title">
           <h3 id="comments-title" className={styles.commentsTitle}>Commentaire</h3>
+
+          {/* Inline comment form */}
+          {isAuthenticated && user?.role === "client" ? (
+            <form className={styles.commentForm} onSubmit={handleSubmit} noValidate>
+              <div className={styles.formRow}>
+                <FormField
+                  id="comment-text"
+                  label="Votre commentaire"
+                  type="textarea"
+                  value={commentText}
+                  onChange={setCommentText}
+                  placeholder="Partagez votre expérience avec ce producteur..."
+                  required
+                  error={formError}
+                  rows={4}
+                />
+                <div>
+                  <label htmlFor="rating-select" className={styles.commentLabel}>Note</label>
+                  <select
+                    id="rating-select"
+                    className={styles.ratingSelect}
+                    value={rating}
+                    onChange={(e) => setRating(Number(e.target.value))}
+                    disabled={submitting}
+                    aria-label="Sélectionnez une note"
+                  >
+                    <option value={5}>5 - Excellent</option>
+                    <option value={4}>4 - Très bien</option>
+                    <option value={3}>3 - Bien</option>
+                    <option value={2}>2 - Moyen</option>
+                    <option value={1}>1 - Mauvais</option>
+                  </select>
+                </div>
+              </div>
+              <div className={styles.formActions}>
+                <button
+                  type="submit"
+                  className={styles.submitBtn}
+                  disabled={submitting}
+                  aria-label="Publier le commentaire"
+                >
+                  {submitting ? "Envoi..." : "Publier"}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className={styles.loginNotice}>
+              Vous devez être connecté en tant que client pour laisser un commentaire.
+              <Link to="/login">Se connecter</Link>
+            </div>
+          )}
 
           {commentsLoading ? (
             <LoadingState message="Chargement des commentaires..." size="small" />

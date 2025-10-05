@@ -149,8 +149,38 @@ export const productAPI = {
   },
 };
 
-// Comments API functions
+ // Comments API functions
 export const commentsAPI = {
+  // Create a comment for a producer (client only)
+  createComment: async ({ ProducteurId, comment, rating }) => {
+    try {
+      const response = await apiClient.post('/comments', { ProducteurId, comment, rating });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de l'envoi du commentaire");
+    }
+  },
+
+  // Update an existing comment (owner only)
+  updateComment: async (commentId, { comment, rating }) => {
+    try {
+      const response = await apiClient.put(`/comments/${commentId}`, { comment, rating });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour du commentaire");
+    }
+  },
+
+  // Delete an existing comment (owner only)
+  deleteComment: async (commentId) => {
+    try {
+      const response = await apiClient.delete(`/comments/${commentId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la suppression du commentaire");
+    }
+  },
+
   // Get comments for a producer
   getCommentsByProducer: async (producteurId) => {
     try {
@@ -160,6 +190,7 @@ export const commentsAPI = {
       throw new Error(error.response?.data?.message || "Erreur lors de la récupération des commentaires");
     }
   },
+
   // Get average rating for a producer
   getAverageRatingByProducer: async (producteurId) => {
     try {
