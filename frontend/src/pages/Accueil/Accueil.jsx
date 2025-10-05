@@ -7,6 +7,7 @@ import HeroSection from "../../components/common/HeroSection";
 import { producerAPI } from "../../services/api";
 import { transformProducerData, transformProductData } from "../../utils/defaults";
 import { ROUTES } from "../../utils/routes";
+import { Link } from "react-router-dom";
 import styles from "./Accueil.module.scss";
 
 const Accueil = () => {
@@ -117,6 +118,22 @@ const Accueil = () => {
             icon="👨‍🌾"
           />
         )}
+
+        {/* Partner CTA */}
+        <section className={styles.partnerHero}>
+          <div className={styles.partnerHeroInner}>
+            <h3 className={styles.partnerTitle}>Devenez partenaire aujourd'hui</h3>
+            <p className={styles.partnerSubtitle}>
+              Rejoignez notre réseau de producteurs locaux et développez votre activité avec nous.
+            </p>
+            <Link
+              to={`${ROUTES.contact}?subject=${encodeURIComponent("Demande pour partenariat")}`}
+              className={styles.partnerBtn}
+            >
+              Devenez partenaire aujourd'hui
+            </Link>
+          </div>
+        </section>
       </div>
     </div>
   );

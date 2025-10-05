@@ -13,6 +13,7 @@ const productSchema = new Schema({
     ref: "User",
     required: true,
   },
+  imagePublicId: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 
