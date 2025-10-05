@@ -1,10 +1,13 @@
 import { useState } from "react";
 import FormField from "../../components/common/FormField";
 import { supportAPI } from "../../services/api";
+import { useLocation } from "react-router-dom";
 import styles from "./Contact.module.scss";
 
 const Contact = () => {
-  const [subject, setSubject] = useState("");
+  const location = useLocation();
+  const prefillSubject = new URLSearchParams(location.search).get("subject") || "";
+  const [subject, setSubject] = useState(prefillSubject);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
