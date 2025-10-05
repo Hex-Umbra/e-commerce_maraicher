@@ -19,6 +19,9 @@ import Cart from './pages/Cart/Cart';
 import MentionsLegales from './pages/MentionsLegales/MentionsLegales';
 import PolitiqueConfidentialite from './pages/PolitiqueConfidentialite/PolitiqueConfidentialite';
 import ConditionsUtilisation from './pages/ConditionsUtilisation/ConditionsUtilisation';
+import Profile from './pages/Profile/Profile';
+import Orders from './pages/Orders/Orders';
+import ProfileEdit from './pages/ProfileEdit/ProfileEdit';
 
 import './styles/main.scss';
 
@@ -40,6 +43,9 @@ const App = () => {
               <Route path="/register" element={<WelcomeSection />} />
               <Route path="/login" element={<LoginSection />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/profil" element={<Profile />} />
+              <Route path="/profil/editer" element={<ProfileEdit />} />
+              <Route path="/commandes" element={<Orders />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
               <Route path="/conditions-utilisation" element={<ConditionsUtilisation />} />

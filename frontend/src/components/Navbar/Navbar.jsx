@@ -6,6 +6,7 @@ import Notification from "../Notification/Notification";
 import styles from "./Navbar.module.scss";
 import { NAV_LINKS, ROUTES } from "../../utils/routes";
 import { BsCart3 } from "react-icons/bs";
+import { FiPackage } from "react-icons/fi";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -110,27 +111,47 @@ const Navbar = () => {
         <div className={styles.userSection}>
           {isAuthenticated ? (
             <div className={styles.userInfo}>
-              <div className={styles.userIcon}>
+              <Link
+                to={ROUTES.profile}
+                className={styles.userIcon}
+                onClick={closeMenu}
+                aria-label="Aller à mon profil"
+                title="Mon profil"
+              >
                 <span className={styles.userName}>{user?.name}</span>
                 <div className={styles.profileIcon}>👤</div>
-              </div>
-              <Link
-                to={ROUTES.cart}
-                className={styles.cartButton}
-                aria-label="Voir le panier"
-                onClick={closeMenu}
-                title="Panier"
-              >
-                <BsCart3 aria-hidden="true" />
-                {cartCount > 0 && (
-                  <span
-                    className={styles.cartBadge}
-                    aria-label={`${cartCount} article(s) dans le panier`}
-                  >
-                    {cartCount}
-                  </span>
-                )}
               </Link>
+              
+              {user?.role === "producteur" ? (
+                <Link
+                  to={ROUTES.orders}
+                  className={styles.ordersButton}
+                  aria-label="Voir les commandes"
+                  onClick={closeMenu}
+                  title="Commandes"
+                >
+                  <FiPackage aria-hidden="true" />
+                </Link>
+              ) : (
+                <Link
+                  to={ROUTES.cart}
+                  className={styles.cartButton}
+                  aria-label="Voir le panier"
+                  onClick={closeMenu}
+                  title="Panier"
+                >
+                  <BsCart3 aria-hidden="true" />
+                  {cartCount > 0 && (
+                    <span
+                      className={styles.cartBadge}
+                      aria-label={`${cartCount} article(s) dans le panier`}
+                    >
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+              )}
+              
               <button 
                 className={styles.logoutButton}
                 onClick={handleLogout}

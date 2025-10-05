@@ -192,7 +192,7 @@
 @mixin message-error {
   @include message-base;
   background: rgba(220, 53, 69, 0.1);
-  color: #dc3545;
+  color: $primary;
   border-color: rgba(220, 53, 69, 0.3);
 }
 
@@ -331,6 +331,8 @@
   border-radius: $radius-md;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-size: 1rem;
+  font-weight: bold;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.1);
