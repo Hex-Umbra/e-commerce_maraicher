@@ -153,8 +153,7 @@ const Fermier = () => {
         comment: trimmed,
         rating,
         createdAt: created?.createdAt || new Date().toISOString(),
-        // Ensure UI has a username to display even if backend didn't populate
-        userId: { username: user?.name },
+        userId: { _id: user?.id, username: user?.name },
       };
 
       setComments((prev) => [newComment, ...prev]);
@@ -169,7 +168,39 @@ const Fermier = () => {
       setSubmitting(false);
     }
   };
+  
+  const handleUpdateComment = async (commentId, { comment, rating }) => {
+    try {
+      const res = await commentsAPI.updateComment(commentId, { comment, rating });
+      const updatedPayload = res?.data || res;
+      const updated = updatedPayload?.data || updatedPayload;
+      setComments((prev) =>
+        prev.map((c) =>
+          c._id === commentId
+            ? { ...c, comment: updated?.comment ?? comment, rating: updated?.rating ?? rating }
+            : c
+        )
+      );
+      showNotification && showNotification("Commentaire mis à jour", "success");
+      return true;
+    } catch (err) {
+      showNotification && showNotification(err?.message || "Erreur lors de la mise à jour", "error");
+      return false;
+    }
+  };
 
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await commentsAPI.deleteComment(commentId);
+      setComments((prev) => prev.filter((c) => c._id !== commentId));
+      showNotification && showNotification("Commentaire supprimé", "success");
+      return true;
+    } catch (err) {
+      showNotification && showNotification(err?.message || "Erreur lors de la suppression", "error");
+      return false;
+    }
+  };
+  
   const title = producer?.name || "Nom du Producteur";
   const specialty = producer?.specialty || "Spécialité du producteur";
   const description = producer?.description || "Description du producteur";
@@ -303,11 +334,20 @@ const Fermier = () => {
               {comments.map((c, idx) => (
                 <CommentCard
                   key={c._id || idx}
+                  commentId={c._id}
                   comment={c.comment}
                   username={c?.userId?.username}
                   rating={c.rating}
                   createdAt={c.createdAt}
                   index={idx}
+                  isOwner={
+                    isAuthenticated &&
+                    (c?.userId?._id === user?.id ||
+                      c?.userId?.id === user?.id ||
+                      c?.userId === user?.id)
+                  }
+                  onSave={handleUpdateComment}
+                  onDelete={handleDeleteComment}
                 />
               ))}
             </div>

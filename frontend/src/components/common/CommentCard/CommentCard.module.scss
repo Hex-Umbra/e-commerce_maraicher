@@ -108,3 +108,66 @@
     transparent
   );
 }
+
+/* Owner action buttons and edit form */
+.ownerActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.actionBtn {
+  @include button-secondary;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+.editBtn {
+  @extend .actionBtn;
+}
+
+.deleteBtn {
+  @extend .actionBtn;
+  border-color: $error-color;
+  color: $error-color;
+
+  &:hover:not(:disabled) {
+    background-color: $error-color;
+    color: $white;
+  }
+}
+
+.saveBtn {
+  @include button-primary;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.9rem;
+}
+
+.cancelBtn {
+  @extend .actionBtn;
+}
+
+.editForm {
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  gap: 1rem;
+  align-items: start;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ratingSelect {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  background: #fff;
+  color: $black;
+}
+
+.commentLabel {
+  font-weight: 700;
+  color: $text;
+}

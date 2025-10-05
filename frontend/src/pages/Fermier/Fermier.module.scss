@@ -112,6 +112,64 @@
   padding: 0.75rem 0;
 }
 
+/* Inline comment form */
+.commentForm {
+  padding: 1rem 1.25rem 0.75rem;
+  background: color.adjust($primary, $lightness: 40%);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  border-top-left-radius: $radius-lg;
+  border-top-right-radius: $radius-lg;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 1rem;
+  align-items: start;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ratingSelect {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  background: #fff;
+  color: $black;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 0 1.25rem 1rem;
+}
+
+.submitBtn {
+  @include button-primary;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+}
+
+.loginNotice {
+  padding: 0.75rem 1.25rem;
+  color: $text;
+
+  a {
+    margin-left: 0.5rem;
+    @include link-reset;
+    color: $secondary;
+    font-weight: 700;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 .commentRow {
   position: relative;
   display: grid;
