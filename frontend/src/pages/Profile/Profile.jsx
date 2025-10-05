@@ -35,6 +35,8 @@ const Profile = () => {
   });
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newImageFile, setNewImageFile] = useState(null);
+  const [newImagePreview, setNewImagePreview] = useState(null);
 
   const isProducer = user?.role === "producteur";
 
@@ -99,7 +101,7 @@ const Profile = () => {
     }
   };
 
-  const validateProductForm = (product) => {
+  const validateProductForm = (product, options = {}) => {
     const errors = {};
 
     if (!product.name || product.name.trim().length < 2) {
@@ -115,8 +117,15 @@ const Profile = () => {
       errors.price = "Veuillez saisir un prix valide (≥ 0)";
     }
 
-    if (!product.image || product.image.trim().length < 5) {
-      errors.image = "Veuillez saisir une URL d'image valide";
+    const allowFile = options.allowFile;
+    if (allowFile) {
+      if ((!product.image || product.image.trim().length < 5) && !newImageFile) {
+        errors.image = "Veuillez fournir une image (fichier) ou une URL valide";
+      }
+    } else {
+      if (!product.image || product.image.trim().length < 5) {
+        errors.image = "Veuillez saisir une URL d'image valide";
+      }
     }
 
     if (!product.category || product.category.trim().length < 2) {
@@ -132,22 +141,53 @@ const Profile = () => {
     return Object.keys(errors).length === 0;
   };
 
+  const handleNewFileChange = (e) => {
+    const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+    if (file) {
+      setNewImageFile(file);
+      try {
+        const previewUrl = URL.createObjectURL(file);
+        setNewImagePreview(previewUrl);
+      } catch (err) {
+        console.error("Preview URL error:", err);
+      }
+      setFormErrors((prev) => ({ ...prev, image: "" }));
+    } else {
+      setNewImageFile(null);
+      setNewImagePreview(null);
+    }
+  };
+
   const handleAddProduct = async (e) => {
     e.preventDefault();
-    if (!validateProductForm(newProduct)) return;
+    if (!validateProductForm(newProduct, { allowFile: !!newImageFile })) return;
 
     setIsSubmitting(true);
     try {
-      const payload = {
-        name: newProduct.name.trim(),
-        description: newProduct.description.trim(),
-        price: parseFloat(newProduct.price),
-        image: newProduct.image.trim(),
-        category: newProduct.category.trim(),
-        quantity: parseInt(newProduct.quantity, 10),
-      };
+      let createdProduct;
 
-      const createdProduct = await productAPI.createProduct(payload);
+      if (newImageFile) {
+        const formData = new FormData();
+        formData.append("name", newProduct.name.trim());
+        formData.append("description", newProduct.description.trim());
+        formData.append("price", String(parseFloat(newProduct.price)));
+        formData.append("category", newProduct.category.trim());
+        formData.append("quantity", String(parseInt(newProduct.quantity, 10)));
+        formData.append("image", newImageFile);
+
+        const resp = await productAPI.createProductMultipart(formData);
+        createdProduct = resp?.product || resp;
+      } else {
+        const payload = {
+          name: newProduct.name.trim(),
+          description: newProduct.description.trim(),
+          price: parseFloat(newProduct.price),
+          image: newProduct.image.trim(),
+          category: newProduct.category.trim(),
+          quantity: parseInt(newProduct.quantity, 10),
+        };
+        createdProduct = await productAPI.createProduct(payload);
+      }
       
       // Add to local state
       setMyProducts((prev) => [createdProduct, ...prev]);
@@ -161,6 +201,8 @@ const Profile = () => {
         category: "",
         quantity: "",
       });
+      setNewImageFile(null);
+      setNewImagePreview(null);
       setFormErrors({});
       setShowAddForm(false);
       
@@ -240,6 +282,8 @@ const Profile = () => {
       category: "",
       quantity: "",
     });
+    setNewImageFile(null);
+    setNewImagePreview(null);
     setFormErrors({});
   };
 
@@ -406,13 +450,31 @@ const Profile = () => {
 
                 <FormField
                   id="new-image"
-                  label="URL de l'image"
+                  label="URL de l'image (optionnel)"
                   value={newProduct.image}
                   onChange={(v) => setNewProduct((s) => ({ ...s, image: v }))}
                   error={formErrors.image || ""}
-                  required
                   placeholder="https://example.com/image.jpg"
                 />
+
+                <div className={styles.fieldWrapper}>
+                  <label htmlFor="new-image-file">Téléverser une image</label>
+                  <input
+                    id="new-image-file"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleNewFileChange}
+                  />
+                  {newImagePreview && (
+                    <div style={{ marginTop: "8px" }}>
+                      <img
+                        src={newImagePreview}
+                        alt="Aperçu de l'image sélectionnée"
+                        style={{ maxWidth: "200px", height: "auto", borderRadius: "4px", border: "1px solid #ddd" }}
+                      />
+                    </div>
+                  )}
+                </div>
 
                 <div className={styles.formActions}>
                   <button

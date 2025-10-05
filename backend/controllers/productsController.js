@@ -1,5 +1,6 @@
 import Product from "../models/productsModel.js";
 import { logger } from "../services/logger.js";
+import { uploadBufferToCloudinary, destroyByPublicId } from "../services/cloudinaryUpload.js";
 import { catchAsync, handleError } from "../utils/handleError.js";
 
 // @desc    Create a new product
@@ -7,7 +8,27 @@ import { catchAsync, handleError } from "../utils/handleError.js";
 // @access  Private (Producteur)
 export const createProduct = catchAsync(async (req, res) => {
   try {
-    const newProduct = new Product({ ...req.body, producteurId: req.user._id });
+    const body = { ...req.body, producteurId: req.user._id };
+
+    // If a file is provided, upload to Cloudinary and set image fields
+    const imageFile = req.files ? req.files.find(f => f.fieldname === 'image') : null;
+    if (imageFile) {
+      const folder = `products/${req.user._id}`;
+      try {
+        const result = await uploadBufferToCloudinary(imageFile.buffer, folder);
+        body.image = result.secure_url;
+        body.imagePublicId = result.public_id;
+      } catch (cloudErr) {
+        handleError(cloudErr, "Upload image (createProduct)", req);
+        return res.status(502).json({
+          message: "Erreur lors du téléversement de l'image.",
+          error: cloudErr.message,
+        });
+      }
+    }
+    // Else: legacy JSON path with body.image as URL (validation handled by Mongoose)
+
+    const newProduct = new Product(body);
     await newProduct.save();
 
     // Log de la création réussie du produit
@@ -118,10 +139,40 @@ export const updateProduct = catchAsync(async (req, res) => {
         .json({ message: "Vous n'êtes pas autorisé à modifier ce produit." });
     }
 
-    // Met à jour le produit avec les nouvelles données
+    const updateData = { ...req.body, producteurId: req.user._id };
+    let newUploadResult = null;
+
+    const imageFile = req.files ? req.files.find(f => f.fieldname === 'image') : null;
+    if (imageFile) {
+      // Upload new image
+      const folder = `products/${req.user._id}`;
+      try {
+        newUploadResult = await uploadBufferToCloudinary(
+          imageFile.buffer,
+          folder
+        );
+        updateData.image = newUploadResult.secure_url;
+        updateData.imagePublicId = newUploadResult.public_id;
+      } catch (cloudErr) {
+        handleError(cloudErr, "Upload image (updateProduct)", req);
+        return res.status(502).json({
+          message: "Erreur lors du téléversement de la nouvelle image.",
+          error: cloudErr.message,
+        });
+      }
+    } else {
+      // If no file and no new URL provided, don't modify image fields
+      if (typeof req.body.image === "undefined") {
+        delete updateData.image;
+      }
+      if (typeof req.body.imagePublicId === "undefined") {
+        delete updateData.imagePublicId;
+      }
+    }
+
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, producteurId: req.user._id },
+      updateData,
       { new: true, runValidators: true }
     );
 
@@ -129,6 +180,20 @@ export const updateProduct = catchAsync(async (req, res) => {
       return res
         .status(404)
         .json({ message: "Produit introuvable après mise à jour." });
+    }
+
+    // After successful update, if we uploaded a new image and an old publicId exists, destroy old asset
+    if (
+      newUploadResult &&
+      product.imagePublicId &&
+      product.imagePublicId !== newUploadResult.public_id
+    ) {
+      try {
+        await destroyByPublicId(product.imagePublicId);
+      } catch (destroyErr) {
+        handleError(destroyErr, "Destroy old image (updateProduct)", req);
+        // Do not fail the request if deletion fails
+      }
     }
 
     // Log de la mise à jour réussie du produit
@@ -170,6 +235,17 @@ export const deleteProduct = catchAsync(async (req, res) => {
         .status(403)
         .json({ message: "Vous n'êtes pas autorisé à supprimer ce produit." });
     }
+
+    // Tente de supprimer l'actif Cloudinary s'il existe
+    if (product.imagePublicId) {
+      try {
+        await destroyByPublicId(product.imagePublicId);
+      } catch (destroyErr) {
+        handleError(destroyErr, "Destroy image (deleteProduct)", req);
+        // Ne pas échouer la suppression DB si Cloudinary échoue
+      }
+    }
+
     // Supprime le produit
     await Product.findByIdAndDelete(req.params.id);
     // Log de la suppression réussie du produit

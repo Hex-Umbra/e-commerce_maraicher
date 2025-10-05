@@ -23,6 +23,8 @@ const ProductEdit = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const isProducer = user?.role === "producteur";
 
@@ -93,8 +95,8 @@ const ProductEdit = () => {
       e.price = "Veuillez saisir un prix valide (≥ 0)";
     }
 
-    if (!form.image || form.image.trim().length < 5) {
-      e.image = "Veuillez saisir une URL d'image valide";
+    if (!imageFile && (!form.image || form.image.trim().length < 5)) {
+      e.image = "Veuillez fournir une image (fichier) ou une URL valide";
     }
 
     if (!form.category || form.category.trim().length < 2) {
@@ -118,8 +120,26 @@ const ProductEdit = () => {
       form.price !== initialForm.price ||
       form.image !== initialForm.image ||
       form.category !== initialForm.category ||
-      form.quantity !== initialForm.quantity
+      form.quantity !== initialForm.quantity ||
+      !!imageFile
     );
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+    if (file) {
+      setImageFile(file);
+      try {
+        const previewUrl = URL.createObjectURL(file);
+        setImagePreview(previewUrl);
+      } catch (err) {
+        console.error("Preview URL error:", err);
+      }
+      setErrors((prev) => ({ ...prev, image: "" }));
+    } else {
+      setImageFile(null);
+      setImagePreview(null);
+    }
   };
 
   const handleSave = async (e) => {
@@ -127,16 +147,28 @@ const ProductEdit = () => {
     if (!validate()) return;
 
     try {
-      const payload = {
-        name: form.name.trim(),
-        description: form.description.trim(),
-        price: parseFloat(form.price),
-        image: form.image.trim(),
-        category: form.category.trim(),
-        quantity: parseInt(form.quantity, 10),
-      };
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("name", form.name.trim());
+        formData.append("description", form.description.trim());
+        formData.append("price", String(parseFloat(form.price)));
+        formData.append("category", form.category.trim());
+        formData.append("quantity", String(parseInt(form.quantity, 10)));
+        formData.append("image", imageFile);
 
-      await productAPI.updateProduct(id, payload);
+        await productAPI.updateProductMultipart(id, formData);
+      } else {
+        const payload = {
+          name: form.name.trim(),
+          description: form.description.trim(),
+          price: parseFloat(form.price),
+          image: form.image.trim(),
+          category: form.category.trim(),
+          quantity: parseInt(form.quantity, 10),
+        };
+
+        await productAPI.updateProduct(id, payload);
+      }
       
       if (showNotification) {
         showNotification("Produit mis à jour avec succès.", "success");
@@ -258,9 +290,27 @@ const ProductEdit = () => {
             value={form.image}
             onChange={(v) => setForm((s) => ({ ...s, image: v }))}
             error={errors.image || ""}
-            required
             placeholder="https://example.com/image.jpg"
           />
+
+          <div className={styles.fileUpload}>
+            <label htmlFor="imageFile">Ou téléverser un fichier</label>
+            <input
+              id="imageFile"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            {imagePreview && (
+              <div className={styles.preview} style={{ marginTop: "8px" }}>
+                <img
+                  src={imagePreview}
+                  alt="Aperçu de l'image sélectionnée"
+                  style={{ maxWidth: "200px", height: "auto", borderRadius: "4px", border: "1px solid #ddd" }}
+                />
+              </div>
+            )}
+          </div>
 
           <div className={styles.actions}>
             <button

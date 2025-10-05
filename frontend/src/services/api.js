@@ -8,9 +8,7 @@ const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  // Do not set Content-Type globally; let axios infer per request (JSON vs FormData)
 });
 
 // Check if we're in development mode
@@ -128,13 +126,35 @@ export const productAPI = {
     }
   },
 
-  // Update a product (Producteur only)
+  // Create a new product with file upload (multipart/form-data)
+  createProductMultipart: async (formData) => {
+    try {
+      // Let the browser set the correct multipart boundary automatically
+      const response = await apiClient.post('/products', formData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la création du produit (multipart)');
+    }
+  },
+
+  // Update a product (Producteur only) - JSON body
   updateProduct: async (productId, payload) => {
     try {
       const response = await apiClient.put(`/products/${productId}`, payload);
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Erreur lors de la mise à jour du produit');
+    }
+  },
+
+  // Update a product with file upload (multipart/form-data)
+  updateProductMultipart: async (productId, formData) => {
+    try {
+      // Let the browser set the correct multipart boundary automatically
+      const response = await apiClient.put(`/products/${productId}`, formData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la mise à jour du produit (multipart)');
     }
   },
 

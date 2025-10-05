@@ -20,7 +20,6 @@ export const uploadImage = multer({
   storage,
   limits: {
     fileSize: MAX_FILE_SIZE_BYTES,
-    files: 1,
   },
   fileFilter,
-});
+}).any();
