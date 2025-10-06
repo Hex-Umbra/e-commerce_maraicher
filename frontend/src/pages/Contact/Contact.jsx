@@ -1,5 +1,6 @@
 import { useState } from "react";
 import FormField from "../../components/common/FormField";
+import SEO from "../../components/SEO";
 import { supportAPI } from "../../services/api";
 import { useLocation } from "react-router-dom";
 import styles from "./Contact.module.scss";
@@ -44,6 +45,13 @@ const Contact = () => {
 
   return (
     <section className={styles.contactSection}>
+      <SEO
+        title="Nous Contacter"
+        description="Une question, un problème ou un retour à nous transmettre ? Contactez notre équipe de support. Nous vous répondrons dans les plus brefs délais."
+        keywords="contact, support, aide, service client, nous contacter"
+        canonical="https://mff-weld.vercel.app/contact"
+        ogType="website"
+      />
       <div className={`container ${styles.contentWrapper}`}>
         <form className={styles.formContainer} onSubmit={handleSubmit} noValidate>
           <FormField

@@ -6,6 +6,7 @@ import EmptyState from "../../components/common/EmptyState/EmptyState";
 import ImageWithFallback from "../../components/common/ImageWithFallback/ImageWithFallback";
 import ProductCard from "../../components/common/ProductCard";
 import CommentCard from "../../components/common/CommentCard";
+import SEO from "../../components/SEO";
 import { producerAPI, commentsAPI } from "../../services/api";
 import { transformProductData, transformProducerData } from "../../utils/defaults";
 import accueilStyles from "../Accueil/Accueil.module.scss";
@@ -205,6 +206,11 @@ const Fermier = () => {
   const specialty = producer?.specialty || "Spécialité du producteur";
   const description = producer?.description || "Description du producteur";
 
+  // Calculate average rating
+  const averageRating = comments.length > 0
+    ? (comments.reduce((sum, c) => sum + (c.rating || 0), 0) / comments.length).toFixed(1)
+    : null;
+
   // Prevent rendering while redirecting
   if (redirect404) {
     return null;
@@ -212,6 +218,19 @@ const Fermier = () => {
 
   return (
     <div className={styles.page}>
+      <SEO
+        title={`${title} - Producteur Local`}
+        description={`${description} Spécialité: ${specialty}. Découvrez les produits frais et artisanaux de ${title}.`}
+        keywords={`${title}, ${specialty}, producteur local, fermier, produits frais, agriculture locale`}
+        canonical={`https://mff-weld.vercel.app/fermier/${id}`}
+        ogType="profile"
+        ogImage={producer?.avatar}
+        ogImageAlt={`Photo de ${title}`}
+      >
+        {averageRating && (
+          <meta name="rating" content={averageRating} />
+        )}
+      </SEO>
       <div className="container">
         {/* Hero section - reuse styles from Accueil */}
         <section className={accueilStyles.hero}>

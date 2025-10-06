@@ -6,6 +6,7 @@ import EmptyState from "../../components/common/EmptyState/EmptyState";
 import ProductCard from "../../components/common/ProductCard";
 import FilterChips from "../../components/common/FilterChips";
 import Pagination from "../../components/common/Pagination";
+import SEO from "../../components/SEO";
 import styles from "./Produits.module.scss";
 import { productAPI } from "../../services/api";
 import { ROUTES } from "../../utils/routes";
@@ -106,6 +107,13 @@ const Produits = () => {
 
   return (
     <div className={styles.produits}>
+      <SEO
+        title="Tous nos Produits Locaux"
+        description="Parcourez notre sélection complète de produits frais, artisanaux et de saison, directement des producteurs partenaires. Fruits, légumes, laitages, viandes et produits de la ruche."
+        keywords="produits locaux, fruits frais, légumes bio, laitages artisanaux, viande fermière, miel, produits de la ruche, produits de saison"
+        canonical="https://mff-weld.vercel.app/produits"
+        ogType="website"
+      />
       <div className="container">
         {/* Hero section */}
         <HeroSection
