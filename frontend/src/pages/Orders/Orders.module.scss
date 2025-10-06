@@ -50,24 +50,26 @@
 }
 
 .status {
-  padding: 0.25rem 0.6rem;
-  border-radius: $radius-sm;
-  font-weight: 600;
-  color: $black;
-  background: $primary-light;
-  border: 1px solid rgba(0,0,0,0.12);
+  @include status-badge;
 
   &[data-status="Complète"] {
     background: rgba(0, 200, 83, 0.15);
+    color: darken(#00c853, 20%);
   }
+
   &[data-status="Annulée"] {
     background: rgba(244, 67, 54, 0.15);
+    color: darken(#f44336, 10%);
   }
+
   &[data-status="En cours"] {
     background: rgba(255, 193, 7, 0.15);
+    color: darken(#ffc107, 20%);
   }
+
   &[data-status="Partiellement complète"] {
     background: rgba(33, 150, 243, 0.15);
+    color: darken(#2196f3, 15%);
   }
 }
 

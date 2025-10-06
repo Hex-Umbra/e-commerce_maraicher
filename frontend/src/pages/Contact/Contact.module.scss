@@ -99,29 +99,7 @@
 
 /* Right-side info panel similar to LoginSection.welcomeText */
 .infoText {
-  background-color: $primary;
-  border-radius: $radius-lg;
-  padding: 2rem;
-  flex: 2;
-  color: $black;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.infoText h2 {
-  margin: 0 0 1rem 0;
-  font-style: italic;
-  font-weight: 700;
-  font-size: 3rem;
-  color: $white;
-}
-
-.infoText p {
-  font-weight: 600;
-  font-size: 1.2rem;
-  color: $primary-dark;
+  @include info-panel;
 }
 @include mobile {
   .contentWrapper {
