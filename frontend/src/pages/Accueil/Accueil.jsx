@@ -4,6 +4,7 @@ import LoadingState from "../../components/common/LoadingState/LoadingState";
 import ErrorState from "../../components/common/ErrorState/ErrorState";
 import EmptyState from "../../components/common/EmptyState/EmptyState";
 import HeroSection from "../../components/common/HeroSection";
+import SEO from "../../components/SEO";
 import { producerAPI } from "../../services/api";
 import { transformProducerData, transformProductData } from "../../utils/defaults";
 import { ROUTES } from "../../utils/routes";
@@ -95,6 +96,13 @@ const Accueil = () => {
 
   return (
     <div className={styles.accueil}>
+      <SEO
+        title="Accueil - Produits Frais de la Ferme"
+        description="Découvrez les meilleurs produits locaux, laitages artisanaux et fruits de saison directement de notre réseau de confiance de fermiers familiaux. Produits frais, bio et de qualité."
+        keywords="produits fermiers, produits locaux, agriculture locale, produits bio, fruits de saison, laitages artisanaux, marché fermier"
+        canonical="https://mff-weld.vercel.app/accueil"
+        ogType="website"
+      />
       <div className="container">
         {/* Hero section */}
         <HeroSection

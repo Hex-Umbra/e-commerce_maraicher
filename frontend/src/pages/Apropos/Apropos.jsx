@@ -1,10 +1,18 @@
 import { Link } from "react-router-dom";
+import SEO from "../../components/SEO";
 import { ROUTES } from "../../utils/routes";
 import styles from "./Apropos.module.scss";
 
 const Apropos = () => {
   return (
     <div className={styles.apropos}>
+      <SEO
+        title="À Propos - Notre Mission"
+        description="Découvrez notre plateforme qui facilite la mise en relation entre producteurs locaux et consommateurs. Valorisation des circuits courts et de l'agriculture durable."
+        keywords="à propos, mission, circuits courts, agriculture durable, producteurs locaux, projet académique"
+        canonical="https://mff-weld.vercel.app/apropos"
+        ogType="website"
+      />
       <div className="container">
 
           <section className={styles.main}>

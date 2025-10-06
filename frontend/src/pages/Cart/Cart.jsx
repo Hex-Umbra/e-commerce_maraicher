@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import LoadingState from '../../components/common/LoadingState/LoadingState';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
+import SEO from '../../components/SEO';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/useCart';
 import { cartAPI, ordersAPI } from '../../services/api';
@@ -126,14 +127,21 @@ const Cart = () => {
 
 
   return (
-    authLoading ? (
-      <section className={`container ${styles.cart}`}>
-        <LoadingState message="Vérification de la session..." />
-      </section>
-    ) : !isAuthenticated ? (
-      <Navigate to={ROUTES.login} replace />
-    ) : (
-      <section className={`container ${styles.cart}`}>
+    <>
+      <SEO
+        title="Mon Panier"
+        description="Consultez et gérez les produits dans votre panier. Validez votre commande de produits frais locaux."
+        canonical="https://mff-weld.vercel.app/cart"
+        noindex={true}
+      />
+      {authLoading ? (
+        <section className={`container ${styles.cart}`}>
+          <LoadingState message="Vérification de la session..." />
+        </section>
+      ) : !isAuthenticated ? (
+        <Navigate to={ROUTES.login} replace />
+      ) : (
+        <section className={`container ${styles.cart}`}>
         <header className={styles.header}>
           <h2>Votre panier</h2>
           <div className={styles.actions}>
@@ -214,8 +222,10 @@ const Cart = () => {
           </div>
         )}
         
-      </section>
-    )
+          
+        </section>
+      )}
+    </>
   );
 };
 

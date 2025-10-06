@@ -5,6 +5,7 @@ import ErrorState from "../../components/common/ErrorState/ErrorState";
 import EmptyState from "../../components/common/EmptyState/EmptyState";
 import ProducerCard from "../../components/common/ProducerCard";
 import Pagination from "../../components/common/Pagination";
+import SEO from "../../components/SEO";
 import styles from "./Nosfermiers.module.scss";
 import { producerAPI } from "../../services/api";
 import { transformProducerData } from "../../utils/defaults";
@@ -62,6 +63,13 @@ const Nosfermiers = () => {
   
   return (
     <div className={styles.nosfermiers}>
+      <SEO
+        title="Nos Fermiers Partenaires"
+        description="Rencontrez les producteurs passionnés derrière nos produits frais et artisanaux. Parcourez leurs spécialités et soutenez l'agriculture locale et familiale."
+        keywords="fermiers locaux, producteurs locaux, agriculture familiale, producteurs bio, fermiers partenaires, agriculture durable"
+        canonical="https://mff-weld.vercel.app/nosfermiers"
+        ogType="website"
+      />
       <div className="container">
         {/* Hero section */}
         <HeroSection
