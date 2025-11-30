@@ -301,23 +301,15 @@ export const ordersAPI = {
     }
   },
 
-  // Cancel an order with backend method fallback (PATCH primary, DELETE fallback)
+  // Cancel an order
   cancelOrder: async (orderId) => {
     try {
       const response = await apiClient.patch(`/orders/${orderId}/cancel`);
       return response.data?.data?.order;
     } catch (error) {
-      // Fallback to DELETE if server expects DELETE for cancel
-      try {
-        const response = await apiClient.delete(`/orders/${orderId}/cancel`);
-        return response.data?.data?.order;
-      } catch (e2) {
-        throw new Error(
-          e2.response?.data?.message ||
-            error.response?.data?.message ||
-            "Erreur lors de l'annulation de la commande"
-        );
-      }
+      throw new Error(
+        error.response?.data?.message || "Erreur lors de l'annulation de la commande"
+      );
     }
   },
 

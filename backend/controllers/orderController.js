@@ -466,6 +466,7 @@ export const cancelOrder = catchAsync(async (req, res, next) => {
   try {
     const order = await orderModel
       .findOne({ _id: orderId, clientId: userId })
+      .populate("clientId") // Populate user details
       .session(session);
     if (!order) {
       return next(new AppError("Order not found", 404));
@@ -532,8 +533,8 @@ export const cancelOrder = catchAsync(async (req, res, next) => {
         .findById(orderId)
         .populate("products.productId", "name price");
       
-      await emailService.sendOrderCancellation(user, populatedOrder);
-      logger.info(`Order cancellation email sent to ${user.email}`);
+      await emailService.sendOrderCancellation(order.clientId, populatedOrder);
+      logger.info(`Order cancellation email sent to ${order.clientId.email}`);
     } catch (emailError) {
       logger.error(`Failed to send order cancellation email: ${emailError.message}`);
       // Don't fail the cancellation if email fails
