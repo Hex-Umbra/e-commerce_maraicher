@@ -1,17 +1,26 @@
-import sgMail from '@sendgrid/mail';
-import handlebars from 'handlebars';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { logger } from './logger.js';
-
+import sgMail from "@sendgrid/mail";
+import handlebars from "handlebars";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { logger } from "./logger.js";
+import dotenv from "dotenv";
+dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 class EmailService {
-  constructor() {
-    this.fromEmail = process.env.FROM_EMAIL;
-    this.frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+  constructor({
+    fromEmail,
+    frontendUrl,
+    backendUrl,
+    supportEmail,
+  } = {}) {
+    this.fromEmail = fromEmail || process.env.FROM_EMAIL;
+    logger.info(`FROM_EMAIL is set to: ${this.fromEmail}`);
+    this.frontendUrl = frontendUrl || process.env.FRONTEND_URL || "http://localhost:5173";
+    this.backendUrl = backendUrl || process.env.BACKEND_URL || "http://localhost:3000";
+    this.supportEmail = supportEmail || process.env.SUPPORT_EMAIL || this.fromEmail;
     this.isInitialized = false;
   }
 
@@ -20,26 +29,33 @@ class EmailService {
     if (!this.isInitialized) {
       const apiKey = process.env.SENDGRID_API_KEY;
       if (!apiKey) {
-        throw new Error('SENDGRID_API_KEY environment variable is not set');
+        throw new Error("SENDGRID_API_KEY environment variable is not set");
       }
-      if (!apiKey.startsWith('SG.')) {
+      if (!apiKey.startsWith("SG.")) {
         throw new Error('SENDGRID_API_KEY must start with "SG."');
       }
       sgMail.setApiKey(apiKey);
       this.isInitialized = true;
-      logger.info('SendGrid initialized successfully');
+      logger.info("SendGrid initialized successfully");
     }
   }
 
   // Load and compile email template
   async loadTemplate(templateName, data) {
     try {
-      const templatePath = path.join(__dirname, '..', 'templates', `${templateName}.hbs`);
-      const templateSource = fs.readFileSync(templatePath, 'utf8');
+      const templatePath = path.join(
+        __dirname,
+        "..",
+        "templates",
+        `${templateName}.hbs`
+      );
+      const templateSource = fs.readFileSync(templatePath, "utf8");
       const template = handlebars.compile(templateSource);
       return template(data);
     } catch (error) {
-      logger.error(`Error loading email template ${templateName}: ${error.message}`);
+      logger.error(
+        `Error loading email template ${templateName}: ${error.message}`
+      );
       throw new Error(`Failed to load email template: ${templateName}`);
     }
   }
@@ -54,11 +70,11 @@ class EmailService {
         to,
         from: {
           email: this.fromEmail,
-          name: 'Marché Frais Fermier'
+          name: "Marché Frais Fermier",
         },
         subject,
         html: htmlContent,
-        text: textContent || htmlContent.replace(/<[^>]*>/g, '') // Strip HTML for text version
+        text: textContent || htmlContent.replace(/<[^>]*>/g, ""), // Strip HTML for text version
       };
 
       const result = await sgMail.send(msg);
@@ -74,26 +90,35 @@ class EmailService {
   async sendEmailVerification(user, token) {
     try {
       // Point directly to backend API endpoint for verification
-      const backendUrl = process.env.BACKEND_URL || 'http://localhost:3000';
-      const verificationUrl = `${backendUrl}/api/auth/verify-email?token=${token}&email=${encodeURIComponent(user.email)}`;
+      const backendUrl = this.backendUrl;
+      const verificationUrl = `${backendUrl}/api/auth/verify-email?token=${token}&email=${encodeURIComponent(
+        user.email
+      )}`;
 
       const templateData = {
         userName: user.name,
         verificationUrl,
-        frontendUrl: this.frontendUrl
+        frontendUrl: this.frontendUrl,
       };
 
-      const htmlContent = await this.loadTemplate('emailVerification', templateData);
+      const htmlContent = await this.loadTemplate(
+        "emailVerification",
+        templateData
+      );
 
       await this.sendEmail(
         user.email,
-        'Vérifiez votre adresse email - Marché Frais Fermier',
+        "Vérifiez votre adresse email - Marché Frais Fermier",
         htmlContent
       );
 
-      logger.info(`Email verification sent to ${user.email} for user ${user.name}`);
+      logger.info(
+        `Email verification sent to ${user.email} for user ${user.name}`
+      );
     } catch (error) {
-      logger.error(`Failed to send verification email to ${user.email}: ${error.message}`);
+      logger.error(
+        `Failed to send verification email to ${user.email}: ${error.message}`
+      );
       throw error;
     }
   }
@@ -110,7 +135,9 @@ class EmailService {
 
       logger.info(`Email verification resent to ${user.email}`);
     } catch (error) {
-      logger.error(`Failed to resend verification email to ${user.email}: ${error.message}`);
+      logger.error(
+        `Failed to resend verification email to ${user.email}: ${error.message}`
+      );
       throw error;
     }
   }
@@ -122,26 +149,29 @@ class EmailService {
         userName: user.name,
         userEmail: user.email,
         orderId: order._id,
-        orderDate: order.createdAt.toLocaleDateString('fr-FR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
+        orderDate: order.createdAt.toLocaleDateString("fr-FR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
         }),
-        products: order.products.map(product => ({
+        products: order.products.map((product) => ({
           name: product.productId.name,
           quantity: product.quantity,
           price: product.price,
           total: (product.price * product.quantity).toFixed(2),
-          status: product.status
+          status: product.status,
         })),
         totalAmount: order.totalAmount.toFixed(2),
         orderStatus: order.status,
-        frontendUrl: this.frontendUrl
+        frontendUrl: this.frontendUrl,
       };
 
-      const htmlContent = await this.loadTemplate('orderConfirmation', templateData);
+      const htmlContent = await this.loadTemplate(
+        "orderConfirmation",
+        templateData
+      );
 
       await this.sendEmail(
         user.email,
@@ -149,9 +179,13 @@ class EmailService {
         htmlContent
       );
 
-      logger.info(`Order confirmation email sent to ${user.email} for order ${order._id}`);
+      logger.info(
+        `Order confirmation email sent to ${user.email} for order ${order._id}`
+      );
     } catch (error) {
-      logger.error(`Failed to send order confirmation email to ${user.email}: ${error.message}`);
+      logger.error(
+        `Failed to send order confirmation email to ${user.email}: ${error.message}`
+      );
       throw error;
     }
   }
@@ -162,25 +196,28 @@ class EmailService {
       const templateData = {
         userName: user.name,
         orderId: order._id,
-        orderDate: order.createdAt.toLocaleDateString('fr-FR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
+        orderDate: order.createdAt.toLocaleDateString("fr-FR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
         }),
-        updatedProducts: updatedProducts.map(product => ({
+        updatedProducts: updatedProducts.map((product) => ({
           name: product.productId.name,
           quantity: product.quantity,
           price: product.price,
           oldStatus: product.oldStatus,
           newStatus: product.status,
-          producerName: product.productId.producteurId?.name || 'Producteur'
+          producerName: product.productId.producteurId?.name || "Producteur",
         })),
         orderStatus: order.status,
         totalAmount: order.totalAmount.toFixed(2),
-        frontendUrl: this.frontendUrl
+        frontendUrl: this.frontendUrl,
       };
 
-      const htmlContent = await this.loadTemplate('orderStatusUpdate', templateData);
+      const htmlContent = await this.loadTemplate(
+        "orderStatusUpdate",
+        templateData
+      );
 
       await this.sendEmail(
         user.email,
@@ -188,9 +225,13 @@ class EmailService {
         htmlContent
       );
 
-      logger.info(`Order status update email sent to ${user.email} for order ${order._id}`);
+      logger.info(
+        `Order status update email sent to ${user.email} for order ${order._id}`
+      );
     } catch (error) {
-      logger.error(`Failed to send order status update email to ${user.email}: ${error.message}`);
+      logger.error(
+        `Failed to send order status update email to ${user.email}: ${error.message}`
+      );
       throw error;
     }
   }
@@ -201,31 +242,34 @@ class EmailService {
       const templateData = {
         userName: user.name,
         orderId: order._id,
-        orderDate: order.createdAt.toLocaleDateString('fr-FR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
+        orderDate: order.createdAt.toLocaleDateString("fr-FR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
         }),
-        products: order.products.map(product => ({
+        products: order.products.map((product) => ({
           name: product.productId.name,
           quantity: product.quantity,
           price: product.price,
-          total: (product.price * product.quantity).toFixed(2)
+          total: (product.price * product.quantity).toFixed(2),
         })),
         totalAmount: order.totalAmount.toFixed(2),
-        cancellationDate: new Date().toLocaleDateString('fr-FR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
+        cancellationDate: new Date().toLocaleDateString("fr-FR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
         }),
-        frontendUrl: this.frontendUrl
+        frontendUrl: this.frontendUrl,
       };
 
-      const htmlContent = await this.loadTemplate('orderCancellation', templateData);
+      const htmlContent = await this.loadTemplate(
+        "orderCancellation",
+        templateData
+      );
 
       await this.sendEmail(
         user.email,
@@ -233,9 +277,13 @@ class EmailService {
         htmlContent
       );
 
-      logger.info(`Order cancellation email sent to ${user.email} for order ${order._id}`);
+      logger.info(
+        `Order cancellation email sent to ${user.email} for order ${order._id}`
+      );
     } catch (error) {
-      logger.error(`Failed to send order cancellation email to ${user.email}: ${error.message}`);
+      logger.error(
+        `Failed to send order cancellation email to ${user.email}: ${error.message}`
+      );
       throw error;
     }
   }
@@ -244,7 +292,10 @@ class EmailService {
     try {
       const supportEmail = process.env.SUPPORT_EMAIL || this.fromEmail;
       const templateData = { subject, title, message };
-      const htmlContent = await this.loadTemplate('supportContact', templateData);
+      const htmlContent = await this.loadTemplate(
+        "supportContact",
+        templateData
+      );
       const emailSubject = `[Contact] ${subject} - ${title}`;
       await this.sendEmail(supportEmail, emailSubject, htmlContent);
       logger.info(`Support contact email sent to ${supportEmail}`);
