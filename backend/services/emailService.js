@@ -1,11 +1,13 @@
-import sgMail from "@sendgrid/mail";
+import nodemailer from "nodemailer"; // Changed import
 import handlebars from "handlebars";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { logger } from "./logger.js";
 import dotenv from "dotenv";
+
 dotenv.config();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -16,31 +18,45 @@ class EmailService {
     backendUrl,
     supportEmail,
   } = {}) {
-    this.fromEmail = fromEmail || process.env.FROM_EMAIL;
+    // For Gmail, the 'from' email usually needs to be the same as the authenticated user
+    this.fromEmail = fromEmail || process.env.SMTP_EMAIL || process.env.FROM_EMAIL;
     logger.info(`FROM_EMAIL is set to: ${this.fromEmail}`);
+    
     this.frontendUrl = frontendUrl || process.env.FRONTEND_URL || "http://localhost:5173";
     this.backendUrl = backendUrl || process.env.BACKEND_URL || "http://localhost:3000";
     this.supportEmail = supportEmail || process.env.SUPPORT_EMAIL || this.fromEmail;
+    
     this.isInitialized = false;
+    this.transporter = null; // Replaced 'this.mailersend' with 'this.transporter'
   }
 
-  // Lazy initialization of SendGrid
-  initializeSendGrid() {
+  // Lazy initialization for Nodemailer Transporter
+  initializeTransporter() {
     if (!this.isInitialized) {
-      const apiKey = process.env.SENDGRID_API_KEY;
-      if (!apiKey) {
-        throw new Error("SENDGRID_API_KEY environment variable is not set");
+      const user = process.env.SMTP_EMAIL;
+      const pass = process.env.SMTP_PASSWORD;
+
+      if (!user || !pass) {
+        throw new Error(
+          "SMTP_EMAIL or SMTP_PASSWORD environment variables are not set"
+        );
       }
-      if (!apiKey.startsWith("SG.")) {
-        throw new Error('SENDGRID_API_KEY must start with "SG."');
-      }
-      sgMail.setApiKey(apiKey);
+
+      // Create the Gmail transporter
+      this.transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: user,
+          pass: pass, // This must be the 16-char App Password, not your login password
+        },
+      });
+
       this.isInitialized = true;
-      logger.info("SendGrid initialized successfully");
+      logger.info("Nodemailer transporter initialized successfully");
     }
   }
 
-  // Load and compile email template
+  // Load and compile email template (Unchanged)
   async loadTemplate(templateName, data) {
     try {
       const templatePath = path.join(
@@ -60,24 +76,24 @@ class EmailService {
     }
   }
 
-  // Send email using SendGrid
+  // Send email using Nodemailer (Refactored)
   async sendEmail(to, subject, htmlContent, textContent = null) {
     try {
-      // Ensure SendGrid is initialized
-      this.initializeSendGrid();
+      this.initializeTransporter(); 
 
-      const msg = {
-        to,
-        from: {
-          email: this.fromEmail,
-          name: "Marché Frais Fermier",
-        },
-        subject,
+      // Define email options
+      const mailOptions = {
+        from: `"Marché Frais Fermier" <${this.fromEmail}>`, // Pretty format: Name <email>
+        to: to,
+        subject: subject,
         html: htmlContent,
-        text: textContent || htmlContent.replace(/<[^>]*>/g, ""), // Strip HTML for text version
+        text: textContent || htmlContent.replace(/<[^>]*>/g, ""), // Fallback text
+        replyTo: this.fromEmail,
       };
 
-      const result = await sgMail.send(msg);
+      // Send the email
+      const result = await this.transporter.sendMail(mailOptions);
+      
       logger.info(`Email sent successfully to ${to} with subject: ${subject}`);
       return result;
     } catch (error) {
@@ -86,10 +102,11 @@ class EmailService {
     }
   }
 
+  // --- All methods below remain EXACTLY the same logic, they just call sendEmail ---
+
   // Send email verification email
   async sendEmailVerification(user, token) {
     try {
-      // Point directly to backend API endpoint for verification
       const backendUrl = this.backendUrl;
       const verificationUrl = `${backendUrl}/api/auth/verify-email?token=${token}&email=${encodeURIComponent(
         user.email
@@ -126,13 +143,9 @@ class EmailService {
   // Resend email verification
   async resendEmailVerification(user) {
     try {
-      // Generate new token
       const token = user.generateEmailVerificationToken();
       await user.save();
-
-      // Send verification email
       await this.sendEmailVerification(user, token);
-
       logger.info(`Email verification resent to ${user.email}`);
     } catch (error) {
       logger.error(
@@ -287,6 +300,7 @@ class EmailService {
       throw error;
     }
   }
+
   // Send support contact email
   async sendSupportContact(subject, title, message) {
     try {
