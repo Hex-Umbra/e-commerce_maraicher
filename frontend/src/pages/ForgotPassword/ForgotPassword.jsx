@@ -51,7 +51,7 @@ const ForgotPassword = () => {
                 name="email"
                 id="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={setEmail}
                 required
               />
               <button type="submit" className={styles.submitButton} disabled={loading}>

@@ -9,7 +9,7 @@ import { ROUTES } from '../../utils/routes';
 const ResetPassword = () => {
   const { token } = useParams();
   const navigate = useNavigate();
-  const { login: authLogin, showNotification } = useAuth();
+  const { updateUser, showNotification } = useAuth();
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,8 +29,8 @@ const ResetPassword = () => {
       if (showNotification) {
         showNotification('Mot de passe mis à jour avec succès !', 'success');
       }
-      // The backend logs the user in, so we update the auth context
-      authLogin(response.user);
+      // The backend logs the user in, so we just update the auth context
+      updateUser(response.user);
       navigate(ROUTES.profile); // Redirect to a protected route
     } catch (error) {
       if (showNotification) {
@@ -57,7 +57,7 @@ const ResetPassword = () => {
               name="password"
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={setPassword}
               required
             />
             <FormField
@@ -66,7 +66,7 @@ const ResetPassword = () => {
               name="passwordConfirm"
               id="passwordConfirm"
               value={passwordConfirm}
-              onChange={(e) => setPasswordConfirm(e.target.value)}
+              onChange={setPasswordConfirm}
               required
             />
             <button type="submit" className={styles.submitButton} disabled={loading}>

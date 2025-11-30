@@ -61,6 +61,22 @@
   }
 }
 
+// Custom button variant
+@mixin button-custom($bg-color, $text-color) {
+  @include button-base;
+  background-color: $bg-color;
+  color: $text-color;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust($bg-color, $lightness: -10%);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+}
+
 /* ===== SUBMIT BUTTON UTILITIES ===== */
 @mixin submit-btn($margin-top: 0.5rem) {
   margin-top: $margin-top;

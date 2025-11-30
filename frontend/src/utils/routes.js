@@ -8,6 +8,8 @@ export const ROUTES = {
   fermier: (id = ":id") => `/fermier/${id}`,
   login: "/login",
   register: "/register",
+  forgotPassword: "/forgot-password",
+  resetPassword: (token = ":token") => `/reset-password/${token}`,
   cart: "/cart",
   profile: "/profil",
   profileEdit: "/profil/editer",

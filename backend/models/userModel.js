@@ -109,8 +109,8 @@ userSchema.methods.generatePasswordResetToken = function () {
     .update(rawToken)
     .digest('hex');
   
-  // Token expires in 10 minutes
-  this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
+  // Token expires in 1 hour
+  this.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000);
   
   return rawToken;
 };
