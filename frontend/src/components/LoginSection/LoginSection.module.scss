@@ -76,6 +76,21 @@
   @include submit-btn-loading;
 }
 
+.forgotPassword {
+  text-align: right;
+  font-size: 0.9rem;
+  margin: -0.5rem 0 1rem 0;
+
+  a {
+    color: $primary;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 @include mobile {
   .contentWrapper {
     flex-direction: column;

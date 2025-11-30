@@ -23,6 +23,8 @@ import ConditionsUtilisation from './pages/ConditionsUtilisation/ConditionsUtili
 import Profile from './pages/Profile/Profile';
 import Orders from './pages/Orders/Orders';
 import ProfileEdit from './pages/ProfileEdit/ProfileEdit';
+import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
+import ResetPassword from './pages/ResetPassword/ResetPassword';
 
 import './styles/main.scss';
 
@@ -44,6 +46,8 @@ const App = () => {
                 <Route path="/fermier/:id" element={<Fermier />} />
                 <Route path="/register" element={<WelcomeSection />} />
                 <Route path="/login" element={<LoginSection />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password/:token" element={<ResetPassword />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/profil" element={<Profile />} />
                 <Route path="/profil/editer" element={<ProfileEdit />} />

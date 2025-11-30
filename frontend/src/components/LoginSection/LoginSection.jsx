@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./LoginSection.module.scss";
+import { ROUTES } from "../../utils/routes";
 
 const LoginSection = () => {
   const { signIn, loading, error, clearError, showNotification } = useAuth();
@@ -148,6 +149,10 @@ const LoginSection = () => {
             {formErrors.password && (
               <span className={styles.fieldError}>{formErrors.password}</span>
             )}
+          </div>
+
+          <div className={styles.forgotPassword}>
+            <Link to={ROUTES.forgotPassword}>Mot de passe oublié ?</Link>
           </div>
 
           <button
