@@ -27,6 +27,14 @@ const userSchema = new Schema({
     type: Date,
     default: null,
   },
+  passwordResetToken: {
+    type: String,
+    default: null,
+  },
+  passwordResetExpires: {
+    type: Date,
+    default: null,
+  },
   cart: [
     {
       product: { type: Schema.Types.ObjectId, ref: "Product" },
@@ -90,6 +98,21 @@ userSchema.methods.isEmailVerificationTokenValid = function (rawToken) {
     this.emailVerificationExpires &&
     this.emailVerificationExpires > new Date()
   );
+};
+
+// Generate password reset token
+userSchema.methods.generatePasswordResetToken = function () {
+  const rawToken = crypto.randomBytes(32).toString('hex');
+  
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(rawToken)
+    .digest('hex');
+  
+  // Token expires in 10 minutes
+  this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000);
+  
+  return rawToken;
 };
 
 export default mongoose.model("User", userSchema);

@@ -378,6 +378,36 @@ export const userAPI = {
       );
     }
   },
+
+  // Request a password reset link
+  forgotPassword: async (email) => {
+    try {
+      const response = await apiClient.post('/auth/forgot-password', { email });
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la demande de réinitialisation"
+      );
+    }
+  },
+
+  // Reset password with a token
+  resetPassword: async (token, { password, passwordConfirm }) => {
+    try {
+      const response = await apiClient.patch(`/auth/reset-password/${token}`, {
+        password,
+        passwordConfirm,
+      });
+      // On success, backend logs the user in and returns user data
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message ||
+          "Erreur lors de la réinitialisation du mot de passe"
+      );
+    }
+  },
 };
 
 export default apiClient;

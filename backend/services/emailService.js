@@ -301,6 +301,37 @@ class EmailService {
     }
   }
 
+  // Send password reset email
+  async sendPasswordResetEmail(user, token) {
+    try {
+      // The frontend URL should point to your password reset page
+      const resetUrl = `${this.frontendUrl}/reset-password/${token}`;
+
+      const templateData = {
+        userName: user.name,
+        resetUrl,
+      };
+
+      const htmlContent = await this.loadTemplate(
+        "passwordReset",
+        templateData
+      );
+
+      await this.sendEmail(
+        user.email,
+        "Réinitialisation de votre mot de passe - Marché Frais Fermier",
+        htmlContent
+      );
+
+      logger.info(`Password reset email sent to ${user.email}`);
+    } catch (error) {
+      logger.error(
+        `Failed to send password reset email to ${user.email}: ${error.message}`
+      );
+      throw error;
+    }
+  }
+
   // Send support contact email
   async sendSupportContact(subject, title, message) {
     try {

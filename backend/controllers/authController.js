@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { catchAsync, AppError } from "../utils/handleError.js";
 import rateLimiter from "express-rate-limit";
 import validator from "validator";
@@ -481,7 +482,88 @@ export const updateProfile = catchAsync(async (req, res, next) => {
       email: updatedUser.email,
       role: updatedUser.role,
       address: updatedUser.address,
-      createdAt: updatedUser.createdAt,
     },
   });
+});
+
+// ----------------------------------------------------------------------------------------------------- //
+
+// Forgot Password
+export const forgotPassword = catchAsync(async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) {
+    return next(new AppError("Veuillez fournir une adresse email", 400));
+  }
+
+  const user = await User.findOne({ email: email.toLowerCase() });
+
+  // Always send a success-like response to prevent user enumeration
+  const successResponse = {
+    status: "success",
+    message: "Si un compte est associé à cet email, un lien de réinitialisation a été envoyé.",
+  };
+
+  if (!user) {
+    logger.warn(`Password reset requested for non-existent user: ${email}`);
+    return res.status(200).json(successResponse);
+  }
+
+  // Generate token
+  const resetToken = user.generatePasswordResetToken();
+  await user.save({ validateBeforeSave: false }); // Skip validation to save token, e.g., if other required fields are missing temporarily
+
+  try {
+    await emailService.sendPasswordResetEmail(user, resetToken);
+    logger.info(`Password reset email sent to ${user.email}`);
+    res.status(200).json(successResponse);
+  } catch (err) {
+    // If email fails, reset token fields and log error
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    
+    logger.error(`Failed to send password reset email: ${err.message}`);
+    return next(new AppError("Erreur lors de l'envoi de l'email. Veuillez réessayer.", 500));
+  }
+});
+
+
+// ----------------------------------------------------------------------------------------------------- //
+
+// Reset Password
+export const resetPassword = catchAsync(async (req, res, next) => {
+  const { token } = req.params;
+  const { password, passwordConfirm } = req.body;
+
+  if (!password || !passwordConfirm) {
+    return next(new AppError("Veuillez fournir un nouveau mot de passe et une confirmation.", 400));
+  }
+  
+  if (password !== passwordConfirm) {
+    return next(new AppError("Les mots de passe ne correspondent pas.", 400));
+  }
+
+  // 1. Get user based on the token
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+
+  // 2. If token has not expired and there is a user, set the new password
+  if (!user) {
+    return next(new AppError("Le jeton est invalide ou a expiré.", 400));
+  }
+
+  // 3. Set new password
+  user.password = password;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  
+  // The pre-save hook will automatically hash the new password
+  await user.save();
+
+  // 4. Log the user in, send JWT
+  createSendToken(user, 200, res, "Mot de passe mis à jour avec succès !");
 });
