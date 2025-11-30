@@ -37,6 +37,32 @@ const Orders = () => {
     }
   }, [isAuthenticated, isProducteur]);
 
+  const handleCancelOrder = async (orderId) => {
+    if (window.confirm("Êtes-vous sûr de vouloir annuler cette commande ?")) {
+      setUpdatingStatus((prev) => ({ ...prev, [orderId]: true }));
+      try {
+        await ordersAPI.cancelOrder(orderId);
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId
+              ? { ...order, status: "Annulée" }
+              : order
+          )
+        );
+        if (showNotification) {
+          showNotification("Commande annulée avec succès.", "success");
+        }
+      } catch (err) {
+        console.error("Error cancelling order:", err);
+        if (showNotification) {
+          showNotification(err.message || "Erreur lors de l'annulation.", "error");
+        }
+      } finally {
+        setUpdatingStatus((prev) => ({ ...prev, [orderId]: false }));
+      }
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="container">
@@ -224,6 +250,18 @@ const Orders = () => {
                       </div>
                     );
                   })}
+                </div>
+              )}
+
+              {!isProducteur && !["Annulée", "Complète"].includes(order.status) && (
+                <div className={styles.actions}>
+                  <button
+                    onClick={() => handleCancelOrder(order._id)}
+                    className={styles.cancelButton}
+                    disabled={updatingStatus[order._id]}
+                  >
+                    {updatingStatus[order._id] ? "Annulation..." : "Annuler la commande"}
+                  </button>
                 </div>
               )}
             </li>

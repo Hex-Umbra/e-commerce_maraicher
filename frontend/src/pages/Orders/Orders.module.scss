@@ -185,3 +185,28 @@
     transform: rotate(360deg);
   }
 }
+
+.actions {
+  margin-top: 1rem;
+  text-align: right;
+}
+
+.cancelButton {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #d32f2f;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+}
