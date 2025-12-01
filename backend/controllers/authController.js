@@ -90,11 +90,11 @@ const validatorDataInputs = (data) => {
       minLowercase: 1,
       minUppercase: 1,
       minNumbers: 1,
-      minSymbols: 0,
+      minSymbols: 1,
     })
   ) {
     errorMessages.push(
-      "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre."
+      "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
     );
   }
   return new AppError(errorMessages.join(" "), 400);
@@ -541,6 +541,24 @@ export const resetPassword = catchAsync(async (req, res, next) => {
   
   if (password !== passwordConfirm) {
     return next(new AppError("Les mots de passe ne correspondent pas.", 400));
+  }
+
+  // Check password strength
+  if (
+    !validator.isStrongPassword(password, {
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    })
+  ) {
+    return next(
+      new AppError(
+        "Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.",
+        400
+      )
+    );
   }
 
   // 1. Get user based on the token

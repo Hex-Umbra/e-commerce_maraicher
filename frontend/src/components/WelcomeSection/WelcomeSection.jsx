@@ -42,6 +42,8 @@ const WelcomeSection = () => {
   // Form validation
   const validateForm = () => {
     const errors = {};
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     if (!formData.name.trim()) {
       errors.name = "Le nom est requis";
@@ -59,8 +61,9 @@ const WelcomeSection = () => {
 
     if (!formData.password) {
       errors.password = "Le mot de passe est requis";
-    } else if (formData.password.length < 6) {
-      errors.password = "Le mot de passe doit contenir au moins 6 caractères";
+    } else if (!passwordRegex.test(formData.password)) {
+      errors.password =
+        "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.";
     }
 
     if (!formData.confirmPassword) {
