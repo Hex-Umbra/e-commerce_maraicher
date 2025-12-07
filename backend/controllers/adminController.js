@@ -1,6 +1,6 @@
-const userModel = require("../models/userModel");
-const productsModel = require("../models/productsModel");
-const orderModel = require("../models/orderModel");
+import userModel from "../models/userModel.js";
+import productsModel from "../models/productsModel.js";
+import orderModel from "../models/orderModel.js";
 
 export const getDashboardStats = async (req, res) => {
   try {
