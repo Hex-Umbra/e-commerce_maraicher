@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
+import User from "../models/userModel.js";
 import { logger } from "../services/logger.js";
 
-export const verifyToken = (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
   // Check if the token is present in the cookies or in the Authorization header
   // The token can be sent as a Bearer token in the Authorization header or as a cookie named 'jwt'
   // If the token is found, it will be used to verify the users' authentication status
@@ -21,7 +22,17 @@ export const verifyToken = (req, res, next) => {
   // If the token is invalid or expired, return an error response
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+
+    // Fetch the user from the database to get the most up-to-date role
+    const freshUser = await User.findById(decoded._id);
+
+    if (!freshUser) {
+      logger.warn(`User not found for decoded ID: ${decoded._id}`);
+      return res.status(401).json({ message: "Utilisateur du token non trouvé" });
+    }
+
+    // Assign the fresh user data to req.user
+    req.user = freshUser;
     next();
   } catch (error) {
     logger.error("Erreur lors de la vérification du token");
