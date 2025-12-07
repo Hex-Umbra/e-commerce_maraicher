@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 const AuthContext = createContext();
@@ -40,6 +40,47 @@ export const AuthProvider = ({ children }) => {
   };
 
 
+  // Check authentication status
+  const checkAuthStatus = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        method: 'GET',
+        credentials: 'include', // Include cookies
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.user) {
+          setUser(data.user);
+        } else {
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+        if (response.status === 401 || response.status === 403) {
+          showNotification('Votre session a expiré. Vous avez été déconnecté.', 'warning');
+        } else if (response.status >= 500) {
+          showNotification('Erreur serveur. Vous avez été déconnecté.', 'error');
+        }
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      setUser(null);
+      // Network error - show disconnection notification
+      if (!navigator.onLine) {
+        showNotification('Connexion perdue. Vérifiez votre connexion internet.', 'error');
+      } else {
+        showNotification('Impossible de se connecter au serveur. Vous avez été déconnecté.', 'error');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [API_BASE_URL, showNotification]);
+
   // Check if user is authenticated on app load
   useEffect(() => {
     checkAuthStatus();
@@ -62,46 +103,7 @@ export const AuthProvider = ({ children }) => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
-
-  // Check authentication status
-  const checkAuthStatus = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/auth/me`, {
-        method: 'GET',
-        credentials: 'include', // Include cookies
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.user) {
-          setUser(data.user);
-        }
-      } else {
-        setUser(null);
-        if (response.status === 401 || response.status === 403) {
-          showNotification('Votre session a expiré. Vous avez été déconnecté.', 'warning');
-        } else if (response.status >= 500) {
-          showNotification('Erreur serveur. Vous avez été déconnecté.', 'error');
-        }
-      }
-    } catch (error) {
-      console.error('Auth check failed:', error);
-      setUser(null);
-      // Network error - show disconnection notification
-      if (!navigator.onLine) {
-        showNotification('Connexion perdue. Vérifiez votre connexion internet.', 'error');
-      } else {
-        showNotification('Impossible de se connecter au serveur. Vous avez été déconnecté.', 'error');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [checkAuthStatus]);
 
   // Sign up function
   const signUp = async (userData) => {
@@ -122,6 +124,8 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok && data.success) {
         showNotification(data.message, 'success');
+        // Re-fetch user status to ensure role is up-to-date
+        await checkAuthStatus();
         return {
           success: true,
           message: data.message,
@@ -172,6 +176,8 @@ export const AuthProvider = ({ children }) => {
       if (response.ok && data.success) {
         setUser(data.user);
         showNotification(data.message, 'success');
+        // Re-fetch user status to ensure role is up-to-date
+        await checkAuthStatus();
         return {
           success: true,
           message: data.message,
@@ -267,7 +273,7 @@ export const AuthProvider = ({ children }) => {
     signOut,
     clearError,
     updateUser,
-    checkAuthStatus,
+    checkAuthStatus, // Expose checkAuthStatus
     showNotification,
     hideNotification,
     isAuthenticated: !!user,
