@@ -79,11 +79,17 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log('AuthContext: Response data from /auth/me:', data); // Added this line
         if (data.success && data.user) {
           setUser(data.user);
+          console.log('AuthContext: User set:', data.user);
+        } else {
+          setUser(null);
+          console.log('AuthContext: User set to null (data.success is false or data.user is missing)');
         }
       } else {
         setUser(null);
+        console.log('AuthContext: User set to null (response not ok)');
         if (response.status === 401 || response.status === 403) {
           showNotification('Votre session a expiré. Vous avez été déconnecté.', 'warning');
         } else if (response.status >= 500) {
