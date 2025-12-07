@@ -63,7 +63,7 @@ export const deleteUser = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.params.id);
 
   if (user) {
-    await user.remove();
+    await User.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: "User removed" });
   } else {
     return next(new AppError("User not found", 404));

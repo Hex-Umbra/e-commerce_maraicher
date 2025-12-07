@@ -427,6 +427,14 @@ export const adminAPI = {
       throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des utilisateurs');
     }
   },
+  getUserById: async (userId) => { // New Method
+    try {
+      const response = await apiClient.get(`/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération de l\'utilisateur');
+    }
+  },
   deleteUser: async (userId) => {
     try {
       const response = await apiClient.delete(`/users/${userId}`);
