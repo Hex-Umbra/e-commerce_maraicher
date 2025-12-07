@@ -2,8 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar/Navbar';
-import WelcomeSection from './components/WelcomeSection/WelcomeSection';
-import LoginSection from './components/LoginSection/LoginSection';
 import Footer from './components/Footer/Footer';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -32,6 +30,7 @@ import AdminUsers from './pages/Admin/AdminUsers';
 import AdminProducts from './pages/Admin/AdminProducts';
 import AdminOrders from './pages/Admin/AdminOrders';
 import AdminComments from './pages/Admin/AdminComments';
+import PublicLayout from './components/common/PublicLayout/PublicLayout';
 
 import './styles/main.scss';
 
@@ -42,8 +41,9 @@ const App = () => {
         <CartProvider>
           <Router>
             <Navbar />
-            <main>
-              <Routes>
+            <Routes>
+              {/* Public Routes */}
+              <Route element={<PublicLayout />}>
                 <Route path="/" element={<Navigate to="/accueil" replace />} />
                 <Route path="/accueil" element={<Accueil />} />
                 <Route path="/nosfermiers" element={<Nosfermiers />} />
@@ -62,23 +62,23 @@ const App = () => {
                 <Route path="/mentions-legales" element={<MentionsLegales />} />
                 <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
                 <Route path="/conditions-utilisation" element={<ConditionsUtilisation />} />
-
-                {/* Admin Routes */}
-                <Route element={<ProtectedRoute requiredRole="admin" />}>
-                  <Route path="/admin" element={<AdminLayout />}>
-                    <Route index element={<Navigate to="dashboard" replace />} />
-                    <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route path="users" element={<AdminUsers />} />
-                    <Route path="products" element={<AdminProducts />} />
-                    <Route path="orders" element={<AdminOrders />} />
-                    <Route path="comments" element={<AdminComments />} />
-                  </Route>
+              </Route>
+              
+              {/* Admin Routes */}
+              <Route element={<ProtectedRoute requiredRole="admin" />}>
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<Navigate to="dashboard" replace />} />
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="products" element={<AdminProducts />} />
+                  <Route path="orders" element={<AdminOrders />} />
+                  <Route path="comments" element={<AdminComments />} />
                 </Route>
+              </Route>
 
-                <Route path="/404" element={<NotFound />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
+              <Route path="/404" element={<NotFound />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
             <Footer />
           </Router>
         </CartProvider>
