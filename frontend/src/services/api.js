@@ -435,6 +435,14 @@ export const adminAPI = {
       throw new Error(error.response?.data?.message || "Erreur lors de la suppression de l'utilisateur");
     }
   },
+  updateUser: async (userId, userData) => {
+    try {
+      const response = await apiClient.put(`/users/${userId}`, userData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour de l'utilisateur");
+    }
+  },
   getAllProducts: async () => {
     try {
       const response = await apiClient.get('/products');
@@ -449,6 +457,14 @@ export const adminAPI = {
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Erreur lors de la suppression du produit');
+    }
+  },
+  updateProduct: async (productId, productData) => {
+    try {
+      const response = await apiClient.put(`/products/admin/${productId}`, productData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour du produit");
     }
   },
   getAllOrders: async () => {

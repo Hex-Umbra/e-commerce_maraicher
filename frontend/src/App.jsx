@@ -29,7 +29,9 @@ import AdminLayout from './components/Admin/AdminLayout';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import ProtectedRoute from './components/common/ProtectedRoute/ProtectedRoute';
 import AdminUsers from './pages/Admin/AdminUsers';
+import AdminUserEdit from './pages/Admin/AdminUserEdit';
 import AdminProducts from './pages/Admin/AdminProducts';
+import AdminProductEdit from './pages/Admin/AdminProductEdit'; // New Import
 import AdminOrders from './pages/Admin/AdminOrders';
 import AdminComments from './pages/Admin/AdminComments';
 import PublicLayout from './components/common/PublicLayout/PublicLayout';
@@ -72,7 +74,9 @@ const App = () => {
                   <Route index element={<Navigate to="dashboard" replace />} />
                   <Route path="dashboard" element={<AdminDashboard />} />
                   <Route path="users" element={<AdminUsers />} />
+                  <Route path="users/edit/:userId" element={<AdminUserEdit />} />
                   <Route path="products" element={<AdminProducts />} />
+                  <Route path="products/edit/:productId" element={<AdminProductEdit />} /> {/* New Admin Product Edit Route */}
                   <Route path="orders" element={<AdminOrders />} />
                   <Route path="comments" element={<AdminComments />} />
                 </Route>

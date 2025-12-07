@@ -7,20 +7,31 @@ const AdminOrders = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const data = await adminAPI.getAllOrders();
-                setOrders(data.data.orders);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchOrders = async () => {
+        try {
+            const data = await adminAPI.getAllOrders();
+            setOrders(data.data.orders);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchOrders();
     }, []);
+
+    const handleUpdateStatus = async (orderId, newStatus) => {
+        try {
+            await adminAPI.updateOrderStatus(orderId, newStatus);
+            alert('Order status updated successfully!');
+            fetchOrders(); // Refresh the list
+        } catch (err) {
+            setError(err.message);
+            alert(`Error updating order status: ${err.message}`);
+        }
+    };
 
     if (loading) {
         return <div>Loading...</div>;
@@ -49,9 +60,21 @@ const AdminOrders = () => {
                             <td>{order._id}</td>
                             <td>{order.clientId.name}</td>
                             <td>{order.totalAmount} €</td>
-                            <td>{order.status}</td>
                             <td>
-                                <button className={styles.button}>Edit Status</button>
+                                <select
+                                    value={order.status}
+                                    onChange={(e) => handleUpdateStatus(order._id, e.target.value)}
+                                    className={styles.statusSelect}
+                                >
+                                    <option value="pending">Pending</option>
+                                    <option value="processing">Processing</option>
+                                    <option value="shipped">Shipped</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </td>
+                            <td>
+                                {/* You can add more actions here if needed */}
                             </td>
                         </tr>
                     ))}

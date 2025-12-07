@@ -27,6 +27,13 @@
     }
 }
 
+.productImage {
+    width: 100px !important;
+    height: 100px !important;
+    object-fit: cover; /* Ensures the image covers the area without distortion */
+    border-radius: 4px; /* Optional: adds a slight rounded corner */
+}
+
 .button {
     padding: 0.5rem 1rem;
     border: none;

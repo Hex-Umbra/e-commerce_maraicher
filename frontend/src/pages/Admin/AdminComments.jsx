@@ -7,20 +7,33 @@ const AdminComments = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchComments = async () => {
-            try {
-                const data = await adminAPI.getAllComments();
-                setComments(data.data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchComments = async () => {
+        try {
+            const data = await adminAPI.getAllComments();
+            setComments(data.data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchComments();
     }, []);
+
+    const handleDeleteComment = async (commentId) => {
+        if (window.confirm('Are you sure you want to delete this comment?')) {
+            try {
+                await adminAPI.deleteComment(commentId);
+                alert('Comment deleted successfully!');
+                fetchComments(); // Refresh the list
+            } catch (err) {
+                setError(err.message);
+                alert(`Error deleting comment: ${err.message}`);
+            }
+        }
+    };
 
     if (loading) {
         return <div>Loading...</div>;
@@ -53,7 +66,12 @@ const AdminComments = () => {
                             <td>{comment.comment}</td>
                             <td>{comment.rating}</td>
                             <td>
-                                <button className={`${styles.button} ${styles.deleteButton}`}>Delete</button>
+                                <button
+                                    className={`${styles.button} ${styles.deleteButton}`}
+                                    onClick={() => handleDeleteComment(comment._id)}
+                                >
+                                    Delete
+                                </button>
                             </td>
                         </tr>
                     ))}
