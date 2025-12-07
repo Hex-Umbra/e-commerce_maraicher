@@ -5,6 +5,8 @@ import FormField from "../../components/common/FormField/FormField";
 import styles from "./ProductEdit.module.scss";
 import { ROUTES } from "../../utils/routes";
 import { productAPI } from "../../services/api";
+import LoadingState from "../../components/common/LoadingState/LoadingState";
+import ErrorState from "../../components/common/ErrorState/ErrorState";
 
 const ProductEdit = () => {
   const { id } = useParams();
@@ -183,9 +185,7 @@ const ProductEdit = () => {
   if (authLoading || loading) {
     return (
       <div className="container">
-        <div className={styles.loading}>
-          <p>Chargement...</p>
-        </div>
+        <LoadingState message="Chargement..." />
       </div>
     );
   }
@@ -201,16 +201,11 @@ const ProductEdit = () => {
   if (loadError) {
     return (
       <div className="container">
-        <div className={styles.error}>
-          <p>{loadError}</p>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => navigate(ROUTES.profile)}
-          >
-            Retour au profil
-          </button>
-        </div>
+        <ErrorState 
+          message={loadError}
+          onRetry={() => navigate(ROUTES.profile)} 
+          buttonText="Retour au profil" 
+        />
       </div>
     );
   }
