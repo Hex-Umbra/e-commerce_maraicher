@@ -25,6 +25,13 @@ import Orders from './pages/Orders/Orders';
 import ProfileEdit from './pages/ProfileEdit/ProfileEdit';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
+import AdminLayout from './components/Admin/AdminLayout';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import ProtectedRoute from './components/common/ProtectedRoute/ProtectedRoute';
+import AdminUsers from './pages/Admin/AdminUsers';
+import AdminProducts from './pages/Admin/AdminProducts';
+import AdminOrders from './pages/Admin/AdminOrders';
+import AdminComments from './pages/Admin/AdminComments';
 
 import './styles/main.scss';
 
@@ -55,6 +62,19 @@ const App = () => {
                 <Route path="/mentions-legales" element={<MentionsLegales />} />
                 <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
                 <Route path="/conditions-utilisation" element={<ConditionsUtilisation />} />
+
+                {/* Admin Routes */}
+                <Route element={<ProtectedRoute requiredRole="admin" />}>
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<Navigate to="dashboard" replace />} />
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="users" element={<AdminUsers />} />
+                    <Route path="products" element={<AdminProducts />} />
+                    <Route path="orders" element={<AdminOrders />} />
+                    <Route path="comments" element={<AdminComments />} />
+                  </Route>
+                </Route>
+
                 <Route path="/404" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

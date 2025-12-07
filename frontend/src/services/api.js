@@ -410,4 +410,79 @@ export const userAPI = {
   },
 };
 
+export const adminAPI = {
+  getDashboardStats: async () => {
+    try {
+      const response = await apiClient.get('/admin/stats');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des statistiques');
+    }
+  },
+  getAllUsers: async () => {
+    try {
+      const response = await apiClient.get('/users');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des utilisateurs');
+    }
+  },
+  deleteUser: async (userId) => {
+    try {
+      const response = await apiClient.delete(`/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la suppression de l'utilisateur");
+    }
+  },
+  getAllProducts: async () => {
+    try {
+      const response = await apiClient.get('/products');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des produits');
+    }
+  },
+  deleteProduct: async (productId) => {
+    try {
+      const response = await apiClient.delete(`/products/admin/${productId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la suppression du produit');
+    }
+  },
+  getAllOrders: async () => {
+    try {
+      const response = await apiClient.get('/orders/admin');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des commandes');
+    }
+  },
+  updateOrderStatus: async (orderId, status) => {
+    try {
+      const response = await apiClient.put(`/orders/admin/${orderId}/status`, { status });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour de la commande");
+    }
+  },
+  getAllComments: async () => {
+    try {
+      const response = await apiClient.get('/comments/admin');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des commentaires');
+    }
+  },
+  deleteComment: async (commentId) => {
+    try {
+      const response = await apiClient.delete(`/comments/admin/${commentId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la suppression du commentaire');
+    }
+  },
+};
+
 export default apiClient;
