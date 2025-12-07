@@ -96,12 +96,16 @@
 }
 
 .authSection {
-  display: none;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  list-style: none;
 }
 
 .navSection {
   display: flex;
   gap: 1.5rem;
+  list-style: none;
 }
 
 .userSection {
@@ -112,6 +116,7 @@
 .userInfo {
   @include flex-center;
   gap: 0.75rem;
+  list-style: none;
 }
 
 .userIcon {
@@ -198,11 +203,6 @@
   box-shadow: 0 1px 6px rgba(0,0,0,0.2);
 }
 
-.authLinks {
-  @include flex-center;
-  gap: 0.75rem;
-}
-
 .authLink {
   @include nav-link;
   color: $white !important;
@@ -256,10 +256,6 @@
     display: flex;
   }
 
-  .authLinks {
-    display: none;
-  }
-
   .navLinks {
     position: fixed;
     top: 50%;
@@ -280,16 +276,20 @@
     .authSection {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 2rem;
       border-bottom: 1px solid $accent;
       padding-bottom: 1rem;
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
+      width: 100%;
+      align-items: center;
     }
 
     .navSection {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 2rem;
+      width: 100%;
+      align-items: center;
     }
 
     &.navLinksOpen {

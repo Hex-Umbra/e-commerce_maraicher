@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/useCart";
@@ -12,21 +12,37 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isAuthenticated, signOut, notification, hideNotification } = useAuth();
   const { cartCount } = useCart();
-  // Using NavLink to handle active state; location not required
+  
+  // Ref for detecting clicks outside the menu
+  const navRef = useRef(null);
 
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const closeMenu = () => setIsMenuOpen(false);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  // UX Upgrade: Close menu when clicking outside component
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navRef.current && !navRef.current.contains(event.target) && isMenuOpen) {
+        closeMenu();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMenuOpen]);
 
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
+  // UX Upgrade: Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isMenuOpen]);
 
   const handleLogout = async () => {
     try {
       await signOut();
-      closeMenu(); // Close mobile menu if open
+      closeMenu();
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -34,7 +50,6 @@ const Navbar = () => {
 
   return (
     <header className={styles.navbar}>
-      {/* Notification */}
       {notification && (
         <div className={styles.notificationContainer}>
           <Notification
@@ -46,138 +61,116 @@ const Navbar = () => {
         </div>
       )}
       
+      {/* SEMANTIC FIX: Changed outer nav to div */}
       <div className={`container ${styles.navbarContainer}`}>
-        <h1 className={styles.logo}>
+        <span className={styles.logo}>
           <Link to={ROUTES.accueil} onClick={closeMenu}>Marché Frais Fermier</Link>
-        </h1>
+        </span>
 
-
-        {/* Hamburger Button */}
+        {/* A11Y FIX: Added aria-expanded and aria-controls */}
         <button
-          className={`${styles.hamburger} ${
-            isMenuOpen ? styles.hamburgerOpen : ""
-          }`}
+          className={`${styles.hamburger} ${isMenuOpen ? styles.hamburgerOpen : ""}`}
           onClick={toggleMenu}
           aria-label="Toggle navigation menu"
+          aria-expanded={isMenuOpen}
+          aria-controls="primary-navigation"
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
         </button>
 
-        {/* Navigation Links */}
+        {/* Navigation Links Wrapper */}
         <nav
-          className={`${styles.navLinks} ${
-            isMenuOpen ? styles.navLinksOpen : ""
-          }`}
+          id="primary-navigation"
+          ref={navRef}
+          className={`${styles.navLinks} ${isMenuOpen ? styles.navLinksOpen : ""}`}
+          aria-label="Main Navigation"
         >
-          <div className={styles.authSection}>
+          <ul className={styles.navSection}>
+            {NAV_LINKS.map(({ to, label }) => (
+              <li key={to}>
+                <NavLink
+                  to={to}
+                  className={({ isActive }) =>
+                    `${styles.navLink} ${isActive ? styles.active : ""}`
+                  }
+                  onClick={closeMenu}
+                >
+                  {label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+
+          <ul className={styles.authSection}>
             {!isAuthenticated && (
               <>
-                <NavLink
-                  to={ROUTES.login}
-                  className={({ isActive }) => `${styles.authLink} ${isActive ? styles.active : ""}`}
-                  onClick={closeMenu}
-                >
-                  Connexion
-                </NavLink>
-                <NavLink
-                  to={ROUTES.register}
-                  className={({ isActive }) => `${styles.authLink} ${styles.signupLink} ${isActive ? styles.active : ""}`}
-                  onClick={closeMenu}
-                >
-                  S'inscrire
-                </NavLink>
+                <li>
+                  <NavLink
+                    to={ROUTES.login}
+                    className={({ isActive }) => `${styles.authLink} ${isActive ? styles.active : ""}`}
+                    onClick={closeMenu}
+                  >
+                    Connexion
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to={ROUTES.register}
+                    className={({ isActive }) => `${styles.authLink} ${styles.signupLink} ${isActive ? styles.active : ""}`}
+                    onClick={closeMenu}
+                  >
+                    S'inscrire
+                  </NavLink>
+                </li>
               </>
             )}
-          </div>
-          <div className={styles.navSection}>
-            {NAV_LINKS.map(({ to, label }) => (
-              <NavLink
-                key={to}
-                to={to}
-                className={({ isActive }) =>
-                  `${styles.navLink} ${isActive ? styles.active : ""}`
-                }
-                onClick={closeMenu}
-              >
-                {label}
-              </NavLink>
-            ))}
-          </div>
+          </ul>
         </nav>
 
-        {/* User Section */}
+        {/* User Section (Icons) - Kept outside nav for direct access */}
         <div className={styles.userSection}>
           {isAuthenticated ? (
-            <div className={styles.userInfo}>
-              <Link
-                to={ROUTES.profile}
-                className={styles.userIcon}
-                onClick={closeMenu}
-                aria-label="Aller à mon profil"
-                title="Mon profil"
-              >
-                <span className={styles.userName}>{user?.name}</span>
-                <div className={styles.profileIcon}>👤</div>
-              </Link>
-              
-              {user?.role === "producteur" ? (
+            <ul className={styles.userInfo}>
+              <li>
                 <Link
-                  to={ROUTES.orders}
-                  className={styles.ordersButton}
-                  aria-label="Voir les commandes"
+                  to={ROUTES.profile}
+                  className={styles.userIcon}
                   onClick={closeMenu}
-                  title="Commandes"
+                  aria-label="Aller à mon profil"
                 >
-                  <FiPackage aria-hidden="true" />
+                  {/* UX FIX: Hide name on small screens in CSS, but keep logic simple here */}
+                  <span className={styles.userName}>{user?.name}</span>
+                  <div className={styles.profileIcon} aria-hidden="true">👤</div>
                 </Link>
-              ) : (
-                <Link
-                  to={ROUTES.cart}
-                  className={styles.cartButton}
-                  aria-label="Voir le panier"
-                  onClick={closeMenu}
-                  title="Panier"
-                >
-                  <BsCart3 aria-hidden="true" />
-                  {cartCount > 0 && (
-                    <span
-                      className={styles.cartBadge}
-                      aria-label={`${cartCount} article(s) dans le panier`}
-                    >
-                      {cartCount}
-                    </span>
-                  )}
-                </Link>
-              )}
+              </li>
               
-              <button 
-                className={styles.logoutButton}
-                onClick={handleLogout}
-                aria-label="Se déconnecter"
-              >
-                Déconnexion
-              </button>
-            </div>
-          ) : (
-            <div className={styles.authLinks}>
-              <NavLink 
-                to={ROUTES.login} 
-                className={({ isActive }) => `${styles.authLink} ${isActive ? styles.active : ""}`}
-                onClick={closeMenu}
-              >
-                Connexion
-              </NavLink>
-              <NavLink 
-                to={ROUTES.register} 
-                className={({ isActive }) => `${styles.authLink} ${styles.signupLink} ${isActive ? styles.active : ""}`}
-                onClick={closeMenu}
-              >
-                S'inscrire
-              </NavLink>
-            </div>
-          )}
+              <li>
+                {user?.role === "producteur" ? (
+                  <Link to={ROUTES.orders} className={styles.ordersButton} aria-label="Voir les commandes">
+                    <FiPackage />
+                  </Link>
+                ) : (
+                  <Link to={ROUTES.cart} className={styles.cartButton} aria-label={`Voir le panier, ${cartCount} articles`}>
+                    <BsCart3 />
+                    {cartCount > 0 && (
+                      <span className={styles.cartBadge}>{cartCount}</span>
+                    )}
+                  </Link>
+                )}
+              </li>
+              
+              <li>
+                <button 
+                  className={styles.logoutButton}
+                  onClick={handleLogout}
+                >
+                  Déconnexion
+                </button>
+              </li>
+            </ul>
+          ) : null}
         </div>
       </div>
     </header>
