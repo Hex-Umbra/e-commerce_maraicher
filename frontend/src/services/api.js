@@ -459,6 +459,14 @@ export const adminAPI = {
       throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des produits');
     }
   },
+  getProductById: async (productId) => { // New Method
+    try {
+      const response = await apiClient.get(`/products/${productId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération du produit');
+    }
+  },
   deleteProduct: async (productId) => {
     try {
       const response = await apiClient.delete(`/products/admin/${productId}`);
