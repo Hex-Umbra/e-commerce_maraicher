@@ -304,7 +304,7 @@ export const ordersAPI = {
   // Cancel an order
   cancelOrder: async (orderId) => {
     try {
-      const response = await apiClient.patch(`/orders/${orderId}/cancel`);
+      const response = await apiClient.delete(`/orders/${orderId}/cancel`);
       return response.data?.data?.order;
     } catch (error) {
       throw new Error(
@@ -331,7 +331,7 @@ export const ordersAPI = {
   // Update product statuses in an order (Producteur only)
   updateProductStatus: async (orderId, updates) => {
     try {
-      const response = await apiClient.patch(`/orders/${orderId}/status`, { updates });
+      const response = await apiClient.put(`/orders/${orderId}/products/status`, { updates });
       return response.data?.data?.order;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Erreur lors de la mise à jour du statut');
