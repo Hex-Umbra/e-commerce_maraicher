@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { adminAPI } from '../../../services/api';
+import { adminAPI } from '../../services/api';
 import styles from './AdminUsers.module.scss';
 
 const AdminUsers = () => {
