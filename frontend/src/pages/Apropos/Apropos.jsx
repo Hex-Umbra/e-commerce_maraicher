@@ -13,10 +13,9 @@ const Apropos = () => {
         canonical="https://mff-weld.vercel.app/apropos"
         ogType="website"
       />
-      <div className="container">
+      <div className={`container ${styles.main}`}>
 
-          <section className={styles.main}>
-            <h1 className={styles.title}>À propos du projet</h1>
+          <h1 className={styles.title}>À propos du projet</h1>
 
           <section className={styles.section}>
             <h2>Contexte académique</h2>
@@ -140,7 +139,6 @@ const Apropos = () => {
               </Link>
             </div>
           </section>
-        </section>
       </div>
     </div>
   );

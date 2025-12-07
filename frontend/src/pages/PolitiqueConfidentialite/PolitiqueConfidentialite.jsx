@@ -3,8 +3,7 @@ import styles from './PolitiqueConfidentialite.module.scss';
 const PolitiqueConfidentialite = () => {
   return (
     <div className={styles.politiqueConfidentialite}>
-      <div className="container">
-        <section className={styles.main}>
+      <section className={`container ${styles.main}`}>
           <h1>Politique de Confidentialité</h1>
           
           <section className={styles.section}>
@@ -21,7 +20,7 @@ const PolitiqueConfidentialite = () => {
             <h2>Utilisation des données</h2>
             <p>
               Les informations que nous collectons ne seront pas utilisé à des fins de marketing,
-              mais uniquement pour traiter vos commandes.
+              but only for processing your orders.
             </p>
           </section>
 
@@ -49,8 +48,7 @@ const PolitiqueConfidentialite = () => {
               également vous opposer au traitement de vos données personnelles.
             </p>
           </section>
-        </section>
-      </div>
+      </section>
     </div>
   );
 };

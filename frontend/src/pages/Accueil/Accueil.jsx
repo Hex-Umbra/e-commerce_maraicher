@@ -71,29 +71,6 @@ const Accueil = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className={styles.accueil}>
-        <div className="container">
-          <LoadingState message="Chargement des producteurs..." />
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={styles.accueil}>
-        <div className="container">
-          <ErrorState 
-            message={error}
-            onRetry={fetchProducersWithProducts}
-          />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.accueil}>
       <SEO
@@ -104,44 +81,55 @@ const Accueil = () => {
         ogType="website"
       />
       <div className="container">
-        {/* Hero section */}
-        <HeroSection
-          title="Frais de la ferme à votre table"
-          subtitle="Découvrez les meilleurs produits locaux, laitages artisanaux et fruits de saison directement de notre réseau de confiance de fermiers familiaux."
-          ctaText="Découvrir nos fermiers !"
-          ctaLink={ROUTES.nosFermiers}
-        />
-
-        {/* Producers showcase */}
-        <h3 className={styles.sectionHeading}>Nos Agriculteurs partenaires</h3>
-        {producers.length > 0 ? (
-          <div className={styles.producers}>
-            {producers.map((producer) => (
-              <ProducerShowcase key={producer.id} producer={producer} onViewAllHref={ROUTES.fermier(producer.id)} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState 
-            message="Aucun producteur disponible pour le moment."
-            icon="👨‍🌾"
+        {loading ? (
+          <LoadingState message="Chargement des producteurs..." />
+        ) : error ? (
+          <ErrorState 
+            message={error}
+            onRetry={fetchProducersWithProducts}
           />
-        )}
+        ) : (
+          <>
+            {/* Hero section */}
+            <HeroSection
+              title="Frais de la ferme à votre table"
+              subtitle="Découvrez les meilleurs produits locaux, laitages artisanaux et fruits de saison directement de notre réseau de confiance de fermiers familiaux."
+              ctaText="Découvrir nos fermiers !"
+              ctaLink={ROUTES.nosFermiers}
+            />
 
-        {/* Partner CTA */}
-        <section className={styles.partnerHero}>
-          <div className={styles.partnerHeroInner}>
-            <h3 className={styles.partnerTitle}>Devenez partenaire aujourd'hui</h3>
-            <p className={styles.partnerSubtitle}>
-              Rejoignez notre réseau de producteurs locaux et développez votre activité avec nous.
-            </p>
-            <Link
-              to={`${ROUTES.contact}?subject=${encodeURIComponent("Demande pour partenariat")}`}
-              className={styles.partnerBtn}
-            >
-              Devenez partenaire aujourd'hui
-            </Link>
-          </div>
-        </section>
+            {/* Producers showcase */}
+            <h3 className={styles.sectionHeading}>Nos Agriculteurs partenaires</h3>
+            {producers.length > 0 ? (
+              <div className={styles.producers}>
+                {producers.map((producer) => (
+                  <ProducerShowcase key={producer.id} producer={producer} onViewAllHref={ROUTES.fermier(producer.id)} />
+                ))}
+              </div>
+            ) : (
+              <EmptyState 
+                message="Aucun producteur disponible pour le moment."
+                icon="👨‍🌾"
+              />
+            )}
+
+            {/* Partner CTA */}
+            <section className={styles.partnerHero}>
+              <div className={styles.partnerHeroInner}>
+                <h3 className={styles.partnerTitle}>Devenez partenaire aujourd'hui</h3>
+                <p className={styles.partnerSubtitle}>
+                  Rejoignez notre réseau de producteurs locaux et développez votre activité avec nous.
+                </p>
+                <Link
+                  to={`${ROUTES.contact}?subject=${encodeURIComponent("Demande pour partenariat")}`}
+                  className={styles.partnerBtn}
+                >
+                  Devenez partenaire aujourd'hui
+                </Link>
+              </div>
+            </section>
+          </>
+        )}
       </div>
     </div>
   );

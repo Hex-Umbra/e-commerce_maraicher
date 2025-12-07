@@ -172,7 +172,7 @@ const Cart = () => {
             ctaLink={ROUTES.produits}
           />
         ) : (
-          <div>
+          <>
             <ul className={styles.cartItems}>
               {items.map((item) => {
                 const product = item.product || {};
@@ -219,7 +219,7 @@ const Cart = () => {
             <footer className={styles.cartFooter}>
               Total Panier: {total.toFixed(2)} €
             </footer>
-          </div>
+          </>
         )}
         
           

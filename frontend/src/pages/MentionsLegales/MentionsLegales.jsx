@@ -3,8 +3,7 @@ import styles from './MentionsLegales.module.scss';
 const MentionsLegales = () => {
   return (
     <div className={styles.mentionsLegales}>
-      <div className="container">
-        <section className={styles.main}>
+      <section className={`container ${styles.main}`}>
           <h1>Mentions Légales</h1>
           
           <section className={styles.section}>
@@ -32,8 +31,7 @@ const MentionsLegales = () => {
               et les représentations iconographiques et photographiques.
             </p>
           </section>
-        </section>
-      </div>
+      </section>
     </div>
   );
 };

@@ -6,6 +6,8 @@ import EmptyState from "../../components/common/EmptyState/EmptyState";
 import ErrorState from "../../components/common/ErrorState/ErrorState";
 import styles from "./Orders.module.scss";
 import { ROUTES } from "../../utils/routes";
+import LoadingState from "../../components/common/LoadingState/LoadingState";
+
 
 const Orders = () => {
   const { user, isAuthenticated, loading: authLoading, showNotification } = useAuth();
@@ -66,55 +68,13 @@ const Orders = () => {
   if (authLoading) {
     return (
       <div className="container">
-        <div className={styles.loading}>
-          <p>Chargement...</p>
-        </div>
+        <LoadingState message="Chargement..." />
       </div>
     );
   }
 
   if (!isAuthenticated) {
     return <Navigate to={ROUTES.login} replace />;
-  }
-
-  if (loading) {
-    return (
-      <div className="container">
-        <div className={styles.loading}>
-          <p>Chargement de vos commandes...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container">
-        <ErrorState message={error} onRetry={fetchOrders} />
-      </div>
-    );
-  }
-
-  if (!orders || orders.length === 0) {
-    return (
-      <div className="container">
-        <div className={styles.orders}>
-          <h2 className={styles.title}>
-            {isProducteur ? "Commandes de mes produits" : "Mes Commandes"}
-          </h2>
-          <EmptyState
-            icon="🧺"
-            message={
-              isProducteur
-                ? "Aucune commande pour vos produits."
-                : "Vous n'avez pas encore de commandes."
-            }
-            ctaText={isProducteur ? "Voir mes produits" : "Voir les produits"}
-            ctaLink={isProducteur ? ROUTES.profile : ROUTES.produits}
-          />
-        </div>
-      </div>
-    );
   }
 
   const formatPrice = (amount) =>
@@ -186,87 +146,104 @@ const Orders = () => {
           {isProducteur ? "Commandes de mes produits" : "Mes Commandes"}
         </h2>
 
-        <ul className={styles.list} role="list" aria-label="Liste de vos commandes">
-          {orders.map((order) => (
-            <li key={order._id} className={styles.item} role="listitem">
-              <div className={styles.itemHeader}>
-                <span className={styles.orderId}>Commande #{order._id?.slice(-6)}</span>
-                <span className={styles.status} data-status={order.status || "En cours"}>
-                  {order.status || "En cours"}
-                </span>
-              </div>
-              <div className={styles.meta}>
-                <span className={styles.date}>{formatDate(order.createdAt)}</span>
-                <span className={styles.amount}>
-                  {formatPrice(isProducteur ? order.producerTotal : order.totalAmount)}
-                </span>
-              </div>
-
-              {/* Client info for producteur */}
-              {isProducteur && order.clientId && (
-                <div className={styles.clientInfo}>
-                  <strong>Client:</strong> {order.clientId.name}
-                  {order.clientId.address && ` - ${order.clientId.address}`}
+        {loading ? (
+          <LoadingState message="Chargement de vos commandes..." />
+        ) : error ? (
+          <ErrorState message={error} onRetry={fetchOrders} />
+        ) : !orders || orders.length === 0 ? (
+          <EmptyState
+            icon="🧺"
+            message={
+              isProducteur
+                ? "Aucune commande pour vos produits."
+                : "Vous n'avez pas encore de commandes."
+            }
+            ctaText={isProducteur ? "Voir mes produits" : "Voir les produits"}
+            ctaLink={isProducteur ? ROUTES.profile : ROUTES.produits}
+          />
+        ) : (
+          <ul className={styles.list} role="list" aria-label="Liste de vos commandes">
+            {orders.map((order) => (
+              <li key={order._id} className={styles.item} role="listitem">
+                <div className={styles.itemHeader}>
+                  <span className={styles.orderId}>Commande #{order._id?.slice(-6)}</span>
+                  <span className={styles.status} data-status={order.status || "En cours"}>
+                    {order.status || "En cours"}
+                  </span>
                 </div>
-              )}
-
-              {Array.isArray(order.products) && order.products.length > 0 && (
-                <div className={styles.lines} role="list" aria-label="Articles de la commande">
-                  {order.products.map((p, idx) => {
-                    const productId = p.productId?._id || p.productId;
-                    const key = `${order._id}-${productId}`;
-                    const isUpdating = updatingStatus[key];
-
-                    return (
-                      <div key={p._id || idx} className={styles.line} role="listitem">
-                        <span className={styles.productName}>
-                          {p.productId?.name || "Produit"}
-                        </span>
-                        <span className={styles.qty}>x{p.quantity}</span>
-                        <span className={styles.linePrice}>{formatPrice(p.price)}</span>
-                        
-                        {isProducteur ? (
-                          <div className={styles.statusControl}>
-                            <select
-                              value={p.status || "En cours"}
-                              onChange={(e) =>
-                                handleStatusChange(order._id, productId, e.target.value)
-                              }
-                              disabled={isUpdating || p.status === "Livré"}
-                              className={styles.statusSelect}
-                              aria-label={`Changer le statut de ${p.productId?.name}`}
-                            >
-                              {getStatusOptions(p.status || "En cours").map((status) => (
-                                <option key={status} value={status}>
-                                  {status}
-                                </option>
-                              ))}
-                            </select>
-                            {isUpdating && <span className={styles.spinner}>⏳</span>}
-                          </div>
-                        ) : (
-                          <span className={styles.lineStatus}>{p.status || "En cours"}</span>
-                        )}
-                      </div>
-                    );
-                  })}
+                <div className={styles.meta}>
+                  <span className={styles.date}>{formatDate(order.createdAt)}</span>
+                  <span className={styles.amount}>
+                    {formatPrice(isProducteur ? order.producerTotal : order.totalAmount)}
+                  </span>
                 </div>
-              )}
 
-              {!isProducteur && !["Annulée", "Complète"].includes(order.status) && (
-                <div className={styles.actions}>
-                  <button
-                    onClick={() => handleCancelOrder(order._id)}
-                    className={styles.cancelButton}
-                    disabled={updatingStatus[order._id]}
-                  >
-                    {updatingStatus[order._id] ? "Annulation..." : "Annuler la commande"}
-                  </button>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
+                {/* Client info for producteur */}
+                {isProducteur && order.clientId && (
+                  <div className={styles.clientInfo}>
+                    <strong>Client:</strong> {order.clientId.name}
+                    {order.clientId.address && ` - ${order.clientId.address}`}
+                  </div>
+                )}
+
+                {Array.isArray(order.products) && order.products.length > 0 && (
+                  <div className={styles.lines} role="list" aria-label="Articles de la commande">
+                    {order.products.map((p, idx) => {
+                      const productId = p.productId?._id || p.productId;
+                      const key = `${order._id}-${productId}`;
+                      const isUpdating = updatingStatus[key];
+
+                      return (
+                        <div key={p._id || idx} className={styles.line} role="listitem">
+                          <span className={styles.productName}>
+                            {p.productId?.name || "Produit"}
+                          </span>
+                          <span className={styles.qty}>x{p.quantity}</span>
+                          <span className={styles.linePrice}>{formatPrice(p.price)}</span>
+                          
+                          {isProducteur ? (
+                            <div className={styles.statusControl}>
+                              <select
+                                value={p.status || "En cours"}
+                                onChange={(e) =>
+                                  handleStatusChange(order._id, productId, e.target.value)
+                                }
+                                disabled={isUpdating || p.status === "Livré"}
+                                className={styles.statusSelect}
+                                aria-label={`Changer le statut de ${p.productId?.name}`}
+                              >
+                                {getStatusOptions(p.status || "En cours").map((status) => (
+                                  <option key={status} value={status}>
+                                    {status}
+                                  </option>
+                                ))}
+                              </select>
+                              {isUpdating && <span className={styles.spinner}>⏳</span>}
+                            </div>
+                          ) : (
+                            <span className={styles.lineStatus}>{p.status || "En cours"}</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {!isProducteur && !["Annulée", "Complète"].includes(order.status) && (
+                  <div className={styles.actions}>
+                    <button
+                      onClick={() => handleCancelOrder(order._id)}
+                      className={styles.cancelButton}
+                      disabled={updatingStatus[order._id]}
+                    >
+                      {updatingStatus[order._id] ? "Annulation..." : "Annuler la commande"}
+                    </button>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

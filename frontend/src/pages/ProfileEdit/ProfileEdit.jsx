@@ -5,6 +5,8 @@ import FormField from "../../components/common/FormField/FormField";
 import styles from "./ProfileEdit.module.scss";
 import { ROUTES } from "../../utils/routes";
 import { userAPI } from "../../services/api";
+import LoadingState from "../../components/common/LoadingState/LoadingState";
+
 
 const ProfileEdit = () => {
   const navigate = useNavigate();
@@ -79,9 +81,7 @@ const ProfileEdit = () => {
   if (loading) {
     return (
       <div className="container">
-        <div className={styles.loading}>
-          <p>Chargement...</p>
-        </div>
+        <LoadingState message="Chargement..." />
       </div>
     );
   }
