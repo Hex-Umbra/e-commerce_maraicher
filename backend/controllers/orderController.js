@@ -556,3 +556,28 @@ export const cancelOrder = catchAsync(async (req, res, next) => {
   }
 });
 
+// @desc    Update order status by admin
+// @route   PUT /api/orders/admin/:id/status
+// @access  Private/Admin
+export const adminUpdateOrderStatus = catchAsync(async (req, res, next) => {
+    const { status } = req.body;
+    
+    const ORDER_STATUS_ENUM = orderModel.schema.path("status").enumValues;
+    if (!status || !ORDER_STATUS_ENUM.includes(status)) {
+        return next(new AppError("Invalid status provided", 400));
+    }
+
+    const order = await orderModel.findById(req.params.id);
+
+    if (order) {
+        order.status = status;
+        const updatedOrder = await order.save();
+        res.status(200).json({
+            success: true,
+            data: updatedOrder,
+        });
+    } else {
+        return next(new AppError("Order not found", 404));
+    }
+});
+

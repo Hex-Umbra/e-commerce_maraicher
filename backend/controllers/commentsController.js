@@ -240,3 +240,40 @@ export const getUserComments = catchAsync(async (req, res, next) => {
     data: comments,
   });
 });
+
+// @desc    Get all comments (admin)
+// @route   GET /api/comments/admin
+// @access  Private/Admin
+export const getAllComments = catchAsync(async (req, res, next) => {
+  const comments = await commentModel.find({})
+    .populate("userId", "name email")
+    .populate("ProducteurId", "name");
+
+  res.status(200).json({
+    status: "success",
+    results: comments.length,
+    data: comments,
+  });
+});
+
+// @desc    Delete a comment by admin
+// @route   DELETE /api/comments/admin/:id
+// @access  Private/Admin
+export const deleteCommentByAdmin = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const comment = await commentModel.findById(id);
+
+  if (!comment) {
+    return next(new AppError("Comment not found", 404));
+  }
+
+  await comment.remove();
+
+  logger.info(`Comment ${id} deleted by admin ${req.user._id}`);
+
+  res.status(200).json({
+    status: "success",
+    data: null,
+  });
+});

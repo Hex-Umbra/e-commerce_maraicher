@@ -15,6 +15,8 @@ import cartRouter from "./routes/cartRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
 import commentRouter from "./routes/commentRoutes.js";
 import supportRouter from "./routes/supportRoutes.js";
+import adminRouter from "./routes/adminRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 
 // Importing Middlewares
 import { connectDB } from "./utils/dbConnection.js";
@@ -72,6 +74,8 @@ app.use("/api/cart", cartRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/comments", commentRouter);
 app.use("/api/support", supportRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/users", userRouter);
 
 
 // Error Handling Middleware

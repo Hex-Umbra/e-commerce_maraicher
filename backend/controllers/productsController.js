@@ -1,7 +1,7 @@
 import Product from "../models/productsModel.js";
 import { logger } from "../services/logger.js";
 import { uploadBufferToCloudinary, destroyByPublicId } from "../services/cloudinaryUpload.js";
-import { catchAsync, handleError } from "../utils/handleError.js";
+import { catchAsync, handleError, AppError } from "../utils/handleError.js";
 
 // @desc    Create a new product
 // @route   POST /api/products
@@ -272,4 +272,93 @@ export const deleteProduct = catchAsync(async (req, res) => {
   }
 });
 
+// -------------------------------------------------------------------------------------- //
+// @desc    Create a new product by admin
+// @route   POST /api/products/admin
+// @access  Private (Admin)
+export const adminCreateProduct = catchAsync(async (req, res) => {
+    const body = { ...req.body };
 
+    if (!body.producteurId) {
+        return next(new AppError("Producteur ID is required", 400));
+    }
+    
+    const newProduct = new Product(body);
+    await newProduct.save();
+
+    logger.info(`Product created by admin: ${newProduct._id}`, {
+      userId: req.user._id,
+      productId: newProduct._id,
+      productName: newProduct.name,
+    });
+
+    res.status(201).json({
+      message: "Product created successfully by admin.",
+      product: newProduct,
+    });
+});
+
+// @desc    Update a product by ID by admin
+// @route   PUT /api/products/admin/:id
+// @access  Private (Admin)
+export const adminUpdateProduct = catchAsync(async (req, res) => {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Produit introuvable." });
+    }
+
+    const updateData = { ...req.body };
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProduct) {
+      return res
+        .status(404)
+        .json({ message: "Produit introuvable après mise à jour." });
+    }
+
+    logger.info(`Product updated by admin: ${updatedProduct._id}`, {
+      userId: req.user._id,
+      productId: updatedProduct._id,
+      productName: updatedProduct.name,
+    });
+
+    res.status(200).json({
+      message: "Product updated successfully by admin.",
+      updatedProduct,
+    });
+});
+
+// @desc    Delete a product by ID by admin
+// @route   DELETE /api/products/admin/:id
+// @access  Private (Admin)
+export const adminDeleteProduct = catchAsync(async (req, res) => {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Produit introuvable." });
+    }
+
+    if (product.imagePublicId) {
+      try {
+        await destroyByPublicId(product.imagePublicId);
+      } catch (destroyErr) {
+        handleError(destroyErr, "Destroy image (adminDeleteProduct)", req);
+      }
+    }
+
+    await Product.findByIdAndDelete(req.params.id);
+    
+    logger.info(`Product deleted by admin: ${product._id}`, {
+      userId: req.user._id,
+      productId: product._id,
+      productName: product.name,
+    });
+    
+    res.status(200).json({
+      message: "Product deleted successfully by admin.",
+    });
+});
