@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }) => {
 
   // Check if user is authenticated on app load
   useEffect(() => {
+    console.log('AuthContext: Initial checkAuthStatus call');
     checkAuthStatus();
     
     // Set up online/offline event listeners
