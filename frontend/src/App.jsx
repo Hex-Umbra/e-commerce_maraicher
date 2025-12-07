@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar/Navbar';
+import WelcomeSection from './components/WelcomeSection/WelcomeSection';
+import LoginSection from './components/LoginSection/LoginSection';
 import Footer from './components/Footer/Footer';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
