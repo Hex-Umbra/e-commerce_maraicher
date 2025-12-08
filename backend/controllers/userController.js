@@ -1,6 +1,88 @@
 import User from "../models/userModel.js";
 import { catchAsync, AppError } from "../utils/handleError.js";
 import { sanitizeUserInput, sanitizeObjectId } from "../utils/sanitize.js";
+import validator from "validator";
+import { logger } from "../services/logger.js";
+
+// @desc    Create a new user (Admin only)
+// @route   POST /api/users
+// @access  Private/Admin
+export const createUser = catchAsync(async (req, res, next) => {
+  const { name, email, password, address, role } = req.body;
+
+  // Validate required fields
+  if (!name || !email || !password) {
+    return next(new AppError("Le nom, l'email et le mot de passe sont requis", 400));
+  }
+
+  // Validate email format
+  if (!validator.isEmail(email)) {
+    return next(new AppError("L'email est invalide", 400));
+  }
+
+  // Validate password strength
+  if (password.length < 8) {
+    return next(new AppError("Le mot de passe doit contenir au moins 8 caractères", 400));
+  }
+
+  if (!validator.isStrongPassword(password, {
+    minLength: 8,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
+  })) {
+    return next(new AppError(
+      "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial",
+      400
+    ));
+  }
+
+  // Sanitize user input
+  const sanitizedData = sanitizeUserInput({ name, email, password, address, role });
+
+  // Check if user already exists
+  const existingUser = await User.findOne({ email: sanitizedData.email });
+  if (existingUser) {
+    return next(new AppError("Un utilisateur avec cet email existe déjà", 409));
+  }
+
+  // Validate role
+  const validRoles = ["client", "producteur", "admin"];
+  if (sanitizedData.role && !validRoles.includes(sanitizedData.role)) {
+    return next(new AppError("Rôle invalide", 400));
+  }
+
+  // Prepare user data
+  const userData = {
+    name: sanitizedData.name,
+    email: sanitizedData.email,
+    password: sanitizedData.password,
+    address: sanitizedData.address || "",
+    role: sanitizedData.role || "client",
+    isEmailVerified: true, // Admin-created users are automatically verified
+  };
+
+  // Create new user
+  const newUser = await User.create(userData);
+
+  logger.info(
+    `New user created by admin: ${newUser.name} (${newUser.email}) - Role: ${newUser.role} - ID: ${newUser._id}`
+  );
+
+  res.status(201).json({
+    success: true,
+    message: "Utilisateur créé avec succès",
+    data: {
+      _id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role,
+      address: newUser.address,
+      isEmailVerified: newUser.isEmailVerified,
+    },
+  });
+});
 
 // @desc    Get all users
 // @route   GET /api/users

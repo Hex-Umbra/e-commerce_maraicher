@@ -54,7 +54,15 @@ const AdminUsers = () => {
 
     return (
         <div className={styles.users}>
-            <h1>Users Management</h1>
+            <div className={styles.header}>
+                <h1>Users Management</h1>
+                <button 
+                    className={styles.createButton} 
+                    onClick={() => navigate('/admin/users/create')}
+                >
+                    + Créer un utilisateur
+                </button>
+            </div>
             {users.length === 0 ? (
                 <div className={styles.emptyState}>
                     <p>No users found.</p>

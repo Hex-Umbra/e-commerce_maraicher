@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import {
+  createUser,
   getAllUsers,
   getUserById,
   updateUser,
@@ -11,7 +12,8 @@ import { verifyRole } from "../middlewares/verifyRole.js";
 
 router
   .route("/")
-  .get(verifyToken, verifyRole("admin"), getAllUsers);
+  .get(verifyToken, verifyRole("admin"), getAllUsers)
+  .post(verifyToken, verifyRole("admin"), createUser);
 
 router
   .route("/:id")

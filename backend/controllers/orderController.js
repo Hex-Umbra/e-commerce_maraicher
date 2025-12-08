@@ -203,14 +203,14 @@ export const getAllOrders = catchAsync(async (req, res, next) => {
 });
 
 // @desc Get single order by ID for admin
-// @route GET /api/orders/admin/:id
+// @route GET /api/orders/admin/:orderId
 // @access Private/Admin
 export const getOrderById = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  logger.info(`Fetching order ${id} for admin`);
+  const { orderId } = req.params;
+  logger.info(`Fetching order ${orderId} for admin`);
 
   const order = await orderModel
-    .findById(id)
+    .findById(orderId)
     .populate("clientId", "name email")
     .populate("products.productId", "name price image producteurId")
     .lean(); // Use .lean() for plain JS objects, faster if not saving
@@ -672,13 +672,13 @@ export const cancelOrder = catchAsync(async (req, res, next) => {
 });
 
 // @desc    Update order status by admin
-// @route   PUT /api/orders/admin/:id/status
+// @route   PUT /api/orders/admin/:orderId/status
 // @access  Private/Admin
 export const adminUpdateOrderStatus = catchAsync(async (req, res, next) => {
     const { status } = req.body;
     
     // Sanitize and validate orderId
-    const orderId = sanitizeObjectId(req.params.id);
+    const orderId = sanitizeObjectId(req.params.orderId);
     if (!orderId) {
         return next(new AppError("Invalid order ID", 400));
     }

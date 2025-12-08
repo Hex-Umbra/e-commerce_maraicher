@@ -419,6 +419,15 @@ export const adminAPI = {
       throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des statistiques');
     }
   },
+  // User Management
+  createUser: async (userData) => {
+    try {
+      const response = await apiClient.post('/users', userData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la création de l'utilisateur");
+    }
+  },
   getAllUsers: async () => {
     try {
       const response = await apiClient.get('/users');

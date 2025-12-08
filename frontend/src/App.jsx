@@ -30,6 +30,7 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import ProtectedRoute from './components/common/ProtectedRoute/ProtectedRoute';
 import AdminUsers from './pages/Admin/AdminUsers';
 import AdminUserEdit from './pages/Admin/AdminUserEdit';
+import AdminUserCreate from './pages/Admin/AdminUserCreate';
 import AdminProducts from './pages/Admin/AdminProducts';
 import AdminProductEdit from './pages/Admin/AdminProductEdit'; // New Import
 import AdminOrdersList from './pages/Admin/AdminOrdersList';
@@ -75,6 +76,7 @@ const App = () => {
                   <Route index element={<Navigate to="dashboard" replace />} />
                   <Route path="dashboard" element={<AdminDashboard />} />
                   <Route path="users" element={<AdminUsers />} />
+                  <Route path="users/create" element={<AdminUserCreate />} />
                   <Route path="users/edit/:userId" element={<AdminUserEdit />} />
                   <Route path="products" element={<AdminProducts />} />
                   <Route path="products/edit/:productId" element={<AdminProductEdit />} />
