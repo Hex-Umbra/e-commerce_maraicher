@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import { catchAsync, AppError } from "../utils/handleError.js";
+import { sanitizeUserInput, sanitizeObjectId } from "../utils/sanitize.js";
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -17,7 +18,13 @@ export const getAllUsers = catchAsync(async (req, res, next) => {
 // @route   GET /api/users/:id
 // @access  Private/Admin
 export const getUserById = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id).select("-password");
+  // Sanitize and validate ObjectId
+  const userId = sanitizeObjectId(req.params.id);
+  if (!userId) {
+    return next(new AppError("Invalid user ID", 400));
+  }
+
+  const user = await User.findById(userId).select("-password");
 
   if (user) {
     res.status(200).json({
@@ -33,12 +40,21 @@ export const getUserById = catchAsync(async (req, res, next) => {
 // @route   PUT /api/users/:id
 // @access  Private/Admin
 export const updateUser = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  // Sanitize and validate ObjectId
+  const userId = sanitizeObjectId(req.params.id);
+  if (!userId) {
+    return next(new AppError("Invalid user ID", 400));
+  }
+
+  const user = await User.findById(userId);
 
   if (user) {
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
-    user.role = req.body.role || user.role;
+    // Sanitize input data
+    const sanitized = sanitizeUserInput(req.body);
+    
+    user.name = sanitized.name || user.name;
+    user.email = sanitized.email || user.email;
+    user.role = sanitized.role || user.role;
 
     const updatedUser = await user.save();
 
@@ -60,10 +76,16 @@ export const updateUser = catchAsync(async (req, res, next) => {
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
 export const deleteUser = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  // Sanitize and validate ObjectId
+  const userId = sanitizeObjectId(req.params.id);
+  if (!userId) {
+    return next(new AppError("Invalid user ID", 400));
+  }
+
+  const user = await User.findById(userId);
 
   if (user) {
-    await User.findByIdAndDelete(req.params.id);
+    await User.findByIdAndDelete(userId);
     res.status(200).json({ success: true, message: "User removed" });
   } else {
     return next(new AppError("User not found", 404));

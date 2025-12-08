@@ -1,6 +1,7 @@
 import { catchAsync, AppError } from "../utils/handleError.js";
 import emailService from "../services/emailService.js";
 import { logger } from "../services/logger.js";
+import { sanitizeSupportInput } from "../utils/sanitize.js";
 
 /**
  * @desc Send a contact message to support
@@ -12,9 +13,17 @@ export const sendContactMessage = catchAsync(async (req, res, next) => {
   const titleRaw = req.body?.title ?? "";
   const messageRaw = req.body?.message ?? "";
 
-  const subject = String(subjectRaw).trim();
-  const title = String(titleRaw).trim();
-  const message = String(messageRaw).trim();
+  // Sanitize all inputs
+  const sanitized = sanitizeSupportInput({
+    subject: subjectRaw,
+    object: subjectRaw,
+    title: titleRaw,
+    message: messageRaw,
+  });
+
+  const subject = sanitized.subject || sanitized.object || "";
+  const title = sanitized.title || "";
+  const message = sanitized.message || "";
 
   if (!subject || !title || !message) {
     return next(

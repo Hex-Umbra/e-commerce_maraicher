@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import commentModel from "../models/commentsModel.js";
 import { catchAsync, AppError } from "../utils/handleError.js";
 import { logger } from "../services/logger.js";
+import { sanitizeCommentInput, sanitizeObjectId } from "../utils/sanitize.js";
 
 // @desc Create a new comment
 // @route POST /api/comments
@@ -19,17 +20,25 @@ export const createComment = catchAsync(async (req, res, next) => {
     return next(new AppError("All fields are required", 400));
   }
 
+  // Sanitize inputs
+  const sanitizedData = sanitizeCommentInput({ ProducteurId, comment, rating });
+
+  // Validate producer ID
+  if (!sanitizedData.ProducteurId) {
+    return next(new AppError("Invalid producer ID", 400));
+  }
+
   // Validate rating
-  if (rating < 1 || rating > 5) {
+  if (sanitizedData.rating < 1 || sanitizedData.rating > 5) {
     return next(new AppError("Rating must be between 1 and 5", 400));
   }
 
   // Create comment
   const newComment = await commentModel.create({
     userId,
-    ProducteurId,
-    comment,
-    rating,
+    ProducteurId: sanitizedData.ProducteurId,
+    comment: sanitizedData.comment,
+    rating: sanitizedData.rating,
   });
 
   logger.info(`Comment created by user ${userId} for producer ${ProducteurId}`);
@@ -46,10 +55,16 @@ export const createComment = catchAsync(async (req, res, next) => {
 export const getCommentsForProducteur = catchAsync(async (req, res, next) => {
   const { producteurId } = req.params;
 
-  logger.info(`Fetching comments for producer ${producteurId}`);
+  // Sanitize and validate ObjectId
+  const sanitizedId = sanitizeObjectId(producteurId);
+  if (!sanitizedId) {
+    return next(new AppError("Invalid producer ID", 400));
+  }
+
+  logger.info(`Fetching comments for producer ${sanitizedId}`);
 
   const comments = await commentModel
-    .find({ ProducteurId: producteurId })
+    .find({ ProducteurId: sanitizedId })
     .populate("userId", "username");
 
   if (!comments || comments.length === 0) {
@@ -72,14 +87,16 @@ export const getAverageRatingForProducteur = catchAsync(
   async (req, res, next) => {
     const { producteurId } = req.params;
 
-    if (!producteurId) {
-      return next(new AppError("Producteur ID is required", 400));
+    // Sanitize and validate ObjectId
+    const sanitizedId = sanitizeObjectId(producteurId);
+    if (!sanitizedId) {
+      return next(new AppError("Producteur ID is required and must be valid", 400));
     }
 
-    logger.info(`Calculating average rating for producer ${producteurId}`);
+    logger.info(`Calculating average rating for producer ${sanitizedId}`);
 
     const result = await commentModel.aggregate([
-      { $match: { ProducteurId: new mongoose.Types.ObjectId(producteurId) } },
+      { $match: { ProducteurId: new mongoose.Types.ObjectId(sanitizedId) } },
       {
         $group: {
           _id: "$ProducteurId",
@@ -117,7 +134,13 @@ export const updateComment = catchAsync(async (req, res, next) => {
   const { comment, rating } = req.body;
   const userId = req.user._id;
 
-  logger.info(`User ${userId} is attempting to update comment ${commentId}`);
+  // Sanitize and validate commentId
+  const sanitizedCommentId = sanitizeObjectId(commentId);
+  if (!sanitizedCommentId) {
+    return next(new AppError("Invalid comment ID", 400));
+  }
+
+  logger.info(`User ${userId} is attempting to update comment ${sanitizedCommentId}`);
 
   // Validate input
   if (!comment && !rating) {
@@ -129,13 +152,16 @@ export const updateComment = catchAsync(async (req, res, next) => {
     );
   }
 
+  // Sanitize inputs
+  const sanitizedData = sanitizeCommentInput({ comment, rating });
+
   // Validate rating if provided
-  if (rating && (rating < 1 || rating > 5)) {
+  if (sanitizedData.rating && (sanitizedData.rating < 1 || sanitizedData.rating > 5)) {
     return next(new AppError("Rating must be between 1 and 5", 400));
   }
 
   // Find the comment to update
-  const existingComment = await commentModel.findById(commentId);
+  const existingComment = await commentModel.findById(sanitizedCommentId);
 
   if (!existingComment) {
     return next(new AppError("Comment not found", 404));
@@ -149,12 +175,12 @@ export const updateComment = catchAsync(async (req, res, next) => {
   }
 
   // Update the comment
-  if (comment) existingComment.comment = comment;
-  if (rating) existingComment.rating = rating;
+  if (sanitizedData.comment) existingComment.comment = sanitizedData.comment;
+  if (sanitizedData.rating) existingComment.rating = sanitizedData.rating;
 
   await existingComment.save();
 
-  logger.info(`Comment ${commentId} updated by user ${userId}`);
+  logger.info(`Comment ${sanitizedCommentId} updated by user ${userId}`);
 
   res.status(200).json({
     status: "success",
@@ -169,27 +195,33 @@ export const deleteComment = catchAsync(async (req, res, next) => {
   const { commentId } = req.params;
   const userId = req.user._id;
 
-  logger.info(`User ${userId} is attempting to delete comment ${commentId}`);
+  // Sanitize and validate commentId
+  const sanitizedCommentId = sanitizeObjectId(commentId);
+  if (!sanitizedCommentId) {
+    return next(new AppError("Invalid comment ID", 400));
+  }
+
+  logger.info(`User ${userId} is attempting to delete comment ${sanitizedCommentId}`);
 
   // Find the comment to delete
-  const existingComment = await commentModel.findById(commentId);
+  const existingComment = await commentModel.findById(sanitizedCommentId);
 
   if (!existingComment) {
-    logger.warn(`Comment ${commentId} not found for deletion`);
+    logger.warn(`Comment ${sanitizedCommentId} not found for deletion`);
     return next(new AppError("Comment not found", 404));
   }
 
   // Check if the user is the owner of the comment
   if (existingComment.userId.toString() !== userId.toString()) {
     logger.warn(
-      `User ${userId} is not authorized to delete comment ${commentId}`
+      `User ${userId} is not authorized to delete comment ${sanitizedCommentId}`
     );
     return next(
       new AppError("You are not authorized to delete this comment", 403)
     );
   }
 
-  logger.info(`User ${userId} authorized to delete comment ${commentId}`);
+  logger.info(`User ${userId} authorized to delete comment ${sanitizedCommentId}`);
   logger.info(
     `Deleting comment "${existingComment.comment}" by user ${existingComment.userId}`
   );
@@ -197,7 +229,7 @@ export const deleteComment = catchAsync(async (req, res, next) => {
   // Delete the comment
   await existingComment.deleteOne();
 
-  logger.info(`Comment ${commentId} deleted by user ${userId}`);
+  logger.info(`Comment ${sanitizedCommentId} deleted by user ${userId}`);
 
   res.status(200).json({
     status: "success",

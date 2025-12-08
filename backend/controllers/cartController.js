@@ -3,6 +3,7 @@ import Product from "../models/productsModel.js";
 import mongoose from "mongoose";
 import { AppError, handleError, catchAsync } from "../utils/handleError.js";
 import { logger } from "../services/logger.js";
+import { sanitizeObjectId, sanitizeNumber } from "../utils/sanitize.js";
 
 // ---------------------------------------------------------------------------------------------- //
 
@@ -29,28 +30,36 @@ export const addToCart = catchAsync(async (req, res, next) => {
   // Validate request body
   const { productId, quantity } = req.body;
 
+  // Sanitize and validate inputs
+  const sanitizedProductId = sanitizeObjectId(productId);
+  if (!sanitizedProductId) {
+    return next(new AppError("Invalid product ID", 400));
+  }
+
+  const sanitizedQuantity = sanitizeNumber(quantity, { min: 1, default: 1 });
+
   const user = await User.findById(req.user._id);
-  const product = await Product.findById(productId);
+  const product = await Product.findById(sanitizedProductId);
 
   // Check if productId and quantity are provided
   if (!product) {
     res.status(404).json({ status: "fail", message: "Product not found" });
     return next(new AppError("Product not found", 404));
   }
-  if (product.quantity < quantity) {
+  if (product.quantity < sanitizedQuantity) {
     return next(new AppError("Insufficient product quantity", 400));
   }
 
   // Check if product already exists in cart
   const existingItem = user.cart.find(
-    (item) => item.product.toString() === productId
+    (item) => item.product.toString() === sanitizedProductId
   );
   if (existingItem) {
     // Update quantity if product already exists in cart
-    existingItem.quantity += quantity;
+    existingItem.quantity += sanitizedQuantity;
   } else {
     // Add new product to cart
-    user.cart.push({ product: productId, quantity, price: product.price });
+    user.cart.push({ product: sanitizedProductId, quantity: sanitizedQuantity, price: product.price });
   }
   // Save updated user cart
   await user.save();
@@ -68,20 +77,22 @@ export const addToCart = catchAsync(async (req, res, next) => {
 // @access Private
 export const removeFromCart = catchAsync(async (req, res, next) => {
   const { cartItemId } = req.params;
-  const user = await User.findById(req.user._id);
-
-  // Validate cartItemId
-  if (!mongoose.Types.ObjectId.isValid(cartItemId)) {
+  
+  // Sanitize and validate cartItemId
+  const sanitizedCartItemId = sanitizeObjectId(cartItemId);
+  if (!sanitizedCartItemId) {
     return next(new AppError("Invalid cart item ID", 400));
   }
 
+  const user = await User.findById(req.user._id);
+
   // Confirm if the item was actually removed
   const itemStillExists = user.cart.some(
-    (item) => item._id.toString() === cartItemId
+    (item) => item._id.toString() === sanitizedCartItemId
   );
 
   logger.debug(
-    `Attempting to remove cart item with ID: ${cartItemId}, still exists: ${itemStillExists}`
+    `Attempting to remove cart item with ID: ${sanitizedCartItemId}, still exists: ${itemStillExists}`
   );
 
   if (!itemStillExists) {
@@ -90,7 +101,7 @@ export const removeFromCart = catchAsync(async (req, res, next) => {
 
   const updatedUser = await User.findByIdAndUpdate(
     req.user._id,
-    { $pull: { cart: { _id: cartItemId } } },
+    { $pull: { cart: { _id: sanitizedCartItemId } } },
     { new: true, runValidators: true }
   ).populate("cart.product");
 

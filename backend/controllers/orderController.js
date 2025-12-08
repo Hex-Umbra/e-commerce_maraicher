@@ -5,6 +5,7 @@ import User from "../models/userModel.js";
 import Product from "../models/productsModel.js";
 import orderModel from "../models/orderModel.js";
 import emailService from "../services/emailService.js";
+import { sanitizeObjectId, sanitizeString } from "../utils/sanitize.js";
 
 // @desc Create a new order
 // @route POST /api/orders
@@ -676,15 +677,24 @@ export const cancelOrder = catchAsync(async (req, res, next) => {
 export const adminUpdateOrderStatus = catchAsync(async (req, res, next) => {
     const { status } = req.body;
     
+    // Sanitize and validate orderId
+    const orderId = sanitizeObjectId(req.params.id);
+    if (!orderId) {
+        return next(new AppError("Invalid order ID", 400));
+    }
+    
+    // Sanitize status string
+    const sanitizedStatus = sanitizeString(status, { maxLength: 50 });
+    
     const ORDER_STATUS_ENUM = orderModel.schema.path("status").enumValues;
-    if (!status || !ORDER_STATUS_ENUM.includes(status)) {
+    if (!sanitizedStatus || !ORDER_STATUS_ENUM.includes(sanitizedStatus)) {
         return next(new AppError("Invalid status provided", 400));
     }
 
-    const order = await orderModel.findById(req.params.id);
+    const order = await orderModel.findById(orderId);
 
     if (order) {
-        order.status = status;
+        order.status = sanitizedStatus;
         const updatedOrder = await order.save();
         res.status(200).json({
             success: true,

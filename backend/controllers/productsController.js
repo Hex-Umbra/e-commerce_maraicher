@@ -2,13 +2,16 @@ import Product from "../models/productsModel.js";
 import { logger } from "../services/logger.js";
 import { uploadBufferToCloudinary, destroyByPublicId } from "../services/cloudinaryUpload.js";
 import { catchAsync, handleError, AppError } from "../utils/handleError.js";
+import { sanitizeProductInput, sanitizeObjectId } from "../utils/sanitize.js";
 
 // @desc    Create a new product
 // @route   POST /api/products
 // @access  Private (Producteur)
 export const createProduct = catchAsync(async (req, res) => {
   try {
-    const body = { ...req.body, producteurId: req.user._id };
+    // Sanitize product inputs
+    const sanitizedBody = sanitizeProductInput(req.body);
+    const body = { ...sanitizedBody, producteurId: req.user._id };
 
     // Enforce file upload for image
     const imageFile = req.files ? req.files.find(f => f.fieldname === 'image') : null;
@@ -90,7 +93,13 @@ export const getAllProducts = catchAsync(async (req, res) => {
 // @access  Public
 export const getProductById = catchAsync(async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate(
+    // Sanitize and validate ObjectId
+    const productId = sanitizeObjectId(req.params.id);
+    if (!productId) {
+      return res.status(400).json({ message: "ID de produit invalide." });
+    }
+
+    const product = await Product.findById(productId).populate(
       "producteurId",
       "name email"
     );
@@ -128,8 +137,14 @@ export const getProductById = catchAsync(async (req, res) => {
 // @access  Private (Producteur)
 export const updateProduct = catchAsync(async (req, res) => {
   try {
+    // Sanitize and validate ObjectId
+    const productId = sanitizeObjectId(req.params.id);
+    if (!productId) {
+      return res.status(400).json({ message: "ID de produit invalide." });
+    }
+
     // Vérifie si le produit existe
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: "Produit introuvable." });
     }
@@ -141,7 +156,9 @@ export const updateProduct = catchAsync(async (req, res) => {
         .json({ message: "Vous n'êtes pas autorisé à modifier ce produit." });
     }
 
-    const updateData = { ...req.body, producteurId: req.user._id };
+    // Sanitize incoming product data
+    const sanitizedData = sanitizeProductInput(req.body);
+    const updateData = { ...sanitizedData, producteurId: req.user._id };
     let newUploadResult = null;
 
     const imageFile = req.files ? req.files.find(f => f.fieldname === 'image') : null;
@@ -175,7 +192,7 @@ export const updateProduct = catchAsync(async (req, res) => {
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
+      productId,
       updateData,
       { new: true, runValidators: true }
     );
