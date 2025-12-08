@@ -87,12 +87,16 @@
 .navLinks {
   @include flex-center;
   gap: 1.5rem;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .navLink {
   @include nav-link;
   color: $white !important;
   font-weight: 700 !important;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .authSection {
@@ -100,12 +104,16 @@
   gap: 1.5rem;
   align-items: center;
   list-style: none;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .navSection {
   display: flex;
   gap: 1.5rem;
   list-style: none;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .userSection {
@@ -159,6 +167,8 @@
   font-size: 0.9rem;
   color: $white;
   @include text-truncate(120px);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .profileIcon {
@@ -287,7 +297,7 @@
     .navSection {
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: 1rem;
       width: 100%;
       align-items: center;
     }
@@ -297,9 +307,9 @@
     }
 
     .navLink {
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-weight: 600;
-      padding: 1.25rem 2rem;
+      padding: 1rem 2rem;
       border-radius: $radius-lg;
       transition: all 0.3s ease;
       min-width: 200px;
