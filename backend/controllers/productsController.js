@@ -1,14 +1,17 @@
 import Product from "../models/productsModel.js";
 import { logger } from "../services/logger.js";
 import { uploadBufferToCloudinary, destroyByPublicId } from "../services/cloudinaryUpload.js";
-import { catchAsync, handleError } from "../utils/handleError.js";
+import { catchAsync, handleError, AppError } from "../utils/handleError.js";
+import { sanitizeProductInput, sanitizeObjectId } from "../utils/sanitize.js";
 
 // @desc    Create a new product
 // @route   POST /api/products
 // @access  Private (Producteur)
 export const createProduct = catchAsync(async (req, res) => {
   try {
-    const body = { ...req.body, producteurId: req.user._id };
+    // Sanitize product inputs
+    const sanitizedBody = sanitizeProductInput(req.body);
+    const body = { ...sanitizedBody, producteurId: req.user._id };
 
     // Enforce file upload for image
     const imageFile = req.files ? req.files.find(f => f.fieldname === 'image') : null;
@@ -90,7 +93,13 @@ export const getAllProducts = catchAsync(async (req, res) => {
 // @access  Public
 export const getProductById = catchAsync(async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate(
+    // Sanitize and validate ObjectId
+    const productId = sanitizeObjectId(req.params.id);
+    if (!productId) {
+      return res.status(400).json({ message: "ID de produit invalide." });
+    }
+
+    const product = await Product.findById(productId).populate(
       "producteurId",
       "name email"
     );
@@ -128,8 +137,14 @@ export const getProductById = catchAsync(async (req, res) => {
 // @access  Private (Producteur)
 export const updateProduct = catchAsync(async (req, res) => {
   try {
+    // Sanitize and validate ObjectId
+    const productId = sanitizeObjectId(req.params.id);
+    if (!productId) {
+      return res.status(400).json({ message: "ID de produit invalide." });
+    }
+
     // Vérifie si le produit existe
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: "Produit introuvable." });
     }
@@ -141,7 +156,9 @@ export const updateProduct = catchAsync(async (req, res) => {
         .json({ message: "Vous n'êtes pas autorisé à modifier ce produit." });
     }
 
-    const updateData = { ...req.body, producteurId: req.user._id };
+    // Sanitize incoming product data
+    const sanitizedData = sanitizeProductInput(req.body);
+    const updateData = { ...sanitizedData, producteurId: req.user._id };
     let newUploadResult = null;
 
     const imageFile = req.files ? req.files.find(f => f.fieldname === 'image') : null;
@@ -175,7 +192,7 @@ export const updateProduct = catchAsync(async (req, res) => {
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
+      productId,
       updateData,
       { new: true, runValidators: true }
     );
@@ -272,4 +289,93 @@ export const deleteProduct = catchAsync(async (req, res) => {
   }
 });
 
+// -------------------------------------------------------------------------------------- //
+// @desc    Create a new product by admin
+// @route   POST /api/products/admin
+// @access  Private (Admin)
+export const adminCreateProduct = catchAsync(async (req, res) => {
+    const body = { ...req.body };
 
+    if (!body.producteurId) {
+        return next(new AppError("Producteur ID is required", 400));
+    }
+    
+    const newProduct = new Product(body);
+    await newProduct.save();
+
+    logger.info(`Product created by admin: ${newProduct._id}`, {
+      userId: req.user._id,
+      productId: newProduct._id,
+      productName: newProduct.name,
+    });
+
+    res.status(201).json({
+      message: "Product created successfully by admin.",
+      product: newProduct,
+    });
+});
+
+// @desc    Update a product by ID by admin
+// @route   PUT /api/products/admin/:id
+// @access  Private (Admin)
+export const adminUpdateProduct = catchAsync(async (req, res) => {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Produit introuvable." });
+    }
+
+    const updateData = { ...req.body };
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedProduct) {
+      return res
+        .status(404)
+        .json({ message: "Produit introuvable après mise à jour." });
+    }
+
+    logger.info(`Product updated by admin: ${updatedProduct._id}`, {
+      userId: req.user._id,
+      productId: updatedProduct._id,
+      productName: updatedProduct.name,
+    });
+
+    res.status(200).json({
+      message: "Product updated successfully by admin.",
+      updatedProduct,
+    });
+});
+
+// @desc    Delete a product by ID by admin
+// @route   DELETE /api/products/admin/:id
+// @access  Private (Admin)
+export const adminDeleteProduct = catchAsync(async (req, res) => {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Produit introuvable." });
+    }
+
+    if (product.imagePublicId) {
+      try {
+        await destroyByPublicId(product.imagePublicId);
+      } catch (destroyErr) {
+        handleError(destroyErr, "Destroy image (adminDeleteProduct)", req);
+      }
+    }
+
+    await Product.findByIdAndDelete(req.params.id);
+    
+    logger.info(`Product deleted by admin: ${product._id}`, {
+      userId: req.user._id,
+      productId: product._id,
+      productName: product.name,
+    });
+    
+    res.status(200).json({
+      message: "Product deleted successfully by admin.",
+    });
+});

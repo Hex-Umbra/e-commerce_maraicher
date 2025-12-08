@@ -6,6 +6,7 @@ import rateLimiter from "express-rate-limit";
 import validator from "validator";
 import { logger } from "../services/logger.js";
 import emailService from "../services/emailService.js";
+import { sanitizeUserInput, sanitizeEmail, sanitizeString } from "../utils/sanitize.js";
 
 // Rate limiting middleware to prevent brute force attacks
 export const limiter = rateLimiter({
@@ -120,8 +121,11 @@ export const register = catchAsync(async (req, res, next) => {
     });
   }
 
+  // Sanitize user input to prevent XSS and injection attacks
+  const sanitizedData = sanitizeUserInput({ name, email, password, address, role });
+
   // Check if user already exists
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ email: sanitizedData.email });
   if (existingUser) {
     return res.status(409).json({
       success: false,
@@ -129,17 +133,14 @@ export const register = catchAsync(async (req, res, next) => {
     });
   }
 
-  // User input sanitization
+  // Prepare user data
   const userData = {
-    name: name.trim(),
-    email: email.trim().toLowerCase(),
-    password,
-    address: address.trim(),
-    role: role || "client",
+    name: sanitizedData.name,
+    email: sanitizedData.email,
+    password: sanitizedData.password,
+    address: sanitizedData.address,
+    role: sanitizedData.role,
   };
-  if (address) {
-    userData.address = validator.escape(address.trim());
-  }
 
   // Create new user
   const newUser = await User.create(userData);
@@ -193,8 +194,12 @@ export const verifyEmail = catchAsync(async (req, res, next) => {
     return next(new AppError("Token et email sont requis", 400));
   }
 
+  // Sanitize inputs
+  const sanitizedEmail = sanitizeEmail(email);
+  const sanitizedToken = sanitizeString(token, { maxLength: 500 });
+
   // Find user by email
-  const user = await User.findOne({ email: email.toLowerCase() });
+  const user = await User.findOne({ email: sanitizedEmail });
   if (!user) {
     return next(new AppError("Utilisateur non trouvé", 404));
   }
@@ -323,7 +328,10 @@ export const login = catchAsync(async (req, res, next) => {
     });
   }
 
-  const user = await User.findOne({ email: email.toLowerCase() });
+  // Sanitize email
+  const sanitizedEmail = sanitizeEmail(email);
+
+  const user = await User.findOne({ email: sanitizedEmail });
   if (!user) {
     return res
       .status(400)
@@ -422,36 +430,39 @@ export const updateProfile = catchAsync(async (req, res, next) => {
     return next(new AppError("Veuillez fournir au moins un champ à mettre à jour", 400));
   }
 
+  // Sanitize inputs
+  const sanitizedData = sanitizeUserInput({ name, email, address });
+
   // Build update object
   const updateData = {};
 
   // Validate and add fields to update
-  if (name) {
-    if (name.trim().length < 2) {
+  if (sanitizedData.name) {
+    if (sanitizedData.name.length < 2) {
       return next(new AppError("Le nom doit contenir au moins 2 caractères", 400));
     }
-    updateData.name = name.trim();
+    updateData.name = sanitizedData.name;
   }
 
-  if (email) {
-    if (!validator.isEmail(email)) {
+  if (sanitizedData.email) {
+    if (!validator.isEmail(sanitizedData.email)) {
       return next(new AppError("L'email est invalide", 400));
     }
     
     // Check if email is already taken by another user
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    const existingUser = await User.findOne({ email: sanitizedData.email });
     if (existingUser && existingUser._id.toString() !== req.user._id.toString()) {
       return next(new AppError("Cet email est déjà utilisé", 409));
     }
     
-    updateData.email = email.trim().toLowerCase();
+    updateData.email = sanitizedData.email;
   }
 
-  if (address) {
-    if (address.trim().length < 4) {
+  if (sanitizedData.address) {
+    if (sanitizedData.address.length < 4) {
       return next(new AppError("L'adresse doit contenir au moins 4 caractères", 400));
     }
-    updateData.address = validator.escape(address.trim());
+    updateData.address = sanitizedData.address;
   }
 
   // Update user using findByIdAndUpdate to avoid triggering password hash pre-save hook
@@ -495,7 +506,10 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
     return next(new AppError("Veuillez fournir une adresse email", 400));
   }
 
-  const user = await User.findOne({ email: email.toLowerCase() });
+  // Sanitize email input
+  const sanitizedEmail = sanitizeEmail(email);
+
+  const user = await User.findOne({ email: sanitizedEmail });
 
   // Always send a success-like response to prevent user enumeration
   const successResponse = {

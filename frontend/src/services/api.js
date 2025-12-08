@@ -304,7 +304,7 @@ export const ordersAPI = {
   // Cancel an order
   cancelOrder: async (orderId) => {
     try {
-      const response = await apiClient.patch(`/orders/${orderId}/cancel`);
+      const response = await apiClient.delete(`/orders/${orderId}/cancel`);
       return response.data?.data?.order;
     } catch (error) {
       throw new Error(
@@ -331,7 +331,7 @@ export const ordersAPI = {
   // Update product statuses in an order (Producteur only)
   updateProductStatus: async (orderId, updates) => {
     try {
-      const response = await apiClient.patch(`/orders/${orderId}/status`, { updates });
+      const response = await apiClient.put(`/orders/${orderId}/products/status`, { updates });
       return response.data?.data?.order;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Erreur lors de la mise à jour du statut');
@@ -409,5 +409,129 @@ export const userAPI = {
     }
   },
 };
+
+export const adminAPI = {
+  getDashboardStats: async () => {
+    try {
+      const response = await apiClient.get('/admin/stats');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des statistiques');
+    }
+  },
+  getAllUsers: async () => {
+    try {
+      const response = await apiClient.get('/users');
+      return response.data;
+    }  catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des utilisateurs');
+    }
+  },
+  getUserById: async (userId) => { // New Method
+    try {
+      const response = await apiClient.get(`/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération de l\'utilisateur');
+    }
+  },
+  deleteUser: async (userId) => {
+    try {
+      const response = await apiClient.delete(`/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la suppression de l'utilisateur");
+    }
+  },
+  updateUser: async (userId, userData) => {
+    try {
+      const response = await apiClient.put(`/users/${userId}`, userData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour de l'utilisateur");
+    }
+  },
+  getAllProducts: async () => {
+    try {
+      const response = await apiClient.get('/products');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des produits');
+    }
+  },
+  getProductById: async (productId) => { // New Method
+    try {
+      const response = await apiClient.get(`/products/${productId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération du produit');
+    }
+  },
+  deleteProduct: async (productId) => {
+    try {
+      const response = await apiClient.delete(`/products/admin/${productId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la suppression du produit');
+    }
+  },
+  updateProduct: async (productId, productData) => {
+    try {
+      const response = await apiClient.put(`/products/admin/${productId}`, productData);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour du produit");
+    }
+  },
+  getAllOrders: async () => {
+    try {
+      const response = await apiClient.get('/orders/admin');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des commandes');
+    }
+  },
+  getOrderById: async (orderId) => { // New Method
+    try {
+      const response = await apiClient.get(`/orders/admin/${orderId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération de la commande');
+    }
+  },
+  updateOrderStatus: async (orderId, status) => {
+    try {
+      const response = await apiClient.put(`/orders/admin/${orderId}/status`, { status });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour de la commande");
+    }
+  },
+  updateProductStatusInOrder: async (orderId, updates) => { // New Method
+    try {
+      const response = await apiClient.put(`/orders/admin/${orderId}/products/status`, { updates });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour du statut des produits dans la commande");
+    }
+  },
+  getAllComments: async () => {
+    try {
+      const response = await apiClient.get('/comments/admin');
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des commentaires');
+    }
+  },
+  deleteComment: async (commentId) => {
+    try {
+      const response = await apiClient.delete(`/comments/admin/${commentId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la suppression du commentaire');
+    }
+  },
+};
+
 
 export default apiClient;

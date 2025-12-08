@@ -5,6 +5,7 @@ import User from "../models/userModel.js";
 import Product from "../models/productsModel.js";
 import orderModel from "../models/orderModel.js";
 import emailService from "../services/emailService.js";
+import { sanitizeObjectId, sanitizeString } from "../utils/sanitize.js";
 
 // @desc Create a new order
 // @route POST /api/orders
@@ -201,15 +202,129 @@ export const getAllOrders = catchAsync(async (req, res, next) => {
   });
 });
 
-// @desc getProductedOrder
-// @route GET /api/orders/producteur
-// @access Private/Producteur
-export const getProducteurOrders = catchAsync(async (req, res, next) => {
-  const producteurId = req.user._id;
+// @desc Get single order by ID for admin
+// @route GET /api/orders/admin/:id
+// @access Private/Admin
+export const getOrderById = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  logger.info(`Fetching order ${id} for admin`);
 
-  logger.info(
-    `Fetching orders for producer: ${producteurId} - ${req.user.name}`
-  );
+  const order = await orderModel
+    .findById(id)
+    .populate("clientId", "name email")
+    .populate("products.productId", "name price image producteurId")
+    .lean(); // Use .lean() for plain JS objects, faster if not saving
+
+  if (!order) {
+    return next(new AppError("Order not found", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Order retrieved successfully",
+    data: {
+      order,
+    },
+  });
+});
+
+// @desc Get all orders for admin
+// @route GET /api/orders/admin
+// @access Private/Admin
+    
+    // @desc    Update product statuses within an order by admin
+    // @route   PUT /api/orders/admin/:orderId/products/status
+    // @access  Private/Admin
+    export const updateProductStatusInOrder = catchAsync(async (req, res, next) => {
+      const session = await mongoose.startSession();
+      session.startTransaction();
+    
+      try {
+        const { orderId } = req.params;
+        const { updates } = req.body; // Array of { productId, status }
+    
+        logger.info(`Admin ${req.user._id} attempting to update product statuses for order ${orderId}`);
+    
+        if (!updates || !Array.isArray(updates) || updates.length === 0) {
+          return next(new AppError("No product updates provided", 400));
+        }
+    
+        const PRODUCT_STATUS_ENUM = orderModel.schema.path("products.0.status").enumValues;
+    
+        const order = await orderModel
+          .findById(orderId)
+          .populate("products.productId")
+          .session(session);
+    
+        if (!order) {
+          return next(new AppError("Order not found", 404));
+        }
+    
+        let orderModified = false;
+        for (const update of updates) {
+          const { productId, status } = update;
+    
+          if (!PRODUCT_STATUS_ENUM.includes(status)) {
+            throw new AppError(`Invalid status: ${status} for product ${productId}`, 400);
+          }
+    
+          const productEntry = order.products.find(
+            (p) => p.productId && p.productId._id.toString() === productId
+          );
+    
+          if (!productEntry) {
+            throw new AppError(`Product ${productId} not found in order ${orderId}`, 404);
+          }
+    
+          if (productEntry.status !== status) {
+            productEntry.status = status;
+            orderModified = true;
+            logger.info(`Product ${productId} status in order ${orderId} updated to ${status}`);
+          }
+        }
+    
+        if (orderModified) {
+          // Recalculate overall order status based on individual product statuses
+          const allProductsDelivered = order.products.every(p => p.status === "Livré");
+          const someProductsDeliveredOrReady = order.products.some(p => p.status === "Prêt" || p.status === "Livré");
+    
+          if (allProductsDelivered) {
+            order.status = "Complète";
+          } else if (someProductsDeliveredOrReady) {
+            order.status = "Partiellement complète";
+          } else {
+            order.status = "En cours";
+          }
+          logger.info(`Order ${orderId} overall status recalculated to ${order.status}`);
+          await order.save({ session });
+        } else {
+          logger.info(`No product statuses were modified for order ${orderId}`);
+        }
+    
+        await session.commitTransaction();
+        session.endSession();
+    
+        // Optionally send email notifications here based on status changes
+    
+        res.status(200).json({
+          status: "success",
+          message: "Product statuses in order updated successfully",
+          data: { order },
+        });
+      } catch (err) {
+        await session.abortTransaction();
+        session.endSession();
+        logger.error(`Error updating product statuses in order ${req.params.orderId}: ${err.message}`);
+        next(err);
+      }
+    });
+    
+    // @desc getProductedOrder
+    // @route GET /api/orders/producteur
+    // @access Private/Producteur
+    export const getProducteurOrders = catchAsync(async (req, res, next) => {
+      const producteurId = req.user._id;
+    
 
   // Find all orders, but only populate products that belong to this producer
   const orders = await orderModel
@@ -554,5 +669,39 @@ export const cancelOrder = catchAsync(async (req, res, next) => {
     });
     next(err); // let globalErrorHandler handle it
   }
+});
+
+// @desc    Update order status by admin
+// @route   PUT /api/orders/admin/:id/status
+// @access  Private/Admin
+export const adminUpdateOrderStatus = catchAsync(async (req, res, next) => {
+    const { status } = req.body;
+    
+    // Sanitize and validate orderId
+    const orderId = sanitizeObjectId(req.params.id);
+    if (!orderId) {
+        return next(new AppError("Invalid order ID", 400));
+    }
+    
+    // Sanitize status string
+    const sanitizedStatus = sanitizeString(status, { maxLength: 50 });
+    
+    const ORDER_STATUS_ENUM = orderModel.schema.path("status").enumValues;
+    if (!sanitizedStatus || !ORDER_STATUS_ENUM.includes(sanitizedStatus)) {
+        return next(new AppError("Invalid status provided", 400));
+    }
+
+    const order = await orderModel.findById(orderId);
+
+    if (order) {
+        order.status = sanitizedStatus;
+        const updatedOrder = await order.save();
+        res.status(200).json({
+            success: true,
+            data: updatedOrder,
+        });
+    } else {
+        return next(new AppError("Order not found", 404));
+    }
 });
 

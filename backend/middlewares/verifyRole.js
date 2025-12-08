@@ -7,15 +7,14 @@ export const verifyRole = (...roles) => {
 
     return (req, res, next) => {
 
-        const userRole = req.user.role;
+        const userRole = req.user.role; // Access role directly from req.user (which is the freshUser from DB)
 
         // Logging information about the user
-        logger.debug(`User role verification`, {
-            userId: req.user._id,
-            userName: req.user.name,
-            userRole: userRole,
-            allowedRoles: roles
-        });
+        logger.debug(`User role verification:
+          - User ID: ${req.user._id}
+          - User Name: ${req.user.name}
+          - User Role (from DB): ${userRole}
+          - Required Roles: ${roles.join(', ')}`);
         
         // Check if the user role is included in the allowed roles
         if (!roles.includes(userRole)) {

@@ -2,6 +2,7 @@ import User from "../models/userModel.js";
 import Product from "../models/productsModel.js";
 import { catchAsync, AppError, handleError } from "../utils/handleError.js";
 import { logger } from "../services/logger.js";
+import { sanitizeObjectId } from "../utils/sanitize.js";
 
 // @desc    Get all producers
 // @route   GET /api/producers
@@ -41,8 +42,14 @@ export const getProducteurById = catchAsync(async (req, res) => {
     // Getting the id of the producteur from the params
     const { id } = req.params;
 
+    // Sanitize and validate ObjectId
+    const sanitizedId = sanitizeObjectId(id);
+    if (!sanitizedId) {
+      throw new AppError("ID de producteur invalide", 400);
+    }
+
     // Finding the producteur by id
-    const producteur = await User.findById(id).select(
+    const producteur = await User.findById(sanitizedId).select(
       "name email address role createdAt"
     );
     if (!producteur) {
@@ -76,15 +83,21 @@ export const getProductsByProducteur = catchAsync(async (req, res) => {
     // Getting the id of the producteur from the params
     const { id } = req.params;
 
+    // Sanitize and validate ObjectId
+    const sanitizedId = sanitizeObjectId(id);
+    if (!sanitizedId) {
+      throw new AppError("ID de producteur invalide", 400);
+    }
+
     // Finding the producteur by id
-    const producteur = await User.findById(id).select(
+    const producteur = await User.findById(sanitizedId).select(
       "name email address role"
     );
     if (!producteur) {
       throw new AppError("Producteur non trouvé", 404);
     }
     // Getting all products of the producteur
-    const products = await Product.find({ producteurId: id })
+    const products = await Product.find({ producteurId: sanitizedId })
       .select("name price description image category quantity createdAt")
       .sort({ createdAt: -1 });
 
