@@ -10,8 +10,10 @@ const AdminComments = () => {
     const fetchComments = async () => {
         try {
             const data = await adminAPI.getAllComments();
-            setComments(data.data);
+            console.log('Comments response:', data);
+            setComments(data.data || []);
         } catch (err) {
+            console.error('Comments error:', err);
             setError(err.message);
         } finally {
             setLoading(false);
@@ -46,25 +48,30 @@ const AdminComments = () => {
     return (
         <div className={styles.comments}>
             <h1>Comments Management</h1>
-            <table className={styles.table}>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>User</th>
-                        <th>Producer</th>
-                        <th>Comment</th>
-                        <th>Rating</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {comments.map((comment) => (
-                        <tr key={comment._id}>
-                            <td>{comment._id}</td>
-                            <td>{comment.userId.name}</td>
-                            <td>{comment.ProducteurId.name}</td>
-                            <td>{comment.comment}</td>
-                            <td>{comment.rating}</td>
+            {comments.length === 0 ? (
+                <div className={styles.emptyState}>
+                    <p>No comments found.</p>
+                </div>
+            ) : (
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Producer</th>
+                            <th>Comment</th>
+                            <th>Rating</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {comments.map((comment) => (
+                            <tr key={comment._id}>
+                                <td>{comment._id}</td>
+                                <td>{comment.userId?.name || 'N/A'}</td>
+                                <td>{comment.ProducteurId?.name || 'N/A'}</td>
+                                <td>{comment.comment}</td>
+                                <td>{comment.rating}</td>
                             <td>
                                 <button
                                     className={`${styles.button} ${styles.deleteButton}`}
@@ -77,6 +84,7 @@ const AdminComments = () => {
                     ))}
                 </tbody>
             </table>
+            )}
         </div>
     );
 };

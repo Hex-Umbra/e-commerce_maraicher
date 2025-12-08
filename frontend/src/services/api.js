@@ -423,7 +423,7 @@ export const adminAPI = {
     try {
       const response = await apiClient.get('/users');
       return response.data;
-    } catch (error) {
+    }  catch (error) {
       throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des utilisateurs');
     }
   },
@@ -491,12 +491,28 @@ export const adminAPI = {
       throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des commandes');
     }
   },
+  getOrderById: async (orderId) => { // New Method
+    try {
+      const response = await apiClient.get(`/orders/admin/${orderId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération de la commande');
+    }
+  },
   updateOrderStatus: async (orderId, status) => {
     try {
       const response = await apiClient.put(`/orders/admin/${orderId}/status`, { status });
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour de la commande");
+    }
+  },
+  updateProductStatusInOrder: async (orderId, updates) => { // New Method
+    try {
+      const response = await apiClient.put(`/orders/admin/${orderId}/products/status`, { updates });
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Erreur lors de la mise à jour du statut des produits dans la commande");
     }
   },
   getAllComments: async () => {
@@ -516,5 +532,6 @@ export const adminAPI = {
     }
   },
 };
+
 
 export default apiClient;

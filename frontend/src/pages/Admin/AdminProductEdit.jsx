@@ -22,8 +22,13 @@ const AdminProductEdit = () => {
         const fetchProduct = async () => {
             try {
                 const response = await adminAPI.getProductById(productId);
-                setProduct(response.data.product); // Assuming response.data.product contains the product object
+                if (response && response.product) {
+                    setProduct(response.product); // Corrected from response.data.product
+                } else {
+                    setError("Product data not found in response.");
+                }
             } catch (err) {
+                console.error("Error fetching product:", err);
                 setError(err.message);
             } finally {
                 setLoading(false);

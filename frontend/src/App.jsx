@@ -32,7 +32,8 @@ import AdminUsers from './pages/Admin/AdminUsers';
 import AdminUserEdit from './pages/Admin/AdminUserEdit';
 import AdminProducts from './pages/Admin/AdminProducts';
 import AdminProductEdit from './pages/Admin/AdminProductEdit'; // New Import
-import AdminOrders from './pages/Admin/AdminOrders';
+import AdminOrdersList from './pages/Admin/AdminOrdersList';
+import AdminOrderEdit from './pages/Admin/AdminOrderEdit';
 import AdminComments from './pages/Admin/AdminComments';
 import PublicLayout from './components/common/PublicLayout/PublicLayout';
 
@@ -76,8 +77,9 @@ const App = () => {
                   <Route path="users" element={<AdminUsers />} />
                   <Route path="users/edit/:userId" element={<AdminUserEdit />} />
                   <Route path="products" element={<AdminProducts />} />
-                  <Route path="products/edit/:productId" element={<AdminProductEdit />} /> {/* New Admin Product Edit Route */}
-                  <Route path="orders" element={<AdminOrders />} />
+                  <Route path="products/edit/:productId" element={<AdminProductEdit />} />
+                  <Route path="orders" element={<AdminOrdersList />} />
+                  <Route path="orders/:orderId/edit" element={<AdminOrderEdit />} />
                   <Route path="comments" element={<AdminComments />} />
                 </Route>
               </Route>

@@ -12,8 +12,10 @@ const AdminUsers = () => {
     const fetchUsers = async () => {
         try {
             const data = await adminAPI.getAllUsers();
-            setUsers(data.data);
+            console.log('Users response:', data);
+            setUsers(data.data || []);
         } catch (err) {
+            console.error('Users error:', err);
             setError(err.message);
         } finally {
             setLoading(false);
@@ -53,18 +55,23 @@ const AdminUsers = () => {
     return (
         <div className={styles.users}>
             <h1>Users Management</h1>
-            <table className={styles.table}>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {users.map((user) => (
+            {users.length === 0 ? (
+                <div className={styles.emptyState}>
+                    <p>No users found.</p>
+                </div>
+            ) : (
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map((user) => (
                         <tr key={user._id}>
                             <td>{user._id}</td>
                             <td>{user.name}</td>
@@ -85,11 +92,10 @@ const AdminUsers = () => {
                                 </button>
                             </td>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                        ))}
+                    </tbody>
+                </table>
+            )}
         </div>
     );
-};
-
-export default AdminUsers;
+};export default AdminUsers;

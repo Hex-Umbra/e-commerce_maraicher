@@ -12,8 +12,10 @@ const AdminProducts = () => {
     const fetchProducts = async () => {
         try {
             const data = await adminAPI.getAllProducts();
-            setProducts(data.products);
+            console.log('Products response:', data);
+            setProducts(data.products || []);
         } catch (err) {
+            console.error('Products error:', err);
             setError(err.message);
         } finally {
             setLoading(false);
@@ -53,19 +55,24 @@ const AdminProducts = () => {
     return (
         <div className={styles.products}>
             <h1>Products Management</h1>
-            <table className={styles.table}>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {products.map((product) => (
+            {products.length === 0 ? (
+                <div className={styles.emptyState}>
+                    <p>No products found.</p>
+                </div>
+            ) : (
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {products.map((product) => (
                         <tr key={product._id}>
                             <td>{product._id}</td>
                             <td>
@@ -94,6 +101,7 @@ const AdminProducts = () => {
                     ))}
                 </tbody>
             </table>
+            )}
         </div>
     );
 };

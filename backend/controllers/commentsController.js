@@ -268,7 +268,7 @@ export const deleteCommentByAdmin = catchAsync(async (req, res, next) => {
     return next(new AppError("Comment not found", 404));
   }
 
-  await comment.remove();
+  await comment.deleteOne();
 
   logger.info(`Comment ${id} deleted by admin ${req.user._id}`);
 
