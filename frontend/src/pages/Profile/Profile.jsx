@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import ProfileCard from "../../components/common/ProfileCard";
 import ImageWithFallback from "../../components/common/ImageWithFallback/ImageWithFallback";
@@ -39,6 +39,7 @@ const Profile = () => {
   const [editImagePreview, setEditImagePreview] = useState(null);
 
   const isProducer = user?.role === "producteur";
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -385,6 +386,14 @@ const Profile = () => {
         <div className={styles.cardWrap}>
           <ProfileCard user={user} />
         </div>
+
+        {isAdmin && (
+          <div className={styles.adminSection}>
+            <Link to="/admin" className={styles.adminButton}>
+              Accéder au panneau d'administration
+            </Link>
+          </div>
+        )}
 
         {isProducer && (
           <section className={styles.manageSection} aria-labelledby="manage-title">
