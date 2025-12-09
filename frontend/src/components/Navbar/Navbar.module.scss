@@ -241,8 +241,8 @@
   }
 
   &.active {
-    color: $accent !important;
-    background-color: rgba(0, 0, 0, 0.08) !important;
+    color: $white !important;
+    background-color: $primary !important;
     transform: scale(1.05);
     font-weight: 600 !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -328,8 +328,8 @@
       }
 
       &.active {
-        background-color: rgba(0, 0, 0, 0.12);
-        color: $accent;
+        background-color: $primary;
+        color: $white;
         transform: scale(1.08);
         font-weight: 700;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -359,8 +359,8 @@
       }
 
       &.active {
-        background-color: rgba(0, 0, 0, 0.12);
-        color: $accent;
+        background-color: $primary;
+        color: $white;
         transform: scale(1.08);
         font-weight: 700;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -405,8 +405,8 @@
       }
 
       &.active {
-        color: $accent !important;
-        background-color: rgba(0, 0, 0, 0.08) !important;
+        color: $white !important;
+        background-color: $primary !important;
         transform: scale(1.03) !important;
         font-weight: 600 !important;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
@@ -491,8 +491,8 @@
       }
 
       &.active {
-        color: $accent !important;
-        background-color: rgba(0, 0, 0, 0.12) !important;
+        color: $white !important;
+        background-color: $primary !important;
         transform: scale(1.08) !important;
         font-weight: 700 !important;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;

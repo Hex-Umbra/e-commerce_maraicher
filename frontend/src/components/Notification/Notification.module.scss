@@ -14,27 +14,27 @@
   margin-left: auto;
   
   &.error {
-    background-color: $error-bg;
-    color: darken($error-color, 10%);
-    border: 1px solid $error-border;
+    background-color: #f8d7da;
+    color: #58151c;
+    border: 1px solid #f5c2c7;
   }
   
   &.warning {
-    background-color: $warning-bg;
-    color: darken($warning-color, 15%);
-    border: 1px solid $warning-border;
+    background-color: #fff3cd;
+    color: #664d03;
+    border: 1px solid #ffecb5;
   }
   
   &.info {
-    background-color: $info-bg;
-    color: darken($info-color, 10%);
-    border: 1px solid $info-border;
+    background-color: #cff4fc;
+    color: #055160;
+    border: 1px solid #b6effb;
   }
   
   &.success {
-    background-color: $success-bg;
-    color: darken($success-color, 10%);
-    border: 1px solid $success-border;
+    background-color: #d1e7dd;
+    color: #0a3622;
+    border: 1px solid #badbcc;
   }
 }
 

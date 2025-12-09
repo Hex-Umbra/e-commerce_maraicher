@@ -23,7 +23,7 @@
   margin-bottom: $spacing-xl;
 
   h2 {
-    color: $primary-dark;
+    color: $black;
     margin-bottom: $spacing-md;
     font-size: 1.5rem;
     border-bottom: 2px solid $primary;
@@ -78,6 +78,7 @@
 
 .cta {
   @include link-reset;
+  color: $white !important;
 }
 
 .main {
@@ -87,7 +88,7 @@
 }
 
 .main h1 {
-  color: $white;
+  color: $black;
 }
 
 @include mobile {

@@ -100,6 +100,14 @@
 /* Right-side info panel similar to LoginSection.welcomeText */
 .infoText {
   @include info-panel;
+
+  h2 {
+    color: $black !important;
+  }
+
+  p {
+    color: $black !important;
+  }
 }
 @include mobile {
   .contentWrapper {
