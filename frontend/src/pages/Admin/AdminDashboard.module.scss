@@ -1,35 +1,36 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
 .dashboard {
-    padding: 2rem;
+    padding: $spacing-xl;
 
     h1 {
-        font-size: 2rem;
-        margin-bottom: 2rem;
+        font-size: $font-size-4xl;
+        margin-bottom: $spacing-xl;
     }
 }
 
 .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+    @include grid-cols(auto-fit, 200px);
+    gap: $spacing-lg;
 }
 
 .statCard {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1.5rem;
+    @include card-base;
+    background-color: $gray-light;
+    border: 1px solid $border;
+    padding: $spacing-lg;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
     h2 {
-        font-size: 1.25rem;
-        margin-bottom: 0.5rem;
-        color: #333;
+        font-size: $font-size-xl;
+        margin-bottom: $spacing-sm;
+        color: $gray-dark;
     }
 
     p {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #007bff;
+        font-size: $font-size-3xl;
+        font-weight: $font-weight-bold;
+        color: $secondary;
     }
 }

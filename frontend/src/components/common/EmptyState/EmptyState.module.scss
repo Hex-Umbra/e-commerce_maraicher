@@ -1,52 +1,27 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
 .emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 2rem;
-  text-align: center;
-  background-color: #f9fafb;
-  border: 1px dashed #d1d5db;
-  border-radius: 8px;
-  margin: 1rem 0;
+  @include empty-state;
 }
 
 .icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
+  font-size: $font-size-4xl;
+  margin-bottom: $spacing-md;
   opacity: 0.7;
 }
 
 .message {
-  color: #6b7280;
-  font-size: 1rem;
-  margin: 0 0 1.5rem 0;
+  color: $text-secondary;
+  font-size: $font-size-base;
+  margin: 0 0 $spacing-lg 0;
   max-width: 500px;
 }
 
 .cta {
-  padding: 0.625rem 1.5rem;
-  background-color: #22c55e;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  @include button-custom($success-color, $white);
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-sm;
   text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
   display: inline-block;
-
-  &:hover {
-    background-color: #16a34a;
-  }
-
-  &:focus {
-    outline: 2px solid #22c55e;
-    outline-offset: 2px;
-  }
-
-  &:active {
-    background-color: #15803d;
-  }
 }

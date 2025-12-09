@@ -1,9 +1,12 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
 .users {
-    padding: 2rem;
+    padding: $spacing-xl;
 
     h1 {
-        font-size: 2rem;
-        margin-bottom: 2rem;
+        font-size: $font-size-4xl;
+        margin-bottom: $spacing-xl;
     }
 }
 
@@ -11,7 +14,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: $spacing-xl;
 
     h1 {
         margin-bottom: 0;
@@ -19,19 +22,10 @@
 }
 
 .createButton {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: #28a745;
-    color: white;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: background-color 0.2s ease;
-
-    &:hover {
-        background-color: #218838;
-    }
+    @include button-custom($success-color, $white);
+    padding: $spacing-md-sm $spacing-lg;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-base;
 
     &:active {
         transform: scale(0.98);
@@ -39,43 +33,15 @@
 }
 
 .table {
-    width: 100%;
-    border-collapse: collapse;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-
-    th, td {
-        border: 1px solid #ddd;
-        padding: 0.75rem;
-        text-align: left;
-    }
-
-    th {
-        background-color: #f9f9f9;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
+    @include data-table;
 }
 
 .button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: #007bff;
-    color: white;
-    margin-right: 0.5rem;
-
-    &:hover {
-        background-color: #0056b3;
-    }
+    @include button-primary;
+    padding: $spacing-sm $spacing-md;
+    margin-right: $spacing-sm;
 }
 
 .deleteButton {
-    background-color: #dc3545;
-
-    &:hover {
-        background-color: #c82333;
-    }
+    @include button-delete;
 }

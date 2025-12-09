@@ -1,32 +1,30 @@
+@use "../../styles/variables" as *;
+@use "../../styles/mixins" as *;
+
 .adminProductEdit {
-    padding: 2rem;
-    max-width: 600px;
+    padding: $spacing-xl;
+    max-width: $container-sm;
     margin: 0 auto;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: $gray-light;
+    border-radius: $radius-md;
+    box-shadow: $shadow-md;
 
     h1 {
-        font-size: 2rem;
-        margin-bottom: 1.5rem;
-        color: #333;
+        font-size: $font-size-4xl;
+        margin-bottom: $spacing-lg;
+        color: $gray-dark;
         text-align: center;
     }
 
     form {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
+        @include form-container;
     }
 
     .formGroup {
-        display: flex;
-        flex-direction: column;
+        @include form-group;
 
         label {
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: #555;
+            @include form-label;
         }
 
         input[type="text"],
@@ -34,16 +32,7 @@
         input[type="number"],
         textarea,
         select {
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-            width: 100%;
-            box-sizing: border-box; /* Include padding in width */
-            -webkit-appearance: none; /* Remove default browser styling for select */
-            -moz-appearance: none;
-            appearance: none;
-            background-color: #fff;
+            @include input-base;
         }
 
         textarea {
@@ -53,39 +42,29 @@
     }
 
     button {
-        padding: 0.8rem 1.2rem;
+        padding: $spacing-md-sm $spacing-lg;
         border: none;
-        border-radius: 4px;
+        border-radius: $radius-sm;
         cursor: pointer;
-        font-size: 1rem;
-        transition: background-color 0.2s ease-in-out;
+        font-size: $font-size-base;
+        transition: $transition-fast;
     }
 
     button[type="submit"] {
-        background-color: #007bff;
-        color: white;
-
-        &:hover:not(:disabled) {
-            background-color: #0056b3;
-        }
-
-        &:disabled {
-            background-color: #a0c9f1;
-            cursor: not-allowed;
-        }
+        @include button-primary;
     }
 
-    button[type="button"] { /* For Cancel button */
-        background-color: #6c757d;
-        color: white;
-        margin-top: 0.5rem; /* Space between buttons */
+    button[type="button"] {
+        background-color: $muted;
+        color: $white;
+        margin-top: $spacing-sm;
 
         &:hover:not(:disabled) {
-            background-color: #5a6268;
+            background-color: darken($muted, 10%);
         }
 
         &:disabled {
-            background-color: #c9ccd0;
+            opacity: 0.6;
             cursor: not-allowed;
         }
     }

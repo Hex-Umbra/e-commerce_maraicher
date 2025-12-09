@@ -1,31 +1,24 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
 .loadingState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  text-align: center;
+  @include loading-state;
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #22c55e;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
+  @include spinner;
+  margin-bottom: $spacing-md;
 }
 
 .message {
-  color: #666;
-  font-size: 1rem;
+  color: $text-secondary;
+  font-size: $font-size-base;
   margin: 0;
 }
 
 /* Size variants */
 .small {
-  padding: 1rem;
+  padding: $spacing-md;
 
   .spinner {
     width: 24px;
@@ -34,12 +27,12 @@
   }
 
   .message {
-    font-size: 0.875rem;
+    font-size: $font-size-sm;
   }
 }
 
 .large {
-  padding: 3rem;
+  padding: $spacing-xxl;
 
   .spinner {
     width: 60px;
@@ -48,7 +41,7 @@
   }
 
   .message {
-    font-size: 1.125rem;
+    font-size: $font-size-lg;
   }
 }
 

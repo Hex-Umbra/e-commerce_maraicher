@@ -868,3 +868,112 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+// ===== AVATAR MIXIN =====
+@mixin avatar($size: $avatar-md, $border-width: 2px) {
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  object-fit: cover;
+  border: $border-width solid $border-strong;
+  background: $placeholder-bg;
+}
+
+// ===== DATA TABLE MIXIN =====
+@mixin data-table($zebra: true) {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: $shadow-sm;
+
+  th, td {
+    border: 1px solid $border;
+    padding: $spacing-md-sm;
+    text-align: left;
+  }
+
+  th {
+    background-color: $gray-light;
+    font-weight: $font-weight-semibold;
+  }
+
+  @if $zebra {
+    tbody tr:nth-child(even) {
+      background-color: rgba($gray-light, 0.5);
+    }
+  }
+  
+  tbody tr:hover {
+    background-color: rgba($primary-light, 0.1);
+  }
+}
+
+// ===== TAG COLOR SYSTEM =====
+$tag-colors: (
+  'dairy': (#e3f2fd, #1565c0, #90caf9),
+  'fruit': (#f3e5f5, #7b1fa2, #ce93d8),
+  'vegetable': (#e8f5e8, #2e7d32, #a5d6a7),
+  'meat': (#ffebee, #c62828, #ef9a9a),
+  'grain': (#fff8e1, #f57f17, #fff176),
+  'honey': (#fff3e0, #ef6c00, #ffcc02),
+  'egg': (#fafafa, #424242, #e0e0e0),
+  'bread': (#efebe9, #5d4037, #bcaaa4),
+  'preserved': (#e0f2f1, #00695c, #80cbc4),
+  'beverage': (#e1f5fe, #0277bd, #81d4fa),
+  'herb': (#f1f8e9, #33691e, #aed581),
+  'spice': (#fce4ec, #ad1457, #f8bbd9),
+  'bio': (#e8f5e8, #1b5e20, #4caf50),
+  'local': (#fff3e0, #e65100, #ffb74d),
+  'artisan': (#f3e5f5, #4a148c, #ba68c8),
+  'new': ($primary-light, $primary-dark, $primary),
+  'promo': ($accent-light, $accent-dark, $accent)
+);
+
+@mixin tag($type: 'default') {
+  @include chip-base;
+  
+  @if map-has-key($tag-colors, $type) {
+    $colors: map-get($tag-colors, $type);
+    background: nth($colors, 1);
+    color: nth($colors, 2);
+    border: 1px solid nth($colors, 3);
+  } @else {
+    background: rgba(0,0,0,0.1);
+    color: $text;
+    border: 1px solid $border;
+  }
+}
+
+// ===== STATUS BADGE WITH COLORS =====
+@mixin status-badge-colored($status) {
+  @include status-badge;
+  
+  @if $status == 'complete' or $status == 'completed' or $status == 'success' {
+    background: rgba(0, 200, 83, 0.15);
+    color: darken(#00c853, 20%);
+  } @else if $status == 'cancelled' or $status == 'canceled' or $status == 'failed' {
+    background: rgba(244, 67, 54, 0.15);
+    color: darken(#f44336, 10%);
+  } @else if $status == 'pending' or $status == 'processing' {
+    background: rgba(255, 193, 7, 0.15);
+    color: darken(#ffc107, 20%);
+  } @else if $status == 'partial' or $status == 'shipped' {
+    background: rgba(33, 150, 243, 0.15);
+    color: darken(#2196f3, 15%);
+  }
+}
+
+// ===== DIVIDER MIXIN =====
+@mixin divider($orientation: horizontal, $color: $border, $style: solid) {
+  @if $orientation == horizontal {
+    border: none;
+    height: 1px;
+    background-color: $color;
+    @if $style == dashed {
+      background-image: linear-gradient(to right, $color 50%, transparent 50%);
+      background-size: 10px 1px;
+    }
+  } @else {
+    width: 1px;
+    background-color: $color;
+  }
+}

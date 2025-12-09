@@ -2,44 +2,44 @@
 @use '../../../styles/mixins' as *;
 
 .filterRow {
-  margin-bottom: 1.5rem;
+  margin-bottom: $spacing-lg;
 }
 
 .chipRow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
+  gap: $spacing-md-sm;
+  padding: $spacing-md;
   background: rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: $radius-md;
+  border: 1px solid $border-light;
 
   @include mobile {
-    gap: 0.5rem;
-    padding: 0.75rem;
+    gap: $spacing-sm;
+    padding: $spacing-md-sm;
   }
 }
 
 .filterLabel {
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
   color: $text;
-  font-size: 1rem;
-  margin-right: 0.5rem;
+  font-size: $font-size-base;
+  margin-right: $spacing-sm;
 
   @include mobile {
-    font-size: 0.9rem;
+    font-size: $font-size-sm;
     width: 100%;
-    margin-bottom: 0.25rem;
+    margin-bottom: $spacing-xs;
   }
 }
 
 .filterIcon {
   display: inline-flex;
   align-items: center;
-  font-size: 1.25rem;
+  font-size: $font-size-xl;
   color: $primary;
-  margin-right: 0.25rem;
+  margin-right: $spacing-xs;
 
   @include mobile {
     display: none;
@@ -47,16 +47,12 @@
 }
 
 .chip {
-  padding: 0.5rem 1rem;
+  @include chip-base;
+  padding: $spacing-sm $spacing-md;
   border: 1px solid $primary;
-  background: white;
+  background: $white;
   color: $primary;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  white-space: nowrap;
+  font-size: $font-size-sm;
 
   &:hover {
     background: rgba($primary, 0.1);
@@ -73,14 +69,14 @@
   }
 
   @include mobile {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
+    padding: $spacing-xs $spacing-md-sm;
+    font-size: $font-size-xs;
   }
 }
 
 .chipActive {
   background: $primary;
-  color: white;
+  color: $white;
 
   &:hover {
     background: $primary-dark;
@@ -90,17 +86,17 @@
 .menuPanel {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  padding: 1rem;
-  margin-top: 0.5rem;
+  gap: $spacing-md-sm;
+  padding: $spacing-md;
+  margin-top: $spacing-sm;
   background: rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: $radius-md;
+  border: 1px solid $border-light;
   animation: slideDown 0.2s ease;
 
   @include mobile {
-    gap: 0.5rem;
-    padding: 0.75rem;
+    gap: $spacing-sm;
+    padding: $spacing-md-sm;
   }
 }
 

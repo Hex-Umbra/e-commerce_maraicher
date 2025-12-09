@@ -95,6 +95,7 @@ $z-tooltip: 1070;
 /* Spacing scale */
 $spacing-xs: 0.25rem;
 $spacing-sm: 0.5rem;
+$spacing-md-sm: 0.75rem; // Between sm and md
 $spacing-md: 1rem;
 $spacing-lg: 1.5rem;
 $spacing-xl: 2rem;
@@ -108,3 +109,61 @@ $section-padding: 4rem 0;
 /* Form layout variables */
 $form-gap: 1.25rem;
 $form-padding: 2rem;
+
+/* Extended border variants */
+$border-light: rgba(0,0,0,0.08);
+$border-medium: rgba(0,0,0,0.2);
+$border-strong: rgba(0,0,0,0.35);
+$border-dashed: rgba(0,0,0,0.15);
+
+/* Placeholder colors */
+$placeholder-bg: #dddddd;
+$placeholder-bg-light: #eeeeee;
+
+/* Border radius variants */
+$radius-pill: 999px;
+
+/* Shadow scale */
+$shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1); // Current $shadow
+$shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+$shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.2);
+$shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+/* Typography scale */
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+$font-weight-black: 900;
+
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-base: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-2xl: 1.5rem;
+$font-size-3xl: 1.875rem;
+$font-size-4xl: 2.25rem;
+
+/* Avatar sizes */
+$avatar-xs: 32px;
+$avatar-sm: 48px;
+$avatar-md: 64px;
+$avatar-lg: 96px;
+$avatar-xl: 120px;
+$avatar-2xl: 160px;
+
+/* Admin color scheme */
+$admin-sidebar-bg: #2c3e50;
+$admin-sidebar-text: #ecf0f1;
+$admin-sidebar-hover: #34495e;
+$admin-sidebar-active: $primary;
+$admin-content-bg: #f4f7fa;
+
+/* Container variants */
+$container-sm: 600px;
+$container-md: $container-tablet; // 900px
+$container-lg: $container; // 1400px

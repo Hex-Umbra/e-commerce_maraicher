@@ -4,37 +4,37 @@
 .notification {
   display: flex;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: $spacing-md-sm $spacing-md;
   border-radius: $radius-md;
-  font-size: 0.9rem;
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  box-shadow: $shadow-md;
   animation: slideIn 0.3s ease-out;
   max-width: 400px;
   margin-left: auto;
   
   &.error {
-    background-color: #fee;
-    color: #c53030;
-    border: 1px solid #feb2b2;
+    background-color: $error-bg;
+    color: darken($error-color, 10%);
+    border: 1px solid $error-border;
   }
   
   &.warning {
-    background-color: #fffbeb;
-    color: #d69e2e;
-    border: 1px solid #fbd38d;
+    background-color: $warning-bg;
+    color: darken($warning-color, 15%);
+    border: 1px solid $warning-border;
   }
   
   &.info {
-    background-color: #ebf8ff;
-    color: #3182ce;
-    border: 1px solid #90cdf4;
+    background-color: $info-bg;
+    color: darken($info-color, 10%);
+    border: 1px solid $info-border;
   }
   
   &.success {
-    background-color: #f0fff4;
-    color: #38a169;
-    border: 1px solid #9ae6b4;
+    background-color: $success-bg;
+    color: darken($success-color, 10%);
+    border: 1px solid $success-border;
   }
 }
 
@@ -43,7 +43,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  gap: 0.75rem;
+  gap: $spacing-md-sm;
 }
 
 .message {
@@ -54,12 +54,12 @@
 .closeButton {
   background: none;
   border: none;
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: $spacing-xs;
   border-radius: $radius-sm;
-  transition: all 0.2s ease;
+  transition: $transition-fast;
   color: inherit;
   opacity: 0.7;
   
@@ -94,28 +94,23 @@
 @include mobile {
   .notification {
     max-width: 300px;
-    padding: 0.6rem 0.8rem;
-    font-size: 0.85rem;
-  }
-  
-  .content {
-    gap: 0.5rem;
+    padding: $spacing-sm $spacing-md-sm;
+    font-size: $font-size-xs;
   }
   
   .closeButton {
-    font-size: 1.1rem;
-    padding: 0.2rem;
+    font-size: $font-size-lg;
   }
 }
 
 @include small-mobile {
   .notification {
     max-width: 250px;
-    padding: 0.5rem 0.7rem;
-    font-size: 0.8rem;
+    padding: $spacing-sm $spacing-sm;
+    font-size: $font-size-xs;
   }
   
   .closeButton {
-    font-size: 1rem;
+    font-size: $font-size-base;
   }
 }
