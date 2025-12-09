@@ -72,6 +72,7 @@
 // Field Error Message
 .fieldError {
   @include field-error;
+  color: $white !important;
 }
 
 // Submit Button States

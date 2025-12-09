@@ -173,7 +173,7 @@ export const register = catchAsync(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    message: "Utilisateur créé avec succès. Veuillez vérifier votre email pour activer votre compte.",
+    message: "Utilisateur créé avec succès. Veuillez vérifier votre email pour activer votre compte. N'oubliez pas de consulter votre dossier spam si vous ne trouvez pas l'email.",
     user: {
       id: newUser._id,
       name: newUser.name,
