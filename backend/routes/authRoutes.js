@@ -12,6 +12,7 @@ import {
   resetPassword
 } from "../controllers/authController.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
+import { uploadImage } from "../middlewares/uploadImage.js";
 
 const authRouter = express.Router();
 
@@ -34,8 +35,8 @@ authRouter.patch("/reset-password/:token", resetPassword);
 // Get current user (me) - Check authentication status
 authRouter.get("/me", verifyToken, getMe);
 
-// Update user profile
-authRouter.patch("/profile", verifyToken, updateProfile);
+// Update user profile - Now supports image upload
+authRouter.patch("/profile", verifyToken, uploadImage, updateProfile);
 
 // User logout
 authRouter.post("/logout", verifyToken, logout);

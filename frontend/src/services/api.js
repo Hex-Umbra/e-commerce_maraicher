@@ -365,13 +365,28 @@ export const supportAPI = {
 // User/Auth API functions
 export const userAPI = {
   // Update user profile
-  updateProfile: async ({ name, email, address }) => {
+  updateProfile: async ({ name, email, address, profilePicture }) => {
     try {
-      const response = await apiClient.patch('/auth/profile', {
-        name,
-        email,
-        address,
-      });
+      // If there's an image file, always send as FormData
+      if (profilePicture) {
+        const formData = new FormData();
+        // Only append fields that are defined
+        if (name !== undefined) formData.append('name', name);
+        if (email !== undefined) formData.append('email', email);
+        if (address !== undefined) formData.append('address', address);
+        formData.append('profilePicture', profilePicture);
+
+        const response = await apiClient.patch('/auth/profile', formData);
+        return response.data;
+      }
+      
+      // Otherwise send as JSON (only changed fields)
+      const updates = {};
+      if (name !== undefined) updates.name = name;
+      if (email !== undefined) updates.email = email;
+      if (address !== undefined) updates.address = address;
+
+      const response = await apiClient.patch('/auth/profile', updates);
       // Backend returns: { success, message, user }
       return response.data;
     } catch (error) {

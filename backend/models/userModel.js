@@ -42,6 +42,14 @@ const userSchema = new Schema({
       price: { type: Number, required: true },
     },
   ],
+  profilePicture: {
+    type: String,
+    default: null,
+  },
+  profilePicturePublicId: {
+    type: String,
+    default: null,
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

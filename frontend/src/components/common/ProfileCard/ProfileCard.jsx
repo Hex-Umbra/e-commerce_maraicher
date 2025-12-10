@@ -28,7 +28,8 @@ const ProfileCard = ({ user: userProp, onEdit }) => {
 
   const roleLabel = role === "producteur" ? "Producteur" : role === "admin" ? "Admin" : "Client";
 
-  const avatarSrc = getDefaultAvatar(displayName);
+  // Use uploaded profile picture if available, otherwise use default avatar
+  const avatarSrc = user?.profilePicture || getDefaultAvatar(displayName);
 
   const goToOrders = () => {
     navigate(ROUTES.orders);
