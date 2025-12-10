@@ -1,11 +1,12 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
+@use 'sass:color';
 
 .navbar {
   height: $header-h;
-  background-color: $primary-dark;
+  background-color: color.adjust($primary, $lightness: -15%);
   @include flex-center;
-  box-shadow: $shadow;
+  box-shadow: 0 2px 8px;
   position: relative;
   flex-direction: column;
 }
