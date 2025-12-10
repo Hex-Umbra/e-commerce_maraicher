@@ -361,11 +361,16 @@
   padding: 0.75rem 1.25rem;
   font-size: 0.95rem;
   color: $text-secondary;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
 
   a {
     @include link-reset;
     @include button-secondary;
-    margin-left: 0.5rem;
+    margin-left: 0;
     padding: 0.35rem 0.75rem;
   }
 }
@@ -381,5 +386,20 @@
   .backRow {
     width: 100%;
     max-width: 100%;
+  }
+
+  .loginNotice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.25rem;
+
+    a {
+      margin-left: 0;
+      width: 100%;
+      max-width: 250px;
+    }
   }
 }
