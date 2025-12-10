@@ -367,24 +367,26 @@ export const userAPI = {
   // Update user profile
   updateProfile: async ({ name, email, address, profilePicture }) => {
     try {
-      // If there's an image file, send as FormData
+      // If there's an image file, always send as FormData
       if (profilePicture) {
         const formData = new FormData();
-        if (name) formData.append('name', name);
-        if (email) formData.append('email', email);
-        if (address) formData.append('address', address);
+        // Only append fields that are defined
+        if (name !== undefined) formData.append('name', name);
+        if (email !== undefined) formData.append('email', email);
+        if (address !== undefined) formData.append('address', address);
         formData.append('profilePicture', profilePicture);
 
         const response = await apiClient.patch('/auth/profile', formData);
         return response.data;
       }
       
-      // Otherwise send as JSON
-      const response = await apiClient.patch('/auth/profile', {
-        name,
-        email,
-        address,
-      });
+      // Otherwise send as JSON (only changed fields)
+      const updates = {};
+      if (name !== undefined) updates.name = name;
+      if (email !== undefined) updates.email = email;
+      if (address !== undefined) updates.address = address;
+
+      const response = await apiClient.patch('/auth/profile', updates);
       // Backend returns: { success, message, user }
       return response.data;
     } catch (error) {

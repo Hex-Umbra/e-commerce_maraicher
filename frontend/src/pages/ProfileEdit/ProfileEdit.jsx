@@ -92,13 +92,24 @@ const ProfileEdit = () => {
 
     setIsSubmitting(true);
     try {
+      // Build update object with only changed fields
+      const updates = {};
+      
+      if (form.name !== initial.name) {
+        updates.name = form.name.trim();
+      }
+      if (form.email !== initial.email) {
+        updates.email = form.email.trim();
+      }
+      if (form.address !== initial.address) {
+        updates.address = form.address.trim();
+      }
+      if (profilePictureFile) {
+        updates.profilePicture = profilePictureFile;
+      }
+
       // Call backend API to update profile
-      const response = await userAPI.updateProfile({
-        name: form.name.trim(),
-        email: form.email.trim(),
-        address: form.address.trim(),
-        profilePicture: profilePictureFile,
-      });
+      const response = await userAPI.updateProfile(updates);
 
       // Update local context with the response from backend
       if (response.success && response.user) {

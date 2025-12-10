@@ -426,7 +426,15 @@ export const getMe = catchAsync(async (req, res, next) => {
 
 // Update user profile
 export const updateProfile = catchAsync(async (req, res, next) => {
-  const { name, email, address } = req.body;
+  // Log for debugging
+  logger.debug('updateProfile called');
+  logger.debug('req.body:', req.body);
+  logger.debug('req.files:', req.files);
+
+  // req.body may be empty object if only file is uploaded
+  const name = req.body?.name || null;
+  const email = req.body?.email || null;
+  const address = req.body?.address || null;
 
   // Validate input - at least one field or image must be provided
   const imageFile = req.files ? req.files.find(f => f.fieldname === 'profilePicture') : null;
@@ -435,8 +443,12 @@ export const updateProfile = catchAsync(async (req, res, next) => {
     return next(new AppError("Veuillez fournir au moins un champ à mettre à jour", 400));
   }
 
-  // Sanitize inputs
-  const sanitizedData = sanitizeUserInput({ name, email, address });
+  // Sanitize inputs (only if they exist)
+  const sanitizedData = sanitizeUserInput({ 
+    ...(name && { name }),
+    ...(email && { email }),
+    ...(address && { address })
+  });
 
   // Build update object
   const updateData = {};
