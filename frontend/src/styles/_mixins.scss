@@ -591,27 +591,59 @@
     display: inline-block;
     font-weight: 600;
     color: $black;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.5rem;
   }
 
   input[type='file'] {
-    display: block;
+    position: relative;
     width: 100%;
-    padding: 0.55rem 0.75rem;
-    border: 1.5px solid $border;
+    padding: 1rem;
+    border: 2px dashed $secondary;
     border-radius: $radius-md;
-    background: $white;
+    background: lighten($secondary, 48%);
     color: $text;
     cursor: pointer;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-weight: 500;
+
+    &::file-selector-button {
+      padding: 0.6rem 1.25rem;
+      margin-right: 1rem;
+      background: $secondary;
+      color: $white;
+      border: none;
+      border-radius: $radius-sm;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        background: $secondary-dark;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+    }
 
     &:hover {
-      border-color: $secondary;
+      border-color: $secondary-dark;
+      background: lighten($secondary, 45%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba($secondary, 0.15);
     }
 
     &:focus {
       outline: none;
       border-color: $secondary;
+      border-style: solid;
+      background: lighten($secondary, 46%);
       box-shadow: 0 0 0 3px rgba($secondary, 0.12);
     }
   }
@@ -623,15 +655,23 @@
   }
 
   .preview {
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
+    display: flex;
+    justify-content: center;
 
     .previewImg {
       max-width: 200px;
       height: auto;
       border-radius: $radius-md;
-      border: 1px solid $border;
+      border: 2px solid $border;
       background: #f8f8f8;
       display: block;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: scale(1.02);
+      }
     }
   }
 }
