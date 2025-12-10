@@ -15,6 +15,7 @@ const Navbar = () => {
   
   // Ref for detecting clicks outside the menu
   const navRef = useRef(null);
+  const hamburgerRef = useRef(null);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
@@ -22,7 +23,13 @@ const Navbar = () => {
   // UX Upgrade: Close menu when clicking outside component
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (navRef.current && !navRef.current.contains(event.target) && isMenuOpen) {
+      if (
+        navRef.current && 
+        !navRef.current.contains(event.target) && 
+        hamburgerRef.current &&
+        !hamburgerRef.current.contains(event.target) &&
+        isMenuOpen
+      ) {
         closeMenu();
       }
     };
@@ -69,6 +76,7 @@ const Navbar = () => {
 
         {/* A11Y FIX: Added aria-expanded and aria-controls */}
         <button
+          ref={hamburgerRef}
           className={`${styles.hamburger} ${isMenuOpen ? styles.hamburgerOpen : ""}`}
           onClick={toggleMenu}
           aria-label="Toggle navigation menu"
