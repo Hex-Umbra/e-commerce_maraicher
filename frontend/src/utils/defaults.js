@@ -102,7 +102,7 @@ export const transformProducerData = (backendProducer, index = 0) => {
     name: backendProducer.name || 'Producteur',
     specialty: getDefaultSpecialty(backendProducer.name, index),
     description: getDefaultDescription(backendProducer.name, index),
-    avatar: getDefaultAvatar(backendProducer.name, index),
+    avatar: backendProducer.profilePicture || getDefaultAvatar(backendProducer.name, index),
     email: backendProducer.email,
     address: backendProducer.address,
     role: backendProducer.role,

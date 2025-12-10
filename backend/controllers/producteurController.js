@@ -11,7 +11,7 @@ export const getAllProducteurs = catchAsync(async (req, res) => {
   try {
     // Getting all producteurs from the database
     const producteurs = await User.find({ role: "producteur" })
-      .select("name email address role createdAt")
+      .select("name email address role createdAt profilePicture")
       .sort({ createdAt: -1 });
 
     logger.debug(`\x1b[1m${producteurs.length}\x1b[0m produteurs récupérés`);
@@ -50,7 +50,7 @@ export const getProducteurById = catchAsync(async (req, res) => {
 
     // Finding the producteur by id
     const producteur = await User.findById(sanitizedId).select(
-      "name email address role createdAt"
+      "name email address role createdAt profilePicture"
     );
     if (!producteur) {
       throw new AppError("Producteur non trouvé", 404);
@@ -91,7 +91,7 @@ export const getProductsByProducteur = catchAsync(async (req, res) => {
 
     // Finding the producteur by id
     const producteur = await User.findById(sanitizedId).select(
-      "name email address role"
+      "name email address role profilePicture"
     );
     if (!producteur) {
       throw new AppError("Producteur non trouvé", 404);

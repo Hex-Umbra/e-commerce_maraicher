@@ -6,6 +6,8 @@ import styles from "./ProfileEdit.module.scss";
 import { ROUTES } from "../../utils/routes";
 import { userAPI } from "../../services/api";
 import LoadingState from "../../components/common/LoadingState/LoadingState";
+import { FiUpload, FiX } from "react-icons/fi";
+import { getDefaultAvatar } from "../../utils/defaults";
 
 
 const ProfileEdit = () => {
@@ -21,6 +23,8 @@ const ProfileEdit = () => {
   const [form, setForm] = useState(initial);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState(null);
 
   useEffect(() => {
     setForm(initial);
@@ -43,7 +47,43 @@ const ProfileEdit = () => {
   };
 
   const hasChanges = () => {
-    return form.name !== initial.name || form.email !== initial.email || form.address !== initial.address;
+    return (
+      form.name !== initial.name || 
+      form.email !== initial.email || 
+      form.address !== initial.address ||
+      profilePictureFile !== null
+    );
+  };
+
+  const handleProfilePictureChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        showNotification("Veuillez sélectionner un fichier image valide", "error");
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        showNotification("L'image ne doit pas dépasser 5MB", "error");
+        return;
+      }
+
+      setProfilePictureFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePicturePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveProfilePicture = () => {
+    setProfilePictureFile(null);
+    setProfilePicturePreview(null);
   };
 
   const handleSave = async (e) => {
@@ -57,6 +97,7 @@ const ProfileEdit = () => {
         name: form.name.trim(),
         email: form.email.trim(),
         address: form.address.trim(),
+        profilePicture: profilePictureFile,
       });
 
       // Update local context with the response from backend
@@ -96,6 +137,49 @@ const ProfileEdit = () => {
         <h2 className={styles.title}>Modifier mon profil</h2>
 
         <form className={styles.form} onSubmit={handleSave} noValidate>
+          {/* Profile Picture Upload */}
+          <div className={styles.profilePictureSection}>
+            <label className={styles.profilePictureLabel}>Photo de profil</label>
+            <div className={styles.profilePictureContainer}>
+              <div className={styles.profilePicturePreview}>
+                <img 
+                  src={
+                    profilePicturePreview || 
+                    user?.profilePicture || 
+                    getDefaultAvatar(user?.name)
+                  } 
+                  alt="Profile"
+                  className={styles.profilePictureImage}
+                />
+              </div>
+              <div className={styles.profilePictureActions}>
+                <label className={styles.uploadButton}>
+                  <FiUpload />
+                  <span>Choisir une image</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleProfilePictureChange}
+                    className={styles.fileInput}
+                  />
+                </label>
+                {(profilePictureFile || profilePicturePreview) && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveProfilePicture}
+                    className={styles.removeButton}
+                    aria-label="Supprimer l'image"
+                  >
+                    <FiX /> Supprimer
+                  </button>
+                )}
+              </div>
+            </div>
+            <p className={styles.imageHint}>
+              Formats acceptés: JPG, PNG, GIF, WEBP (max 5MB)
+            </p>
+          </div>
+
           <FormField
             id="name"
             label="Nom et Prénom"

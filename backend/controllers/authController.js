@@ -7,6 +7,7 @@ import validator from "validator";
 import { logger } from "../services/logger.js";
 import emailService from "../services/emailService.js";
 import { sanitizeUserInput, sanitizeEmail, sanitizeString } from "../utils/sanitize.js";
+import { uploadBufferToCloudinary, destroyByPublicId } from "../services/cloudinaryUpload.js";
 
 // Rate limiting middleware to prevent brute force attacks
 export const limiter = rateLimiter({
@@ -63,6 +64,7 @@ const createSendToken = (user, statusCode, res, message) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        profilePicture: user.profilePicture,
       },
     });
 };
@@ -414,6 +416,7 @@ export const getMe = catchAsync(async (req, res, next) => {
       email: user.email,
       role: user.role,
       address: user.address,
+      profilePicture: user.profilePicture,
       createdAt: user.createdAt,
     },
   });
@@ -425,8 +428,10 @@ export const getMe = catchAsync(async (req, res, next) => {
 export const updateProfile = catchAsync(async (req, res, next) => {
   const { name, email, address } = req.body;
 
-  // Validate input
-  if (!name && !email && !address) {
+  // Validate input - at least one field or image must be provided
+  const imageFile = req.files ? req.files.find(f => f.fieldname === 'profilePicture') : null;
+  
+  if (!name && !email && !address && !imageFile) {
     return next(new AppError("Veuillez fournir au moins un champ à mettre à jour", 400));
   }
 
@@ -465,6 +470,36 @@ export const updateProfile = catchAsync(async (req, res, next) => {
     updateData.address = sanitizedData.address;
   }
 
+  // Handle profile picture upload
+  if (imageFile) {
+    try {
+      // Get current user to check for existing profile picture
+      const currentUser = await User.findById(req.user._id);
+      
+      // Delete old profile picture from Cloudinary if it exists
+      if (currentUser.profilePicturePublicId) {
+        try {
+          await destroyByPublicId(currentUser.profilePicturePublicId);
+        } catch (deleteError) {
+          logger.warn(`Failed to delete old profile picture: ${deleteError.message}`);
+          // Continue with upload even if deletion fails
+        }
+      }
+
+      // Upload new profile picture
+      const folder = `profiles/${req.user._id}`;
+      const result = await uploadBufferToCloudinary(imageFile.buffer, folder);
+      
+      updateData.profilePicture = result.secure_url;
+      updateData.profilePicturePublicId = result.public_id;
+      
+      logger.info(`Profile picture uploaded for user ${req.user._id}`);
+    } catch (uploadError) {
+      logger.error(`Profile picture upload failed: ${uploadError.message}`);
+      return next(new AppError("Erreur lors du téléversement de l'image de profil", 500));
+    }
+  }
+
   // Update user using findByIdAndUpdate to avoid triggering password hash pre-save hook
   const updatedUser = await User.findByIdAndUpdate(
     req.user._id,
@@ -493,6 +528,7 @@ export const updateProfile = catchAsync(async (req, res, next) => {
       email: updatedUser.email,
       role: updatedUser.role,
       address: updatedUser.address,
+      profilePicture: updatedUser.profilePicture,
     },
   });
 });

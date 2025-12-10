@@ -365,8 +365,21 @@ export const supportAPI = {
 // User/Auth API functions
 export const userAPI = {
   // Update user profile
-  updateProfile: async ({ name, email, address }) => {
+  updateProfile: async ({ name, email, address, profilePicture }) => {
     try {
+      // If there's an image file, send as FormData
+      if (profilePicture) {
+        const formData = new FormData();
+        if (name) formData.append('name', name);
+        if (email) formData.append('email', email);
+        if (address) formData.append('address', address);
+        formData.append('profilePicture', profilePicture);
+
+        const response = await apiClient.patch('/auth/profile', formData);
+        return response.data;
+      }
+      
+      // Otherwise send as JSON
       const response = await apiClient.patch('/auth/profile', {
         name,
         email,
