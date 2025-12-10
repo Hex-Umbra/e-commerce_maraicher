@@ -6,7 +6,7 @@ import Notification from "../Notification/Notification";
 import styles from "./Navbar.module.scss";
 import { NAV_LINKS, ROUTES } from "../../utils/routes";
 import { BsCart3 } from "react-icons/bs";
-import { FiPackage } from "react-icons/fi";
+import { FiPackage, FiPower } from "react-icons/fi";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -165,8 +165,10 @@ const Navbar = () => {
                 <button 
                   className={styles.logoutButton}
                   onClick={handleLogout}
+                  aria-label="Déconnexion"
                 >
-                  Déconnexion
+                  <span className={styles.logoutText}>Déconnexion</span>
+                  <FiPower className={styles.logoutIcon} aria-hidden="true" />
                 </button>
               </li>
             </ul>

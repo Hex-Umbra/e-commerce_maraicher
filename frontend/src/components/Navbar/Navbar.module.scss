@@ -137,6 +137,18 @@
   font-size: 0.9rem;
   font-weight: 500;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .logoutIcon {
+    display: none;
+    font-size: 1.2rem;
+  }
+
+  .logoutText {
+    display: inline;
+  }
 }
 
 .cartButton {
@@ -372,9 +384,22 @@
     gap: 0.5rem;
   }
 
+  .userName {
+    display: none;
+  }
+
   .logoutButton {
     font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
+    padding: 0.5rem;
+    min-width: auto;
+
+    .logoutText {
+      display: none;
+    }
+
+    .logoutIcon {
+      display: inline;
+    }
   }
 
   .logo {
