@@ -89,6 +89,8 @@ class EmailService {
         html: htmlContent,
         text: textContent || htmlContent.replace(/<[^>]*>/g, ""), // Fallback text
         replyTo: this.fromEmail,
+        encoding: 'utf-8',
+        textEncoding: 'base64',
       };
 
       // Send the email
@@ -333,17 +335,24 @@ class EmailService {
   }
 
   // Send support contact email
-  async sendSupportContact(subject, title, message) {
+  async sendSupportContact(subject, title, message, userEmail, userName = "Utilisateur anonyme", userId = null) {
     try {
       const supportEmail = process.env.SUPPORT_EMAIL || this.fromEmail;
-      const templateData = { subject, title, message };
+      const templateData = { 
+        subject, 
+        title, 
+        message,
+        userEmail: userEmail || "Non fourni",
+        userName: userName && userName.trim() ? userName : "Utilisateur anonyme",
+        userId: userId || "Non connecté"
+      };
       const htmlContent = await this.loadTemplate(
         "supportContact",
         templateData
       );
       const emailSubject = `[Contact] ${subject} - ${title}`;
       await this.sendEmail(supportEmail, emailSubject, htmlContent);
-      logger.info(`Support contact email sent to ${supportEmail}`);
+      logger.info(`Support contact email sent to ${supportEmail} from ${userEmail}`);
     } catch (error) {
       logger.error(`Failed to send support contact email: ${error.message}`);
       throw error;

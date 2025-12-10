@@ -14,6 +14,7 @@ const FormField = ({
   disabled = false,
   rows = 5,
   className = '',
+  helpText = '',
 }) => {
   const handleChange = (e) => {
     onChange(e.target.value);
@@ -61,6 +62,12 @@ const FormField = ({
           {error}
         </span>
       )}
+      
+      {helpText && !error && (
+        <span className={styles.helpText}>
+          {helpText}
+        </span>
+      )}
     </div>
   );
 };
@@ -77,6 +84,7 @@ FormField.propTypes = {
   disabled: PropTypes.bool,
   rows: PropTypes.number,
   className: PropTypes.string,
+  helpText: PropTypes.string,
 };
 
 export default FormField;

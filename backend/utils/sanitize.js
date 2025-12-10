@@ -273,5 +273,13 @@ export const sanitizeSupportInput = (data) => {
     sanitized.message = sanitizeString(data.message, { maxLength: 5000 });
   }
 
+  if (data.userEmail) {
+    sanitized.userEmail = sanitizeString(data.userEmail, { maxLength: 255 });
+  }
+
+  if (data.userName) {
+    sanitized.userName = sanitizeString(data.userName, { maxLength: 100 });
+  }
+
   return sanitized;
 };

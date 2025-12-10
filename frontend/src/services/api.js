@@ -341,12 +341,15 @@ export const ordersAPI = {
 
 export const supportAPI = {
   // Send contact message to support
-  sendContact: async ({ subject, title, message }) => {
+  sendContact: async ({ subject, title, message, userEmail, userName, userId }) => {
     try {
       const response = await apiClient.post('/support/contact', {
         subject,
         title,
         message,
+        userEmail,
+        userName,
+        userId,
       });
       // Backend returns: { status, message }
       return response.data;

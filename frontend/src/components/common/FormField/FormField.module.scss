@@ -36,3 +36,11 @@ textarea.input {
 .fieldError {
   @include field-error;
 }
+
+.helpText {
+  display: block;
+  font-size: $font-size-xs;
+  color: $white;
+  margin-top: $spacing-xs;
+  font-style: italic;
+}
